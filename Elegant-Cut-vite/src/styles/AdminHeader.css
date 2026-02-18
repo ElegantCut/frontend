@@ -1,0 +1,115 @@
+:root {
+    --Negro: #111205;
+    --NegroMedio: #1f1f1e;
+    --Blanco: #f4f4f4;
+    --Rojo: #bc2041;
+}
+
+/*Encabezado del admin*/
+.admin-header {
+    background: var(--Blanco);
+    padding: 1rem 2rem;
+    display: flex;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    z-index: 100;
+}
+
+/*Izquierda del encabezado*/
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/*Titulo del encabezado*/
+.header-left h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--Negro);
+    font-weight: 600;
+}
+
+/*Derecha del encabezado*/
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: var(--Blanco);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+}
+
+/*Avatar del usuario (circulo de perfil)*/
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--Blanco);
+    box-shadow: 0 2px 4px var(--Negro);
+}
+
+/*Nombre del usuario*/
+.user-name {
+    font-weight: 500;
+    color: var(--Negro);
+    font-size: 0.95rem;
+}
+
+/* Responsive de el header */
+@media (max-width: 768px) {
+    .admin-header {
+        padding: 0.8rem 1rem;
+        /* Reduced padding */
+        /* flex-direction: column;  Keep row direction but allow wrapping if needed, or better yet, keep it row and scale down */
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .header-left {
+        /* width: 100%;  Don't force full width, let it take what it needs */
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .header-left h1 {
+        font-size: 1.2rem;
+        /* Smaller font on mobile */
+    }
+
+    .header-right {
+        /* width: 100%; */
+        justify-content: flex-end;
+    }
+
+    .user-info {
+        padding: 0.3rem 0.8rem;
+        /* Smaller padding */
+        background: var(--Blanco);
+        /* Keep background for visibility */
+    }
+
+    .user-name {
+        display: none;
+        /* Hide name on very small screens if needed, or keep small */
+    }
+}
+
+@media (max-width: 480px) {
+    .user-name {
+        display: none;
+        /* Hide user name on phones to save space */
+    }
+
+    .header-left h1 {
+        font-size: 1.1rem;
+    }
+}

@@ -1,0 +1,360 @@
+/* VARIABLES CSS - AÑADIR AL INICIO */
+:root {
+    --Negro: #111205;
+    --NegroMedio: #1f1f1e;
+    --Blanco: #f4f4f4;
+    --Rojo: #bc2041;
+}
+
+/* ESTILOS EXCLUSIVOS PARA EL MENÚ HAMBURGUESA - CORREGIDO */
+
+/* En pantalla GRANDE: mostrar íconos, ocultar menú hamburguesa */
+@media screen and (min-width: 769px) {
+    .desktop-icons {
+        display: flex;
+    }
+
+    .abrir-menu {
+        display: none;
+    }
+
+    .nav {
+        display: none;
+    }
+}
+
+/* En pantalla PEQUEÑA: ocultar íconos, mostrar botón hamburguesa */
+@media screen and (max-width: 768px) {
+    .desktop-icons {
+        display: none;
+    }
+
+    /* Ocultar elementos del header cuando el menú móvil está abierto */
+    .header-hidden .brand-container {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    /* Botón abrir menú - Estilo mejorado */
+    .abrir-menu {
+        display: flex;
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: var(--Negro);
+        z-index: 1001;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 0.5rem;
+        border-radius: 50%;
+    }
+
+    /* Quitar fondo gris al hover */
+    .abrir-menu:hover {
+        background-color: transparent !important;
+        color: var(--RojoVino);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    /* Menú móvil - ESTILO BLANCO (TIPO SIDEBAR) */
+    .nav {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100vh;
+        background: var(--Blanco);
+        /* Fondo blanco */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+        z-index: 1000;
+        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 1;
+        visibility: visible;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        /* Sombra suave */
+    }
+
+    /* Menú visible */
+    .nav.visible {
+        left: 0;
+    }
+
+    /* Quitar scroll del body cuando el menú está abierto */
+    body.menu-open {
+        overflow: hidden !important;
+    }
+
+    /* Botón cerrar */
+    .cerrar-menu {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        color: var(--Negro);
+        font-size: 2rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1001;
+        padding: 0.5rem;
+        border-radius: 50%;
+    }
+
+    .cerrar-menu:hover {
+        background-color: transparent !important;
+        color: var(--Rojo);
+        transform: scale(1.2);
+    }
+
+    /* ========== LOGO ========== */
+    .mobile-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 3.5rem 1rem 1.5rem;
+        width: 100%;
+        background: var(--Blanco);
+        /* Eliminar borde o hacerlo muy sutil */
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(10px);
+    }
+
+    .mobile-logo-small {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--Rojo);
+        /* Borde Rojo */
+        display: block;
+        box-shadow: 0 4px 15px rgba(188, 32, 65, 0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .mobile-logo-small:hover {
+        transform: scale(1.05);
+    }
+
+    .mobile-brand-text {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--Negro);
+        letter-spacing: 2px;
+        text-align: center;
+        text-transform: uppercase;
+        /* Quitar sombra oscura si se ve mal en blanco, o suavizarla */
+        text-shadow: none;
+    }
+
+    .mobile-slogan {
+        font-size: 0.9rem;
+        color: var(--Rojo);
+        font-weight: 500;
+        text-align: center;
+        font-style: italic;
+        letter-spacing: 1px;
+        text-shadow: none;
+    }
+
+    /* ========== CONTENEDOR DE BOTONES ========== */
+    .menu-icons-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        /* Menos espacio entre items, como en sidebar */
+        width: 100%;
+        padding: 2rem 1rem;
+        overflow-y: auto;
+        flex: 1;
+        max-height: calc(100vh - 250px);
+        scrollbar-width: thin;
+        scrollbar-color: var(--Rojo) transparent;
+    }
+
+    /* Scrollbar */
+    .menu-icons-container::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .menu-icons-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .menu-icons-container::-webkit-scrollbar-thumb {
+        background: var(--Negro);
+        border-radius: 10px;
+    }
+
+    /* Botones de navegación - ESTILO SIDEBAR (Limpio) */
+    .menu-nav-button {
+        width: 100%;
+        max-width: 280px;
+        height: 50px;
+        /* Un poco más compactos */
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0 1.5rem;
+
+        /* Fondo transparente y sin bordes */
+        background: transparent;
+        border: none;
+        border-radius: 8px;
+        /* Bordes menos redondeados */
+
+        /* Texto Negro */
+        color: var(--Negro);
+        text-decoration: none;
+
+        transition: all 0.2s ease;
+        cursor: pointer;
+        backdrop-filter: none;
+        box-shadow: none;
+
+        font-weight: 500;
+        font-size: 1rem;
+    }
+
+    .menu-nav-button:hover {
+        /* Hoover gris suave */
+        background-color: #f8f9fa;
+        color: var(--Rojo);
+        transform: translateX(4px);
+        /* Movimiento sutil */
+        box-shadow: none;
+        border: none;
+    }
+
+    /* Iconos en Rojo */
+    .menu-nav-button i {
+        font-size: 1.2rem;
+        width: 25px;
+        text-align: center;
+        transition: transform 0.3s ease;
+        color: var(--Rojo);
+        /* Iconos SIEMPRE rojos */
+    }
+
+    .menu-nav-button:hover i {
+        transform: scale(1.1);
+    }
+
+    .menu-nav-label {
+        /* El color se hereda del botón (Negro -> Rojo al hover) */
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+    }
+
+    /* Botones específicos (Login/Logout) */
+    .logout-mobile {
+        margin-top: 1rem;
+        /* Opcional: un borde rojo sutil para separar la acción de salir */
+        border: 1px solid rgba(188, 32, 65, 0.2);
+    }
+
+    .logout-mobile:hover {
+        background: rgba(188, 32, 65, 0.1);
+    }
+
+    .login-mobile {
+        margin-top: 1rem;
+        background: rgba(0, 0, 0, 0.05);
+        /* Un fondo suave para resaltar 'Iniciar Sesión' */
+    }
+
+    /* User info en móvil - ESTILO CLARO */
+    .user-info-mobile {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.8rem 1rem;
+
+        /* Fondo gris muy claro */
+        background: #f8f9fa;
+        border-radius: 12px;
+
+        margin-top: auto;
+        margin-bottom: 2rem;
+        width: 100%;
+        max-width: 280px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        backdrop-filter: none;
+    }
+
+    .user-avatar {
+        font-size: 1.5rem;
+        color: var(--Rojo);
+        transition: transform 0.3s ease;
+    }
+
+    .user-info-mobile:hover .user-avatar {
+        transform: scale(1.1);
+    }
+
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: var(--Negro);
+        font-size: 0.9rem;
+    }
+
+    .user-role {
+        font-size: 0.8rem;
+        color: #666;
+        /* Gris para el rol */
+        font-weight: 500;
+    }
+}
+
+/* === DIAGNÓSTICO Y FORZADO - AÑADIR AL FINAL === */
+@media screen and (max-width: 768px) {
+
+    /* FORZAR que el menú se muestre */
+    .nav.visible {
+        left: 0 !important;
+        transform: translateX(0) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: flex !important;
+    }
+
+    /* Reset completo para eliminar cualquier conflicto - ACTUALIZADO A BLANCO */
+    .nav {
+        position: fixed !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 100% !important;
+        height: 100vh !important;
+        background: var(--Blanco) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 0 !important;
+        z-index: 9999 !important;
+        transition: left 0.4s ease !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Asegurar que el botón cerrar sea visible */
+    .cerrar-menu {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        z-index: 10001 !important;
+    }
+}

@@ -1,0 +1,761 @@
+/* FORM_AGENDA.CSS - ELEGANT CUT PROFESSIONAL */
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap");
+
+:root {
+  --Negro: #111205;
+  --NegroMedio: #1F1F1E;
+  --Blanco: #f4f4f4;
+  --RojoVino: #BC2041;
+  --Dorado: #D4AF37;
+  --GrisOscuro: #2A2A2A;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Comfortaa", sans-serif;
+}
+
+/* ============================================
+   CONTAINER PRINCIPAL
+   ============================================ */
+.form-agenda-container {
+  font-family: "Comfortaa", sans-serif;
+  background: var(--Negro);
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* ============================================
+   HERO HEADER este es el header del formulario
+   ============================================ */
+.hero-header {
+  position: relative;
+  background: linear-gradient(135deg, var(--RojoVino) 0%, var(--Negro) 100%);
+  padding: 80px 20px 60px;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* ============================================
+   HERO OVERLAY este es como un filtro que se coloca encima del header
+   ============================================ */
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    repeating-linear-gradient(45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.03) 10px,
+      rgba(255, 255, 255, 0.03) 20px);
+  pointer-events: none;
+}
+
+/* ============================================
+   HERO CONTENT este es el contenido del header
+   ============================================ */
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   HERO ICON este es el icono del header
+   ============================================ */
+.hero-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  margin-bottom: 20px;
+  border: 3px solid var(--Dorado);
+  backdrop-filter: blur(10px);
+}
+
+.hero-icon svg {
+  color: var(--Dorado);
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--Blanco);
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 30px;
+  font-weight: 400;
+}
+
+.hero-features {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.hero-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--Blanco);
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 20px;
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-feature svg {
+  color: var(--Dorado);
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+.main-content {
+  background: var(--NegroMedio);
+  min-height: calc(100vh - 300px);
+  padding: 40px 20px;
+}
+
+.form-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* ============================================
+   SIDEBAR DE INFORMACIÓN
+   ============================================ */
+.info-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  position: sticky;
+  top: 20px;
+}
+
+.info-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--Dorado);
+}
+
+.info-card h3 {
+  color: var(--Negro);
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+  border-bottom: 2px solid var(--Dorado);
+  padding-bottom: 10px;
+}
+
+.benefits-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.benefits-list li {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.benefit-icon {
+  color: var(--RojoVino);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.benefits-list strong {
+  display: block;
+  color: var(--Negro);
+  font-size: 1rem;
+  margin-bottom: 3px;
+}
+
+.benefits-list p {
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* TARJETA DE CONTACTO */
+.contact-card {
+  background: linear-gradient(135deg, var(--RojoVino) 0%, var(--Negro) 100%);
+  color: var(--Blanco);
+  border: 2px solid var(--Dorado);
+}
+
+.contact-card h3 {
+  color: var(--Blanco);
+  border-bottom-color: var(--Dorado);
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--Blanco);
+  font-size: 0.95rem;
+}
+
+.contact-item svg {
+  color: var(--Dorado);
+  flex-shrink: 0;
+}
+
+/* RESUMEN DE RESERVA */
+.summary-card {
+  background: var(--Dorado);
+  border: 2px solid var(--RojoVino);
+  animation: slideInUp 0.5s ease;
+}
+
+.summary-card h3 {
+  color: var(--Negro);
+  border-bottom-color: var(--RojoVino);
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-label {
+  font-size: 0.85rem;
+  color: var(--Negro);
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.summary-value {
+  font-size: 1rem;
+  color: var(--Negro);
+  font-weight: 700;
+}
+
+.summary-price {
+  font-size: 1.1rem;
+  color: var(--RojoVino);
+  font-weight: 700;
+}
+
+.summary-duration {
+  font-size: 0.85rem;
+  color: var(--Negro);
+  opacity: 0.7;
+}
+
+.barber-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  color: var(--Negro);
+  font-weight: 600;
+}
+
+/* ============================================
+   FORMULARIO PRINCIPAL
+   ============================================ */
+.form-main {
+  background: var(--Blanco);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border: 3px solid var(--Dorado);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid var(--Dorado);
+}
+
+.form-header h2 {
+  font-size: 2rem;
+  color: var(--Negro);
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.form-header p {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* ============================================
+   SECCIONES DEL FORMULARIO
+   ============================================ */
+.form-section {
+  margin-bottom: 35px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--RojoVino);
+}
+
+/*icono de el muñequito*/
+.section-icon {
+  color: var(--RojoVino);
+  flex-shrink: 0;
+}
+
+/*titulo "informacion personal"*/
+.section-header h3 {
+  color: var(--Negro);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* GRID DEL FORMULARIO */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--Negro);
+  font-size: 0.95rem;
+}
+
+.required {
+  color: var(--RojoVino);
+  font-weight: 700;
+}
+
+/* INPUT WRAPPER CON ICONOS */
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--RojoVino);
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* CSS FIX: Aumentar especificidad y usar !important para asegurar que se aplique */
+.form-agenda-container .input-wrapper input {
+  width: 100%;
+  height: 44px;
+  padding: 10px 12px 10px 48px !important;
+  /* 👈 Forzamos el padding */
+  box-sizing: border-box;
+}
+
+
+
+/* Regla específica para selects con icono */
+.form-agenda-container .form-group .input-wrapper select {
+  padding-left: 48px !important;
+}
+
+.form-group select {
+  width: 100%;
+  padding: 14px 15px;
+  border: 2px solid #e1e1e1;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: "Comfortaa", sans-serif;
+  background: white;
+  color: var(--Negro);
+  cursor: pointer;
+}
+
+.input-wrapper input:focus,
+.input-wrapper select:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--RojoVino);
+  box-shadow: 0 0 0 4px rgba(188, 32, 65, 0.1);
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 14px 15px;
+  border: 2px solid #e1e1e1;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: "Comfortaa", sans-serif;
+  background: white;
+  color: var(--Negro);
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--RojoVino);
+  box-shadow: 0 0 0 4px rgba(188, 32, 65, 0.1);
+}
+
+/* ============================================
+   OPCIONES DE PAGO
+   ============================================ */
+.payment-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.payment-option {
+  cursor: pointer;
+  border: 3px solid #e1e1e1;
+  border-radius: 15px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  background: white;
+  position: relative;
+}
+
+.payment-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.payment-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.payment-content svg {
+  color: var(--RojoVino);
+  transition: all 0.3s ease;
+}
+
+.payment-content span {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--Negro);
+}
+
+.payment-content p {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}
+
+.payment-option:hover {
+  border-color: var(--RojoVino);
+  background: rgba(188, 32, 65, 0.05);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(188, 32, 65, 0.2);
+}
+
+.payment-option.active {
+  border-color: var(--RojoVino);
+  background: linear-gradient(135deg, rgba(188, 32, 65, 0.1) 0%, rgba(212, 175, 55, 0.1) 100%);
+  box-shadow: 0 5px 20px rgba(188, 32, 65, 0.3);
+}
+
+.payment-option.active .payment-content svg {
+  color: var(--Dorado);
+  transform: scale(1.1);
+}
+
+.payment-option.active .payment-content span {
+  color: var(--RojoVino);
+}
+
+/* ============================================
+   BOTÓN DE ENVÍO
+   ============================================ */
+.submit-btn {
+  width: 100%;
+  padding: 18px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Comfortaa", sans-serif;
+  margin-top: 30px;
+  background: linear-gradient(135deg, var(--RojoVino) 0%, var(--Negro) 100%);
+  color: var(--Blanco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 5px 20px rgba(188, 32, 65, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.submit-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(188, 32, 65, 0.5);
+}
+
+.submit-btn:active {
+  transform: translateY(-1px);
+}
+
+.form-disclaimer {
+  text-align: center;
+  color: #666;
+  font-size: 0.85rem;
+  margin-top: 15px;
+  line-height: 1.4;
+}
+
+/* ============================================
+   ANIMACIONES
+   ============================================ */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   SCROLL PERSONALIZADO
+   ============================================ */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--NegroMedio);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--RojoVino);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--Dorado);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 1200px) {
+  .form-wrapper {
+    grid-template-columns: 300px 1fr;
+    gap: 30px;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .form-wrapper {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .info-sidebar {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .form-main {
+    padding: 30px;
+  }
+
+  .hero-title {
+    font-size: 2.2rem;
+  }
+
+  .hero-features {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-header {
+    padding: 60px 20px 40px;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .hero-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .form-main {
+    padding: 25px;
+    border-radius: 15px;
+  }
+
+  .form-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .payment-options {
+    grid-template-columns: 1fr;
+  }
+
+  .info-sidebar {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 20px 10px;
+  }
+
+  .form-main {
+    padding: 20px;
+  }
+
+  .form-header {
+    margin-bottom: 25px;
+  }
+
+  .form-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .section-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .hero-features {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .hero-feature {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .submit-btn {
+    font-size: 1.1rem;
+    padding: 16px;
+  }
+}

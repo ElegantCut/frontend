@@ -1,0 +1,360 @@
+/* ========================================
+   REVIEWS PAGE - PROFESSIONAL DESIGN
+   ======================================== */
+
+.reviews-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 80px 20px 60px;
+}
+
+/* ========================================
+   HEADER SECTION
+   ======================================== */
+
+.reviews-header {
+    text-align: center;
+    margin-bottom: 60px;
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.reviews-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #111205;
+    margin-bottom: 15px;
+    letter-spacing: -1px;
+}
+
+.reviews-header .subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    font-weight: 400;
+}
+
+/* ========================================
+   MAIN CONTAINER
+   ======================================== */
+
+.reviews-main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 40px;
+    align-items: start;
+}
+
+/* ========================================
+   REVIEWS GRID (LEFT SIDE)
+   ======================================== */
+
+.reviews-section {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.reviews-section h2 {
+    font-size: 1.8rem;
+    color: #111205;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.reviews-grid {
+    display: grid;
+    gap: 24px;
+}
+
+.review-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.review-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(188, 32, 65, 0.12);
+    border-color: #bc2041;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.reviewer-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #bc2041 0%, #8a1830 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.reviewer-info {
+    flex: 1;
+}
+
+.reviewer-name {
+    display: block;
+    font-weight: 600;
+    color: #111205;
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+.review-date {
+    display: block;
+    font-size: 0.85rem;
+    color: #868e96;
+}
+
+.review-rating {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.star {
+    color: #ffc107;
+    font-size: 1.1rem;
+}
+
+.star.empty {
+    color: #dee2e6;
+}
+
+.review-comment {
+    color: #495057;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* ========================================
+   FORM SECTION (RIGHT SIDE)
+   ======================================== */
+
+.form-section {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 100px;
+}
+
+.form-section h2 {
+    font-size: 1.5rem;
+    color: #111205;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    background: #f8f9fa;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #bc2041;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(188, 32, 65, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.review-submit-btn {
+    background: #bc2041;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-top: 8px;
+    box-shadow: 0 4px 6px rgba(188, 32, 65, 0.1);
+}
+
+.review-submit-btn:hover {
+    background: #a01c39;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(188, 32, 65, 0.3);
+}
+
+.review-submit-btn:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+.review-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ========================================
+   STATUS MESSAGES
+   ======================================== */
+
+.status-message {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+    animation: slideInDown 0.3s ease-out;
+}
+
+.status-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* ========================================
+   LOADING & EMPTY STATES
+   ======================================== */
+
+.loading-spinner {
+    text-align: center;
+    padding: 60px 20px;
+    color: #868e96;
+    font-size: 1.1rem;
+}
+
+.no-reviews {
+    text-align: center;
+    padding: 60px 20px;
+    color: #868e96;
+}
+
+.no-reviews p {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 1200px) {
+    .reviews-main-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .form-section {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .reviews-page {
+        padding: 60px 15px 40px;
+    }
+
+    .reviews-header h1 {
+        font-size: 2rem;
+    }
+
+    .reviews-section,
+    .form-section {
+        padding: 24px;
+    }
+
+    .reviews-section h2,
+    .form-section h2 {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .reviews-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .review-card {
+        padding: 16px;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+}

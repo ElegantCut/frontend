@@ -1,0 +1,198 @@
+:root {
+    --Negro: #111205;
+    --NegroMedio: #1f1f1e;
+    --Blanco: #f4f4f4;
+    --Rojo: #bc2041;
+}
+
+
+.admin-panel {
+    display: flex;
+    min-height: 100vh;
+    /* height: 100vh;  RELXAXED FOR DEBUG */
+    background-color: #f4f6f9;
+    /* overflow: hidden; RELAXED FOR DEBUG */
+    /* Prevent body scroll */
+}
+
+.admin-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 260px;
+    transition: margin-left 0.3s ease;
+}
+
+/*Contenedor principal*/
+.admin-main {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    height: 100%;
+    /* Ensure it fills space */
+}
+
+/* Estilos Generales para Tabs */
+.tab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: var(--Blanco);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/*Titulo del tab*/
+.tab-header h2 {
+    margin: 0;
+    color: var(--Negro);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.tab-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-container {
+    width: 100%;
+}
+
+.crud-table {
+    width: 100%;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.crud-table th {
+    background: #f8f9fa;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.crud-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+
+.crud-table tr:last-child td {
+    border-bottom: none;
+}
+
+.crud-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Botones de Acción */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
+}
+
+/* Badges */
+.badge {
+    padding: 0.5em 0.8em;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .admin-main {
+        padding: 1rem;
+    }
+
+    .tab-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .tab-header .action-buttons {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .crud-table {
+        min-width: 600px;
+        /* Force scroll */
+    }
+
+    .crud-table {
+        min-width: 600px;
+        /* Force scroll */
+    }
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-top: 1rem;
+}
+
+/* Mobile Toggle Styles */
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.btn-toggle-sidebar {
+    background: none;
+    border: none;
+    color: #2c3e50;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Overlay */
+.admin-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

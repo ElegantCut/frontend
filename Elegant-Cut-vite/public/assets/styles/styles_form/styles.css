@@ -1,0 +1,510 @@
+/* ============================================
+   ESTILOS ESPECÍFICOS PARA FORMULARIOS DE LOGIN/REGISTRO
+   ============================================ */
+
+/* Contenedor principal del libro */
+.login-form-container .book-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    min-height: 80vh;
+}
+
+/* Libro con efecto 3D */
+.login-form-container .book {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    min-height: 550px;
+    max-height: 90vh;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.login-form-container .book.flipped {
+    transform: rotateY(-180deg);
+}
+
+/* Páginas del libro */
+.login-form-container .page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: none;
+}
+
+.login-form-container .page.active {
+    display: block;
+}
+
+.login-form-container #login-page {
+    transform: rotateY(0deg);
+}
+
+.login-form-container #register-page {
+    transform: rotateY(180deg);
+}
+
+/* Caja del formulario */
+.login-form-container .form-box {
+    background-color: white;
+    padding: 30px 25px;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;
+    border: 1px solid #e1e1e1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+/* Scroll personalizado para el formulario */
+.login-form-container .form-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.login-form-container .form-box::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.login-form-container .form-box::-webkit-scrollbar-thumb {
+    background: #BC2041;
+    border-radius: 10px;
+}
+
+.login-form-container .form-box::-webkit-scrollbar-thumb:hover {
+    background: #f51d4c;
+}
+
+/* Título del formulario */
+.login-form-container .form-title {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* ============================================
+   FORMULARIO DE REGISTRO - GRID LAYOUT
+   ============================================ */
+
+/* Contenedor del formulario de registro con grid */
+.login-form-container .register-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Campos que ocupan toda la fila */
+.login-form-container .register-form .form-group:nth-child(1),
+/* Email */
+.login-form-container .register-form .form-group:nth-child(2),
+/* Usuario */
+.login-form-container .register-form .form-group:nth-child(9),
+/* Contraseña */
+.login-form-container .register-form .submit-btn,
+.login-form-container .register-form .switch-form {
+    grid-column: 1 / -1;
+}
+
+/* Grupo de formulario - espaciado general */
+.login-form-container .form-group {
+    margin-bottom: 18px;
+}
+
+/* Grupo de formulario en registro - sin espaciado (usa gap del grid) */
+.login-form-container .register-form .form-group {
+    margin-bottom: 0;
+}
+
+/* ============================================
+   INPUTS DEL FORMULARIO
+   ============================================ */
+
+.login-form-container .form-input {
+    width: 100%;
+    padding: 16px 18px;
+    border: 2px solid #e1e1e1;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.login-form-container .form-input:focus {
+    outline: none;
+    border-color: #BC2041;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(188, 32, 65, 0.1);
+}
+
+.login-form-container .form-input::placeholder {
+    color: #999;
+}
+
+.login-form-container .form-input:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+
+/* Botón principal de enviar */
+.login-form-container .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #BC2041 0%, #d62952 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(188, 32, 65, 0.2);
+}
+
+.login-form-container .submit-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #d62952 0%, #f51d4c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(188, 32, 65, 0.4);
+}
+
+.login-form-container .submit-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(188, 32, 65, 0.3);
+}
+
+.login-form-container .submit-btn:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ============================================
+   ENLACES Y BOTONES DE TEXTO
+   ============================================ */
+
+/* Contenedor de "olvidaste tu contraseña" */
+.login-form-container .forgot-password {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+/* Botón de "olvidaste tu contraseña" */
+.login-form-container .forgot-link {
+    color: #BC2041;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.login-form-container .forgot-link:hover:not(:disabled) {
+    background-color: rgba(188, 32, 65, 0.1);
+    text-decoration: underline;
+}
+
+.login-form-container .forgot-link:disabled {
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Enlace para cambiar entre formularios */
+.login-form-container .switch-form {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.login-form-container .switch-form p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.login-form-container .switch-link {
+    color: #BC2041;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: inherit;
+    padding: 0;
+    margin-left: 5px;
+    transition: all 0.2s ease;
+}
+
+.login-form-container .switch-link:hover {
+    text-decoration: underline;
+    color: #f51d4c;
+}
+
+/* ============================================
+   FORMULARIO DE VERIFICACIÓN
+   ============================================ */
+
+/* Header de verificación */
+.login-form-container .verification-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.login-form-container .verification-icon {
+    font-size: 48px;
+    color: #BC2041;
+    margin-bottom: 15px;
+}
+
+.login-form-container .verification-subtitle {
+    color: #666;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.login-form-container .user-info {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #495057;
+}
+
+.login-form-container .username {
+    font-weight: 600;
+    color: #BC2041;
+}
+
+/* Label para código */
+.login-form-container .code-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* Input de código */
+.login-form-container .code-input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e1e1e1;
+    border-radius: 8px;
+    font-size: 18px;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+    text-align: center;
+    letter-spacing: 8px;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.login-form-container .code-input:focus {
+    outline: none;
+    border-color: #BC2041;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(188, 32, 65, 0.1);
+}
+
+/* Hint del código */
+.login-form-container .code-hint {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #6c757d;
+    text-align: center;
+}
+
+/* Botón de verificación */
+.login-form-container .verification-btn {
+    background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
+    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+}
+
+.login-form-container .verification-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #34ce57 0%, #28a745 100%);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+/* Acciones de verificación */
+.login-form-container .verification-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.login-form-container .back-btn,
+.login-form-container .resend-btn {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #BC2041;
+    background: white;
+    color: #BC2041;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-form-container .back-btn:hover:not(:disabled),
+.login-form-container .resend-btn:hover:not(:disabled) {
+    background: #BC2041;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(188, 32, 65, 0.3);
+}
+
+.login-form-container .back-btn:disabled,
+.login-form-container .resend-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ============================================
+   MENSAJES
+   ============================================ */
+
+.login-form-container .mensaje-login {
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 14px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   MOSTRAR/OCULTAR PÁGINAS
+   ============================================ */
+
+.login-form-container #register-page {
+    display: none;
+}
+
+.login-form-container .book.flipped #login-page {
+    display: none;
+}
+
+.login-form-container .book.flipped #register-page {
+    display: block;
+}
+
+.login-form-container .page {
+    transition: opacity 0.3s ease;
+}
+
+.login-form-container .book.flipped .form-box {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .login-form-container .book {
+        max-width: 450px;
+    }
+
+    .login-form-container .form-box {
+        padding: 25px 20px;
+    }
+
+    .login-form-container .form-title {
+        font-size: 22px;
+    }
+}
+
+/* Móviles */
+@media (max-width: 576px) {
+    .login-form-container .book-container {
+        padding: 10px;
+    }
+
+    .login-form-container .book {
+        max-width: 100%;
+        min-height: auto;
+    }
+
+    .login-form-container .form-box {
+        padding: 20px 15px;
+        border-radius: 10px;
+    }
+
+    .login-form-container .form-title {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    /* Grid de registro a 1 columna en móviles */
+    .login-form-container .register-form {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .login-form-container .register-form .form-group:nth-child(1),
+    .login-form-container .register-form .form-group:nth-child(2),
+    .login-form-container .register-form .form-group:nth-child(9),
+    .login-form-container .register-form .submit-btn,
+    .login-form-container .register-form .switch-form {
+        grid-column: 1;
+    }
+
+    .login-form-container .form-input {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .login-form-container .submit-btn {
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .login-form-container .verification-actions {
+        flex-direction: column;
+    }
+
+    .login-form-container .back-btn,
+    .login-form-container .resend-btn {
+        width: 100%;
+    }
+}
