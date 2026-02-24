@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthClient } from '../lib/utils/authClient';
 import { useAuth } from '../lib/hooks/UseAuth';
@@ -15,6 +15,55 @@ function Servicios_dama() {
     const [alertVisible, setAlertVisible] = useState(false); // Alerta de carrito vacío (dentro del modal)
     const [loginAlertVisible, setLoginAlertVisible] = useState(false); // Alerta de login (flotante)
     const [activeCategory, setActiveCategory] = useState('uñas');
+
+    // --- CARRUSEL ESTILO XIAOMI ---
+    const carouselSlidesDama = [
+        {
+            img: '/assets/images/servicios_dama/Carrusel/Carrusel1.jpg',
+            title: 'BELLEZA Y ELEGANCIA',
+            subtitle: 'Descubre tu mejor versión con nuestros expertos'
+        },
+        {
+            img: '/assets/images/servicios_dama/Carrusel/Carrusel2.jpg',
+            title: 'CUIDADO INTEGRAL',
+            subtitle: 'Tratamientos exclusivos para tu cabello y piel'
+        },
+        {
+            img: '/assets/images/servicios_dama/Carrusel/Carrusel3.jpg',
+            title: 'TENDENCIAS ACTUALES',
+            subtitle: 'Lo último en cortes y coloración'
+        },
+        {
+            img: '/assets/images/servicios_dama/Carrusel/Carrusel4.jpg',
+            title: 'ESTILO ÚNICO',
+            subtitle: 'Cada detalle pensado para ti'
+        },
+        {
+            img: '/assets/images/servicios_dama/Carrusel/Carrusel5.jpg',
+            title: 'TRANSFORMA TU LOOK',
+            subtitle: 'Arte y precisión en cada servicio'
+        },
+        {
+            img: '/assets/images/servicios_dama/Carrusel/Carrusel6.jpg',
+            title: 'EXPERIENCIA TOTAL',
+            subtitle: 'Un espacio diseñado para tu bienestar'
+        },
+    ];
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const slideTimer = useRef(null);
+    const SLIDE_DURATION = 4000;
+
+    const goToSlide = useCallback((index) => {
+        setCurrentSlide((index + carouselSlidesDama.length) % carouselSlidesDama.length);
+    }, [carouselSlidesDama.length]);
+
+    useEffect(() => {
+        slideTimer.current = setInterval(() => {
+            setCurrentSlide(prev => (prev + 1) % carouselSlidesDama.length);
+        }, SLIDE_DURATION);
+        return () => clearInterval(slideTimer.current);
+    }, [currentSlide, carouselSlidesDama.length]);
+    // --- FIN CARRUSEL ---
 
     // Calcular total y cantidad
     const cartTotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
@@ -335,63 +384,60 @@ function Servicios_dama() {
                     </div>
                 )}
 
-                {/* CARRUSEL BOOTSTRAP */}
-                <div className="carousel-container">
-                    <div id="carouselDama" className="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-                        <div className="carousel-inner">
-                            <div className="carousel-item active">
-                                <img src="/assets/images/servicios_dama/Carrusel/Carrusel1.jpg" className="d-block w-100" alt="Estilo Dama 1" />
-                                <div className="carousel-caption d-none d-md-block">
-                                    <h3>BELLEZA Y ELEGANCIA</h3>
-                                    <p>Descubre tu mejor versión con nuestros expertos</p>
+                {/* CARRUSEL ESTILO XIAOMI */}
+                <div className="xmi-carousel">
+                    <div className="xmi-carousel__track">
+                        {carouselSlidesDama.map((slide, i) => (
+                            <div
+                                key={i}
+                                className={`xmi-carousel__slide ${i === currentSlide ? 'active' : ''}`}
+                                aria-hidden={i !== currentSlide}
+                            >
+                                <img src={slide.img} alt={slide.title} />
+                                <div className="xmi-carousel__overlay">
+                                    <h2 className="xmi-carousel__title">{slide.title}</h2>
+                                    <p className="xmi-carousel__subtitle">{slide.subtitle}</p>
                                 </div>
                             </div>
-                            <div className="carousel-item">
-                                <img src="/assets/images/servicios_dama/Carrusel/Carrusel2.jpg" className="d-block w-100" alt="Estilo Dama 2" />
-                                <div className="carousel-caption d-none d-md-block">
-                                    <h3>CUIDADO INTEGRAL</h3>
-                                    <p>Tratamientos exclusivos para tu cabello y piel</p>
-                                </div>
-                            </div>
-                            <div className="carousel-item">
-                                <img src="/assets/images/servicios_dama/Carrusel/Carrusel3.jpg" className="d-block w-100" alt="Estilo Dama 3" />
-                                <div className="carousel-caption d-none d-md-block">
-                                    <h3>TENDENCIAS ACTUALES</h3>
-                                    <p>Lo último en cortes y coloración</p>
-                                </div>
-                            </div>
-                            <div className="carousel-item">
-                                <img src="/assets/images/servicios_dama/Carrusel/Carrusel4.jpg" className="d-block w-100" alt="Estilo Dama 4" />
-                            </div>
-                            <div className="carousel-item">
-                                <img src="/assets/images/servicios_dama/Carrusel/Carrusel5.jpg" className="d-block w-100" alt="Estilo Dama 5" />
-                            </div>
-                            <div className="carousel-item">
-                                <img src="/assets/images/servicios_dama/Carrusel/Carrusel6.jpg" className="d-block w-100" alt="Estilo Dama 6" />
-                            </div>
-                        </div>
-                        <button className="carousel-control-prev" type="button" data-bs-target="#carouselDama" data-bs-slide="prev">
-                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span className="visually-hidden">Anterior</span>
-                        </button>
-                        <button className="carousel-control-next" type="button" data-bs-target="#carouselDama" data-bs-slide="next">
-                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span className="visually-hidden">Siguiente</span>
-                        </button>
+                        ))}
+                    </div>
+
+                    {/* Flechas */}
+                    <button
+                        className="xmi-carousel__btn xmi-carousel__btn--prev"
+                        onClick={() => goToSlide(currentSlide - 1)}
+                        aria-label="Anterior"
+                    >
+                        &#8249;
+                    </button>
+                    <button
+                        className="xmi-carousel__btn xmi-carousel__btn--next"
+                        onClick={() => goToSlide(currentSlide + 1)}
+                        aria-label="Siguiente"
+                    >
+                        &#8250;
+                    </button>
+
+                    {/* Indicadores tipo barra de progreso */}
+                    <div className="xmi-carousel__indicators">
+                        {carouselSlidesDama.map((_, i) => (
+                            <button
+                                key={i}
+                                className={`xmi-carousel__indicator ${i === currentSlide ? 'active' : ''}`}
+                                onClick={() => goToSlide(i)}
+                                aria-label={`Slide ${i + 1}`}
+                            >
+                                {i === currentSlide && (
+                                    <span
+                                        className="xmi-carousel__indicator-fill"
+                                        style={{ animationDuration: `${SLIDE_DURATION}ms` }}
+                                    />
+                                )}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
-                {/* MARQUEE */}
-                <div className="marquee">
-                    <p>
-                        Renueva tu estilo, realza tu esencia.
-                        Tu belleza merece un toque de elegancia.
-                        Un nuevo look, una nueva versión de ti.
-                        Renueva tu estilo, realza tu esencia.
-                        Tu belleza merece un toque de elegancia.
-                        Un nuevo look, una nueva versión de ti.
-                    </p>
-                </div>
 
                 {/* FILTRO DE DAMA Y CABALLERO */}
                 <div className="seleccion-genero">
