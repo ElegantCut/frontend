@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Estos son cajistas de memoria
+import React, { useState, useEffect, useRef, useCallback } from "react"; // Estos son cajistas de memoria
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/hooks/UseAuth";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,11 +8,45 @@ import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedLi
 function Servicios_caballero() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [activeCategory, setActiveCategory] = useState("todos"); //esto guarda qué categoría esta sellecionada
-  const [cart, setCart] = useState([]);// acá se guardan todos los servicios que se van agregando al carrito; el "=useState ([]), significa que ese carrito está vacío"
-  const [isCartOpen, setIsCartOpen] = useState(false);// acá se controla si el carrito está abierto o cerrado
+  const [activeCategory, setActiveCategory] = useState("todos");
+  const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [loginAlertVisible, setLoginAlertVisible] = useState(false);
+
+  // --- CARRUSEL ESTILO XIAOMI ---
+  const carouselSlidesCab = [
+    {
+      img: '/assets/images/servicios_caballeros/carrusel/barberia.png',
+      title: 'ESTILO Y TRADICIÓN',
+      subtitle: 'Técnicas clásicas con tendencias modernas'
+    },
+    {
+      img: '/assets/images/servicios_caballeros/carrusel/servicios_general.png',
+      title: 'SERVICIOS PREMIUM',
+      subtitle: 'Cortes, barbas y tratamientos para el caballero moderno'
+    },
+    {
+      img: '/assets/images/servicios_caballeros/carrusel/varios.png',
+      title: 'AMBIENTE ÚNICO',
+      subtitle: 'Diseñado para tu comodidad y relajación'
+    },
+  ];
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const slideTimer = useRef(null);
+  const SLIDE_DURATION = 4000;
+
+  const goToSlide = useCallback((index) => {
+    setCurrentSlide((index + carouselSlidesCab.length) % carouselSlidesCab.length);
+  }, [carouselSlidesCab.length]);
+
+  useEffect(() => {
+    slideTimer.current = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % carouselSlidesCab.length);
+    }, SLIDE_DURATION);
+    return () => clearInterval(slideTimer.current);
+  }, [currentSlide, carouselSlidesCab.length]);
+  // --- FIN CARRUSEL ---
 
   const servicesData = [
     {
@@ -264,88 +298,57 @@ function Servicios_caballero() {
           </div>
         )}
 
-        {/* CARRUSEL */}
-        <div className="carousel-container">
-          <div
-            id="carouselAuto"
-            className="carousel slide"
-            data-bs-ride="carousel"
-            data-bs-interval="3000"
+        {/* CARRUSEL ESTILO XIAOMI */}
+        <div className="xmi-carousel">
+          <div className="xmi-carousel__track">
+            {carouselSlidesCab.map((slide, i) => (
+              <div
+                key={i}
+                className={`xmi-carousel__slide ${i === currentSlide ? 'active' : ''}`}
+                aria-hidden={i !== currentSlide}
+              >
+                <img src={slide.img} alt={slide.title} />
+                <div className="xmi-carousel__overlay">
+                  <h2 className="xmi-carousel__title">{slide.title}</h2>
+                  <p className="xmi-carousel__subtitle">{slide.subtitle}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Flechas */}
+          <button
+            className="xmi-carousel__btn xmi-carousel__btn--prev"
+            onClick={() => goToSlide(currentSlide - 1)}
+            aria-label="Anterior"
           >
-            <div className="carousel-inner">
-              {/* Imagen 1 */}
-              <div className="carousel-item active">
-                <img
-                  src="/assets/images/servicios_caballeros/carrusel/barberia.png"
-                  className="d-block w-100"
-                  alt="Barbería ElegantCut"
-                />
-                <div className="carousel-caption d-none d-md-block">
-                  <h3>ESTILO Y TRADICIÓN</h3>
-                  <p>
-                    Descubre la experiencia de barbería que combina técnicas
-                    clásicas con tendencias modernas
-                  </p>
-                </div>
-              </div>
+            &#8249;
+          </button>
+          <button
+            className="xmi-carousel__btn xmi-carousel__btn--next"
+            onClick={() => goToSlide(currentSlide + 1)}
+            aria-label="Siguiente"
+          >
+            &#8250;
+          </button>
 
-              {/* Imagen 2 */}
-              <div className="carousel-item">
-                <img
-                  src="/assets/images/servicios_caballeros/carrusel/servicios_general.png"
-                  className="d-block w-100"
-                  alt="Nuestros Servicios"
-                />
-                <div className="carousel-caption d-none d-md-block">
-                  <h3>SERVICIOS PREMIUM</h3>
-                  <p>
-                    Cortes, barbas y tratamientos especializados para el
-                    caballero moderno
-                  </p>
-                </div>
-              </div>
-
-              {/* Imagen 3 */}
-              <div className="carousel-item">
-                <img
-                  src="/assets/images/servicios_caballeros/carrusel/varios.png"
-                  className="d-block w-100"
-                  alt="Ambiente ElegantCut"
-                />
-                <div className="carousel-caption d-none d-md-block">
-                  <h3>AMBIENTE ÚNICO</h3>
-                  <p>
-                    Disfruta de un espacio diseñado para tu comodidad y
-                    relajación
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <button
-              className="carousel-control-prev"
-              type="button"
-              data-bs-target="#carouselAuto"
-              data-bs-slide="prev"
-            >
-              <span
-                className="carousel-control-prev-icon"
-                aria-hidden="true"
-              ></span>
-              <span className="visually-hidden">Anterior</span>
-            </button>
-            <button
-              className="carousel-control-next"
-              type="button"
-              data-bs-target="#carouselAuto"
-              data-bs-slide="next"
-            >
-              <span
-                className="carousel-control-next-icon"
-                aria-hidden="true"
-              ></span>
-              <span className="visually-hidden">Siguiente</span>
-            </button>
+          {/* Indicadores tipo barra de progreso */}
+          <div className="xmi-carousel__indicators">
+            {carouselSlidesCab.map((_, i) => (
+              <button
+                key={i}
+                className={`xmi-carousel__indicator ${i === currentSlide ? 'active' : ''}`}
+                onClick={() => goToSlide(i)}
+                aria-label={`Slide ${i + 1}`}
+              >
+                {i === currentSlide && (
+                  <span
+                    className="xmi-carousel__indicator-fill"
+                    style={{ animationDuration: `${SLIDE_DURATION}ms` }}
+                  />
+                )}
+              </button>
+            ))}
           </div>
         </div>
 
