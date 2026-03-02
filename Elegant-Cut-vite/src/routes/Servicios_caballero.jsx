@@ -4,6 +4,7 @@ import { useAuth } from "../lib/hooks/UseAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedPage from "../components/shared/AnimatedPage";
 import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedList";
+import { servicesService } from '../lib/servicesService'; //Este es el que imprtamos con la lógica de conexión xd
 
 function Servicios_caballero() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ function Servicios_caballero() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [loginAlertVisible, setLoginAlertVisible] = useState(false);
+  const [servicios, setServicios] = useState([]);
+  const [cargando, setCargando] = useState(true);
 
   // --- CARRUSEL ESTILO XIAOMI ---
   const carouselSlidesCab = [
@@ -48,206 +51,39 @@ function Servicios_caballero() {
   }, [currentSlide, carouselSlidesCab.length]);
   // --- FIN CARRUSEL ---
 
-  const servicesData = [
-    {
-      id: 1,
-      name: "Buzz Cut",
-      price: 25000,
-      category: "cortes",
-      image: "/assets/images/servicios_caballeros/cortes/buzzz cut.png",
-      description: "Un corte limpio, rápido y versátil. Ideal para quienes buscan un look moderno y sin complicaciones.",
-      features: ["Máquina", "45 min"],
-      categoryLabel: "Corte"
-    },
-    {
-      id: 2,
-      name: "Corte Militar (Bascot)",
-      price: 28000,
-      category: "cortes",
-      image: "/assets/images/servicios_caballeros/cortes/Corte Militar (Bascot).png",
-      description: "Estilo clásico y disciplinado, con laterales muy cortos y parte superior ligeramente más larga.",
-      features: ["Tijera/Máquina", "45 min"],
-      categoryLabel: "Corte"
-    },
-    {
-      id: 3,
-      name: "Mullet",
-      price: 35000,
-      category: "cortes",
-      image: "/assets/images/servicios_caballeros/cortes/Mullet.png",
-      description: "Un estilo audaz y retro, corto adelante y largo atrás. Para quienes quieren destacar.",
-      features: ["Estilo", "60 min"],
-      categoryLabel: "Corte"
-    },
-    {
-      id: 4,
-      name: "Slick Back",
-      price: 32000,
-      category: "cortes",
-      image: "/assets/images/servicios_caballeros/cortes/Slick Back.png",
-      description: "Elegancia pura. Cabello peinado hacia atrás con un acabado pulido y sofisticado.",
-      features: ["Clásico", "50 min"],
-      categoryLabel: "Corte"
-    },
-    {
-      id: 5,
-      name: "Corte con Figuras",
-      price: 40000,
-      category: "cortes",
-      image: "/assets/images/servicios_caballeros/cortes/corte con figuras.png",
-      description: "Arte en tu cabello. Diseños personalizados y creativos para un look único.",
-      features: ["Diseño", "60+ min"],
-      categoryLabel: "Corte"
-    },
-    {
-      id: 6,
-      name: "Crop Top",
-      price: 30000,
-      category: "cortes",
-      image: "/assets/images/servicios_caballeros/cortes/crop top.png",
-      description: "Texturizado en la parte superior con flequillo corto. Moderno y fácil de peinar.",
-      features: ["Textura", "50 min"],
-      categoryLabel: "Corte"
-    },
-    {
-      id: 7,
-      name: "Low Fade",
-      price: 30000,
-      category: "cortes",
-      image: "/assets/images/servicios_caballeros/cortes/low fade.png",
-      description: "Degradado suave y bajo que conecta perfectamente con la barba o patillas.",
-      features: ["Degradado", "50 min"],
-      categoryLabel: "Corte"
-    },
-    {
-      id: 8,
-      name: "Undercut",
-      price: 32000,
-      category: "cortes",
-      image: "/assets/images/servicios_caballeros/cortes/undercut.png",
-      description: "Contraste marcado entre laterales rapados y volumen superior. Versátil y actual.",
-      features: ["Contraste", "50 min"],
-      categoryLabel: "Corte"
-    }
-  ];
+  useEffect(() => {
+    const obtenerDatos = async () => {
+      try {
+        setCargando(true);
+        // Pedimos los datos al servicio
+        const datosBrutos = await servicesService.getAllServices();
 
-  const additionalServices = [
-    // BARBA
-    {
-      id: 9,
-      name: "Perfilado de Barba",
-      price: 15000,
-      category: "barba",
-      image: "/assets/images/servicios_caballeros/barba/perfilado de barba.png",
-      description: "Definición de contornos para una barba prolija y elegante.",
-      features: ["Navaja", "20 min"],
-      categoryLabel: "Barba"
-    },
-    {
-      id: 10,
-      name: "Afeitado Tradicional",
-      price: 25000,
-      category: "barba",
-      image: "/assets/images/servicios_caballeros/barba/afeitado tradicional.png",
-      description: "Experiencia clásica con toalla caliente y navaja.",
-      features: ["Toalla Caliente", "30 min"],
-      categoryLabel: "Barba"
-    },
-    {
-      id: 11,
-      name: "Barba Express",
-      price: 12000,
-      category: "barba",
-      image: "/assets/images/servicios_caballeros/barba/barba express.png",
-      description: "Arreglo rápido con máquina para mantener el largo ideal.",
-      features: ["Máquina", "15 min"],
-      categoryLabel: "Barba"
-    },
-    {
-      id: 12,
-      name: "Tinturación de Barba",
-      price: 25000,
-      category: "barba",
-      image: "/assets/images/servicios_caballeros/barba/baraba tinturacion .png",
-      description: "Cubre canas o unifica el tono de tu barba.",
-      features: ["Color", "40 min"],
-      categoryLabel: "Barba"
-    },
-    {
-      id: 13,
-      name: "Tratamiento de Barba",
-      price: 20000,
-      category: "barba",
-      image: "/assets/images/servicios_caballeros/barba/barba tratamiento .png",
-      description: "Hidratación profunda para una barba suave y manejable.",
-      features: ["Hidratación", "25 min"],
-      categoryLabel: "Barba"
-    },
-    {
-      id: 14,
-      name: "Depilación con Cera",
-      price: 15000,
-      category: "barba",
-      image: "/assets/images/servicios_caballeros/barba/depilacion con cera.png",
-      description: "Eliminación de vello en pómulos, nariz u orejas.",
-      features: ["Cera", "15 min"],
-      categoryLabel: "Barba"
-    },
-    // OTROS SERVICIOS
-    {
-      id: 15,
-      name: "Mascarilla Facial",
-      price: 25000,
-      category: "otros",
-      image: "/assets/images/servicios_caballeros/otros_servicios/mascarilla.png",
-      description: "Limpieza e hidratación para revitalizar tu rostro.",
-      features: ["Limpieza", "30 min"],
-      categoryLabel: "Tratamiento"
-    },
-    {
-      id: 16,
-      name: "Keratina Capilar",
-      price: 60000,
-      category: "otros",
-      image: "/assets/images/servicios_caballeros/otros_servicios/keratina capilar.png",
-      description: "Alisado y restauración profunda del cabello.",
-      features: ["Alisado", "90 min"],
-      categoryLabel: "Tratamiento"
-    },
-    {
-      id: 17,
-      name: "Tinturación Capilar",
-      price: 45000,
-      category: "otros",
-      image: "/assets/images/servicios_caballeros/otros_servicios/tinturacion.png",
-      description: "Cambio de look o cobertura de canas con productos premium.",
-      features: ["Color", "60 min"],
-      categoryLabel: "Tratamiento"
-    },
-    {
-      id: 18,
-      name: "Depilación Facial",
-      price: 20000,
-      category: "otros",
-      image: "/assets/images/servicios_caballeros/otros_servicios/depilacion.png",
-      description: "Depilación de cejas y rostro para una mirada limpia.",
-      features: ["Cera/Hilo", "20 min"],
-      categoryLabel: "Tratamiento"
-    },
-    {
-      id: 19,
-      name: "Diseño de Figuras",
-      price: 15000,
-      category: "otros",
-      image: "/assets/images/servicios_caballeros/otros_servicios/figuras.png",
-      description: "Diseños artísticos y tribales en tu corte.",
-      features: ["Arte", "30 min"],
-      categoryLabel: "Diseño"
-    }
-  ];
+        // TRANSFORMACIÓN: Adaptamos los nombres de tu Base de Datos
+        // a los nombres que usas en tu diseño (HTML/CSS)
+        const serviciosLimpios = datosBrutos.map((s) => ({
+          id: s.id_servicio,      // Como se llame en tu Prisma
+          nombre: s.nom_servicio, // Como se llame en tu Prisma
+          name: s.nom_servicio,   // Soporte para la interfaz gráfica
+          precio: s.precio,
+          price: s.precio,        // Soporte para la interfaz gráfica
+          descripcion: s.descripcion || "Servicio premium",
+          description: s.descripcion || "Servicio premium",
+          category: s.categoria || "cortes",
+          categoryLabel: s.categoria || "Corte",
+          image: s.imagen || "/assets/images/servicios_caballeros/cortes/buzzz cut.png",
+          features: s.caracteristicas ? JSON.parse(s.caracteristicas) : ["Servicio", "45 min"]
+        }));
 
-  // Combine existing and new services
-  servicesData.push(...additionalServices);
+        setServicios(serviciosLimpios); // Guardamos la lista ya limpia
+      } catch (error) {
+        console.error("No se pudo conectar con el backend", error);
+      } finally {
+        setCargando(false); // Quitamos el mensaje de "Cargando..."
+      }
+    };
+
+    obtenerDatos();
+  }, []);
   //Cuando haces clic en un botón de filtro, llamas a:
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
@@ -271,8 +107,8 @@ function Servicios_caballero() {
   }; //Calcula el total del carrito
 
   const filteredServices = activeCategory === "todos"
-    ? servicesData
-    : servicesData.filter(service => service.category === activeCategory); //Filtra los servicios por categoría
+    ? servicios
+    : servicios.filter(service => service.category === activeCategory); //Filtra los servicios por categoría
 
   return (
     <AnimatedPage>
@@ -394,6 +230,9 @@ function Servicios_caballero() {
         </div>
 
         {/* Área de servicios */}
+        {/* --- PASO 4: Mostrar los datos en el HTML --- */}
+        {/* Aquí es donde usamos la variable de estado (en este caso enviada por 'filteredServices') */}
+        {/* para dibujar gráficamente tus tarjetas de diseño en la página. */}
         <AnimatedContainer className="services-grid">
           <AnimatePresence mode="popLayout">
             {filteredServices.map((service) => (
@@ -405,8 +244,11 @@ function Servicios_caballero() {
                   className="service-image"
                 />
                 <div className="service-content">
+                  {/* Aquí mostramos el nombre del servicio que viene de la base de datos */}
                   <h3 className="service-title">{service.name}</h3>
+                  {/* Aquí mostramos el precio */}
                   <div className="service-price">${service.price.toLocaleString()}</div>
+                  {/* Y aquí la descripción */}
                   <p className="service-description">
                     {service.description}
                   </p>

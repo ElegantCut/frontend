@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedList';
+import { barberService } from '../lib/barberService';
 
 function Barberos() {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -8,36 +9,36 @@ function Barberos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Plantillas de datos enriquecidos (para UI)
-  // Fetch de barberos desde el backend
   useEffect(() => {
     const fetchBarbers = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/barbers');
-        const result = await response.json();
+        // 1. CAMBIO: Usamos el servicio (el "mesero")
+        const data = await barberService.getAllBarbers();
 
-        if (result.success) {
-          // Transformar datos reales a estructura de UI
-          const transformedBarbers = result.data.map((realBarber) => ({
+        // 2. CAMBIO: Verificamos si 'data' existe (Axios ya te da el contenido directo)
+        if (data) {
+          // 3. CAMBIO: Ahora usamos 'data.map' en lugar de 'result.data.map'
+          const transformedBarbers = data.map((realBarber) => ({
             id: realBarber.id_usuario,
-            name: `${realBarber.prim_nombre} ${realBarber.apellido1}`, // Nombre real de la BD
-            title: "Barbero Profesional", // Default
-            experience: "Experto", // Default
-            rating: "5.0", // Default
-            bio: "Barbero profesional del equipo Elegant Cut, dedicado a ofrecer la mejor experiencia y estilo a nuestros clientes.", // Default
-            stats: { clients: "+1000", recommend: "100%" }, // Default
-            categories: ["classic", "modern"], // Default categories for filtering
-            specialties: ["Corte Clásico", "Barba"], // Default
-            badge: "expert", // Default tag
-            image: realBarber.foto_perfil || null // Use DB photo or null (render logic handles fallback) 
+            name: `${realBarber.prim_nombre} ${realBarber.apellido1}`,
+            title: "Barbero Profesional",
+            experience: "Experto",
+            rating: "5.0",
+            bio: "Barbero profesional del equipo Elegant Cut...",
+            stats: { clients: "+1000", recommend: "100%" },
+            categories: ["classic", "modern"],
+            specialties: ["Corte Clásico", "Barba"],
+            badge: "expert",
+            image: realBarber.foto_perfil || null
           }));
+
           setBarbers(transformedBarbers);
         } else {
           setError('Error al cargar los barberos');
         }
       } catch (err) {
         console.error("Error fetching barbers:", err);
-        setError('Error de conexión con el servidor');
+        setError('Error de conexión con el servidor en el puerto 3001');
       } finally {
         setLoading(false);
       }
