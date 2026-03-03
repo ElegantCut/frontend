@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { AuthClient } from '../../lib/utils/authClient';
 import { useNavigate } from 'react-router-dom';
 import './LoginForm.css';
+import { authService } from '../../lib/authService';
+import { useAuth } from '../../lib/hooks/UseAuth.jsx';
 
 function LoginForm() {
+  const { login } = useAuth();
   // State for active view: 'login', 'register', 'forgot-password', 'verification'
   const [activeView, setActiveView] = useState('login');
 
@@ -63,26 +66,27 @@ function LoginForm() {
     mostrarMensaje('Procesando login...', 'info');
 
     try {
-      const result = await AuthClient.login(loginData.usuario, loginData.contrasena);
+      // Usar el login del contexto global en vez del authService directo
+      const credenciales = { username: loginData.usuario, contrasena: loginData.contrasena };
+      const data = await login(credenciales);
 
-      if (result.success) {
-        mostrarMensaje('¡Login exitoso! Redirigiendo...', 'success');
+      mostrarMensaje('¡Login exitoso! Redirigiendo...', 'success');
 
-        // Redirigir según el rol
-        setTimeout(() => {
-          if (result.user.role === 'admin') {
-            navigate('/admin');
-          } else if (result.user.role === 'barber') {
-            navigate('/barber');
-          } else {
-            navigate('/');
-          }
-        }, 1000);
-      } else {
-        mostrarMensaje('Error: ' + result.error, 'error');
-      }
+      // Redirigir según el rol del usuario devuelto por la API
+      setTimeout(() => {
+        const userRole = data.user?.role;
+        if (userRole === 'admin') {
+          navigate('/admin');
+        } else if (userRole === 'barber') {
+          navigate('/barber');
+        } else {
+          navigate('/');
+        }
+      }, 1000);
+
     } catch (error) {
-      mostrarMensaje('Error de conexión: ' + error.message, 'error');
+      // authService.login ya simplifica y arroja el string del mensaje
+      mostrarMensaje('Error: ' + error, 'error');
     } finally {
       setLoading(false);
     }
@@ -102,29 +106,28 @@ function LoginForm() {
     }
 
     try {
-      const result = await AuthClient.register({
+      const formPayload = {
         username: registerData.usuario,
-        password: registerData.contrasena,
+        password_hash: registerData.contrasena,
         email: registerData.email,
         prim_nombre: registerData.prim_nombre,
         seg_nombre: registerData.seg_nombre || '',
         apellido1: registerData.apellido1,
         apellido2: registerData.apellido2 || '',
         telefono: registerData.telefono || '',
-        role: 'cliente'
-      });
+        id_rol: 2, // Usuario común
+        estado: true
+      };
 
-      if (result.success) {
-        mostrarMensaje('¡Registro exitoso!', 'success');
+      const data = await authService.register(formPayload);
 
-        setTimeout(() => {
-          switchToLogin();
-        }, 1500);
-      } else {
-        mostrarMensaje('Error: ' + result.error, 'error');
-      }
+      mostrarMensaje('¡Registro exitoso! Ya puedes iniciar sesión', 'success');
+      setTimeout(() => {
+        switchToLogin();
+      }, 1500);
+
     } catch (error) {
-      mostrarMensaje('Error de conexión: ' + error.message, 'error');
+      mostrarMensaje('Error: ' + error, 'error');
     } finally {
       setLoading(false);
     }

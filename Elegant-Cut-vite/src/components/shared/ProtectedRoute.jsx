@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from "../../lib/hooks/UseAuth";
+import { useAuth } from "../../lib/hooks/UseAuth.jsx";
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, requiredRole = null }) => {
@@ -21,8 +21,19 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
   }
 
   // Verificar rol si se requiere uno específico
-  if (requiredRole && user.role !== requiredRole) {
-    return <Navigate to="/unauthorized" replace />;
+  if (requiredRole) {
+    let hasRole = false;
+    // Map required strings to id_rol numbers
+    if (requiredRole === 'admin' && user.id_rol === 1) hasRole = true;
+    if (requiredRole === 'barber' && user.id_rol === 3) hasRole = true;
+    if (requiredRole === 'client' && user.id_rol === 2) hasRole = true;
+
+    // Por si acaso el de base de datos envía rol
+    if (user.role === requiredRole) hasRole = true;
+
+    if (!hasRole) {
+      return <Navigate to="/unauthorized" replace />;
+    }
   }
 
   return children;

@@ -7,10 +7,10 @@ export const servicesService = {
     getAllServices: async () => {
         try {
             // Hacemos la petición a: http://localhost:3001/api/services
-            // El "/services" debe coincidir con el nombre de tu módulo en NestJS
+            // El "/services" debe coincidir con el nombre de tu 
             const response = await api.get('/services');
 
-            // Si todo sale bien, devolvemos la lista de datos
+            // Si todo sale bien, devolvemos la lista de datos uwu
             return response.data;
         } catch (error) {
 

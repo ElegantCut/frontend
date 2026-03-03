@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Scissors, Calendar, Clock, User, Phone, Mail,
@@ -7,8 +7,11 @@ import {
 } from 'lucide-react';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import '../styles/Form_agenda.css';
+import { barberService } from '../lib/barberService';
+import { servicesService } from '../lib/servicesService';
+import { appointmentService } from '../lib/appointmentService';
 
-// ── MOCK DATA ─────────────────────────────────────────
+// MOCK DATA Fallbacks
 const MOCK_BARBERS = [
   { id: 1, name: 'Carlos', last: 'Rodríguez', specialty: 'Fade & Diseño', emoji: 'CR' },
   { id: 2, name: 'Luis', last: 'García', specialty: 'Cortes Clásicos', emoji: 'LG' },
@@ -74,6 +77,28 @@ function Form_agenda() {
   const [direction, setDir] = useState(1);
   const [weekBase, setWeekBase] = useState(() => { const d = new Date(today); return d; });
 
+  const [listaBarberos, setListaBarberos] = useState([]);
+  const [listaServicios, setListaServicios] = useState([]);
+
+  useEffect(() => {
+    const cargarDatosIniciales = async () => {
+      try {
+        const [barberos, servicios] = await Promise.all([
+          barberService.getAllBarbers(),
+          servicesService.getAllServices()
+        ]);
+        // Si el backend no devuelve nada, usamos los mocks temporalmente
+        setListaBarberos(barberos?.length > 0 ? barberos : MOCK_BARBERS);
+        setListaServicios(servicios?.length > 0 ? servicios : MOCK_SERVICES);
+      } catch (error) {
+        console.error("Error cargando datos:", error);
+        setListaBarberos(MOCK_BARBERS);
+        setListaServicios(MOCK_SERVICES);
+      }
+    };
+    cargarDatosIniciales();
+  }, []);
+
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedBarber, setBarber] = useState(null);
@@ -96,9 +121,27 @@ function Form_agenda() {
     setContact(p => ({ ...p, [e.target.name]: e.target.value }));
   }
 
-  function handleConfirm() {
+  const handleConfirm = async () => {
     if (!contact.name || !contact.phone) return alert('Por favor completa nombre y teléfono.');
-    setConfirmed(true);
+
+    // Preparar formData para el backend (CreateAppointmentDto)
+    const formData = {
+      fecha: `${selectedDate}T00:00:00.000Z`, // Formato ISO 8601 como en Postman
+      observaciones: contact.notes || "Cita agendada desde la web",
+      id_usuario: 2, // IDEALMENTE debe ser el ID del cliente logueado. Por ahora hardcodeado a 2 según el ejemplo de Postman
+      id_empleado: selectedBarber?.id || selectedBarber?.id_usuario || 3, // El ID del barbero
+      id_estado_cita: 1, // 1 para 'Pendiente' u 'Agendada'
+      id_horarios: 1 // IDEALMENTE buscar el id_horario real basado en selectedTime. Por ahora hardcodeado a 1.
+    };
+
+    try {
+      const resultado = await appointmentService.create(formData);
+      setConfirmed(true);
+      // Opcional: alert("¡Cita agendada con éxito!");
+    } catch (error) {
+      alert("Hubo un error al agendar la cita. Por favor intenta de nuevo.");
+      console.error(error);
+    }
   }
 
   function resetForm() {
@@ -153,11 +196,11 @@ function Form_agenda() {
             ].map((item, i) => {
               if (item === 'line') {
                 const filled = step > (i < 2 ? 1 : 2);
-                return <div key={i} className={`fa-step-line ${filled ? 'active' : ''}`} />;
+                return <div key={`line-${i}`} className={`fa-step-line ${filled ? 'active' : ''}`} />;
               }
               const s = item.n < step ? 'done' : item.n === step ? 'active' : '';
               return (
-                <div key={item.n} className={`fa-step ${s}`}>
+                <div key={`step-${item.n}`} className={`fa-step ${s}`}>
                   <div className="fa-step-circle">
                     {item.n < step ? <Check size={16} /> : item.n}
                   </div>
@@ -188,13 +231,13 @@ function Form_agenda() {
                   {selectedService && (
                     <div className="fa-success-detail-row">
                       <Scissors size={16} />
-                      <span>Servicio: <strong>{selectedService.name}</strong></span>
+                      <span>Servicio: <strong>{selectedService.name || selectedService.nombre}</strong></span>
                     </div>
                   )}
                   {selectedBarber && (
                     <div className="fa-success-detail-row">
                       <User size={16} />
-                      <span>Barbero: <strong>{selectedBarber.name} {selectedBarber.last}</strong></span>
+                      <span>Barbero: <strong>{selectedBarber.name || selectedBarber.prim_nombre} {selectedBarber.last || selectedBarber.apellido1 || ''}</strong></span>
                     </div>
                   )}
                   {selectedDate && (
@@ -218,7 +261,7 @@ function Form_agenda() {
                   {selectedService && (
                     <div className="fa-success-detail-row">
                       <CreditCard size={16} />
-                      <span>Total: <strong>{priceFormat(selectedService.price)}</strong></span>
+                      <span>Total: <strong>{priceFormat(selectedService.price || selectedService.precio || 0)}</strong></span>
                     </div>
                   )}
                 </div>
@@ -344,52 +387,69 @@ function Form_agenda() {
 
                     <div className="fa-subsection">Profesional</div>
                     <div className="fa-barbers-grid">
-                      {MOCK_BARBERS.map(b => (
-                        <motion.div
-                          key={b.id}
-                          className={`fa-barber-card ${selectedBarber?.id === b.id ? 'selected' : ''}`}
-                          onClick={() => setBarber(b)}
-                          whileHover={{ y: -3 }}
-                          whileTap={{ scale: 0.96 }}
-                        >
-                          <div className="fa-barber-avatar">{b.emoji}</div>
-                          <div className="fa-barber-name">{b.name} {b.last}</div>
-                          <div className="fa-barber-specialty">{b.specialty}</div>
-                          {selectedBarber?.id === b.id && (
-                            <motion.div
-                              className="fa-barber-check"
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ type: 'spring', stiffness: 300 }}
-                            >
-                              <Check size={16} />
-                            </motion.div>
-                          )}
-                        </motion.div>
-                      ))}
+                      {listaBarberos.map(b => {
+                        const bId = b.id || b.id_usuario;
+                        const bName = b.name || b.prim_nombre;
+                        const bLast = b.last || b.apellido1 || '';
+                        const bSpecialty = b.specialty || b.especialidad || 'Barbero';
+                        const bEmoji = b.emoji || (bName ? bName.charAt(0) : 'B');
+                        const isSelected = selectedBarber?.id === bId || selectedBarber?.id_usuario === bId;
+
+                        return (
+                          <motion.div
+                            key={bId}
+                            className={`fa-barber-card ${isSelected ? 'selected' : ''}`}
+                            onClick={() => setBarber(b)}
+                            whileHover={{ y: -3 }}
+                            whileTap={{ scale: 0.96 }}
+                          >
+                            <div className="fa-barber-avatar">{bEmoji}</div>
+                            <div className="fa-barber-name">{bName} {bLast}</div>
+                            <div className="fa-barber-specialty">{bSpecialty}</div>
+                            {isSelected && (
+                              <motion.div
+                                className="fa-barber-check"
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ type: 'spring', stiffness: 300 }}
+                              >
+                                <Check size={16} />
+                              </motion.div>
+                            )}
+                          </motion.div>
+                        )
+                      })}
                     </div>
 
                     <div className="fa-subsection">Servicio</div>
                     <div className="fa-services-list">
-                      {MOCK_SERVICES.map(s => (
-                        <motion.div
-                          key={s.id}
-                          className={`fa-service-card ${selectedService?.id === s.id ? 'selected' : ''}`}
-                          onClick={() => setService(s)}
-                          whileTap={{ scale: 0.985 }}
-                        >
-                          <div className="fa-service-info">
-                            <div className="fa-service-name">{s.name}</div>
-                            <div className="fa-service-duration">
-                              <Clock size={12} />{s.duration} min
+                      {listaServicios.map(s => {
+                        const sId = s.id || s.id_servicio;
+                        const sName = s.name || s.nombre;
+                        const sPrice = s.price || s.precio || 0;
+                        const sDuration = s.duration || s.duracion || 30;
+                        const isSelected = selectedService?.id === sId || selectedService?.id_servicio === sId;
+
+                        return (
+                          <motion.div
+                            key={sId}
+                            className={`fa-service-card ${isSelected ? 'selected' : ''}`}
+                            onClick={() => setService(s)}
+                            whileTap={{ scale: 0.985 }}
+                          >
+                            <div className="fa-service-info">
+                              <div className="fa-service-name">{sName}</div>
+                              <div className="fa-service-duration">
+                                <Clock size={12} />{sDuration} min
+                              </div>
                             </div>
-                          </div>
-                          <div className="fa-service-price">{priceFormat(s.price)}</div>
-                          <div className="fa-service-radio">
-                            {selectedService?.id === s.id && <div className="fa-service-radio-dot" />}
-                          </div>
-                        </motion.div>
-                      ))}
+                            <div className="fa-service-price">{priceFormat(sPrice)}</div>
+                            <div className="fa-service-radio">
+                              {isSelected && <div className="fa-service-radio-dot" />}
+                            </div>
+                          </motion.div>
+                        )
+                      })}
                     </div>
 
                     <div className="fa-nav-btns">
@@ -548,9 +608,9 @@ function Form_agenda() {
                             <div className="check-icon">
                               <Check size={12} color="#fff" />
                             </div>
-                            {selectedService.name.toUpperCase()}
+                            {(selectedService.name || selectedService.nombre || '').toUpperCase()}
                           </div>
-                          <div className="fa-summary-price">{priceFormat(selectedService.price)}</div>
+                          <div className="fa-summary-price">{priceFormat(selectedService.price || selectedService.precio || 0)}</div>
                           {selectedDate && (
                             <div className="fa-summary-row">
                               <Calendar size={13} />
@@ -567,7 +627,7 @@ function Form_agenda() {
                           {selectedBarber && (
                             <div className="fa-summary-row">
                               <User size={13} />
-                              {selectedBarber.name} {selectedBarber.last}
+                              {selectedBarber.name || selectedBarber.prim_nombre} {selectedBarber.last || selectedBarber.apellido1 || ''}
                             </div>
                           )}
                         </div>
@@ -586,7 +646,7 @@ function Form_agenda() {
                       )}
                       {!selectedService && selectedBarber && (
                         <div className="fa-summary-row" style={{ marginBottom: 6 }}>
-                          <User size={13} />{selectedBarber.name} {selectedBarber.last}
+                          <User size={13} />{selectedBarber.name || selectedBarber.prim_nombre} {selectedBarber.last || selectedBarber.apellido1 || ''}
                         </div>
                       )}
                     </motion.div>

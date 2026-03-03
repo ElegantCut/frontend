@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom'
+import { AuthProvider } from './lib/hooks/UseAuth.jsx'
 import { AnimatePresence } from 'framer-motion'
 import Home from './routes/home/Home'
 import Reseñas from './routes/Reseñas'
@@ -100,9 +101,11 @@ const AnimatedRoutes = () => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AnimatedRoutes />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <AnimatedRoutes />
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
