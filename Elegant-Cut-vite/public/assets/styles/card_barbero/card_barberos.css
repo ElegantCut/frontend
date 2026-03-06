@@ -334,6 +334,8 @@ img {
   color: #ddd;
   position: absolute;
   z-index: 1;
+  display: none !important;
+  /* Icono de persona oculto por petición del usuario */
 }
 
 .barber-card:hover .barber-image img {

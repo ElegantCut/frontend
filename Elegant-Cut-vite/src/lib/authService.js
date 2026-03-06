@@ -18,7 +18,7 @@ export const authService = {
 
             // Si el backend responde con éxito y trae token
             if (response.data.token) {
-                // Guardamos el pase VIP y los datos del usuario
+                // Guardamos el pase VIP y los datos del usuario (JWT)
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
             }

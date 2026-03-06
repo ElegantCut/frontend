@@ -88,10 +88,14 @@ function Barberos() {
         <div className="barber-experience">{barber.experience}</div>
       </div>
       <div className="barber-image">
-        <img
-          src={`/assets/images/barberos/${barber.image}`}
-          alt={`${barber.name} - ${barber.title}`}
-        />
+        {barber.image && !barber.image.includes('default.png') ? (
+          <img
+            src={`https://res.cloudinary.com/dbuldg4dt/image/upload/c_fill,g_face,h_400,w_400/${barber.image}`}
+            alt={`${barber.name} - ${barber.title}`}
+            className="w-full h-full object-cover"
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+        ) : null}
         <div className="barber-overlay">
           <div className="specialties">
             {barber.specialties.map((specialty, index) => (
