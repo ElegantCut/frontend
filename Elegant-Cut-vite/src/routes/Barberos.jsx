@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedList';
 import { barberService } from '../lib/barberService';
+import BarberPortfolioModal from './BarberPortfolioModal';
 
 function Barberos() {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -9,28 +10,61 @@ function Barberos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBarber, setSelectedBarber] = useState(null);
+
+  const handleOpenPortfolio = (barber) => {
+    setSelectedBarber(barber);
+    setIsModalOpen(true);
+  };
+
   useEffect(() => {
     const fetchBarbers = async () => {
       try {
-        // 1. CAMBIO: Usamos el servicio (el "mesero")
-        const data = await barberService.getAllBarbers();
+        // Obtenemos los barberos base y los portafolios nuevos en paralelo
+        const [data, portfolios] = await Promise.all([
+          barberService.getAllBarbers(),
+          barberService.getAllPortfolios()
+        ]);
 
-        // 2. CAMBIO: Verificamos si 'data' existe (Axios ya te da el contenido directo)
         if (data) {
-          // 3. CAMBIO: Ahora usamos 'data.map' en lugar de 'result.data.map'
-          const transformedBarbers = data.map((realBarber) => ({
-            id: realBarber.id_usuario,
-            name: `${realBarber.prim_nombre} ${realBarber.apellido1}`,
-            title: "Barbero Profesional",
-            experience: "Experto",
-            rating: "5.0",
-            bio: "Barbero profesional del equipo Elegant Cut...",
-            stats: { clients: "+1000", recommend: "100%" },
-            categories: ["classic", "modern"],
-            specialties: ["Corte Clásico", "Barba"],
-            badge: "expert",
-            image: realBarber.foto_perfil || null
-          }));
+          const transformedBarbers = data.map((realBarber) => {
+            // Buscamos si el barbero tiene un portafolio registrado en la tabla portabarbero
+            // Matchamos convirtiendo a String por seguridad del tipo de dato
+            const portfolio = portfolios.find(p =>
+              String(p.id_usuario) === String(realBarber.id_usuario) ||
+              String(p.barbero_id) === String(realBarber.id_usuario) // asumiendo posibles nombres para la FK
+            );
+            return {
+              id: realBarber.id_usuario,
+              name: `${realBarber.prim_nombre} ${realBarber.apellido1}`,
+              title: "Barbero Profesional",
+              experience: portfolio?.experiencia || "Experto",
+              rating: portfolio?.calificacion ? String(portfolio.calificacion) : "5.0",
+              bio: portfolio?.biografia || "Barbero profesional del equipo Elegant Cut...",
+              stats: {
+                clients: portfolio?.reseñas_count ? `+${portfolio.reseñas_count * 10}` : "+1000",
+                recommend: "100%"
+              },
+              categories: ["classic", "modern"],
+              specialties: (() => {
+                try {
+                  // MySQL JSON return stringified array or real array depending on the db driver
+                  const specs = typeof portfolio?.especialidades === 'string'
+                    ? JSON.parse(portfolio.especialidades)
+                    : portfolio?.especialidades;
+
+                  return Array.isArray(specs) && specs.length > 0 ? specs : ["Corte Clásico", "Barba"];
+                } catch (e) {
+                  return ["Corte Clásico", "Barba"];
+                }
+              })(),
+              badge: "expert",
+              image: realBarber.foto_perfil || null, // Se mantiene foto_perfil del usuario base
+              portfolioData: portfolio || null
+            };
+          });
 
           setBarbers(transformedBarbers);
         } else {
@@ -38,7 +72,8 @@ function Barberos() {
         }
       } catch (err) {
         console.error("Error fetching barbers:", err);
-        setError('Error de conexión con el servidor en el puerto 3001');
+        // Mejor manejo de errores para que no esté hardcodeado al puerto 3001 siempre.
+        setError(err.message === 'Network Error' ? 'Error de red: Verifica que el servidor (puerto 3001) esté corriendo y permita CORS.' : 'Error al cargar los datos del servidor');
       } finally {
         setLoading(false);
       }
@@ -129,7 +164,7 @@ function Barberos() {
           </div>
         </div>
         <div className="barber-actions">
-          <button className="btn-primary">Ver Portafolio</button>
+          <button className="btn-primary" onClick={() => handleOpenPortfolio(barber)}>Ver Portafolio</button>
           <button className="btn-secondary">Reservar Cita</button>
         </div>
       </div>
@@ -151,6 +186,19 @@ function Barberos() {
           {/* ... existing CTA ... */}
         </main>
       </div>
+
+      {/* Portfolio Modal Integration */}
+      {selectedBarber && (
+        <BarberPortfolioModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          barberId={selectedBarber.id}
+          barberName={selectedBarber.name}
+          barberImage={selectedBarber.image}
+          barberTitle={selectedBarber.title}
+          portfolioDataProp={selectedBarber.portfolioData}
+        />
+      )}
     </AnimatedPage>
   )
 }

@@ -17,6 +17,18 @@ export const barberService = {
         }
     },
 
+    // Función para traer todos los portafolios (desde el nuevo módulo)
+    getAllPortfolios: async () => {
+        try {
+            // Se asume que el backend tiene la ruta http://localhost:3001/api/portabarbero
+            const response = await api.get('/portabarbero');
+            return response.data;
+        } catch (error) {
+            console.warn("Endpoints de portafolio aún no disponibles localmente:", error);
+            return []; // Devolvemos un array vacío como fallback si falla (ej. aún no se ha hecho pull)
+        }
+    },
+
     // Ejemplo de otra función para crear un barbero (POST)
     createBarber: async (barberData) => {
         try {
