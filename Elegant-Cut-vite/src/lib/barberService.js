@@ -9,11 +9,20 @@ export const barberService = {
             // Hacemos la petición GET a http://localhost:3001/api/barbers
             const response = await api.get('/barbers');
 
-            // Retornamos solo la información que nos interesa (los datos)
             return response.data;
         } catch (error) {
             console.error("Error en getAllBarbers:", error);
             throw error; // Lanzamos el error para manejarlo en la interfaz (el JSX)
+        }
+    },
+
+    getPublicBarbers: async () => {
+        try {
+            const response = await api.get('/barbers/public');
+            return response.data;
+        } catch (error) {
+            console.error("Error en getPublicBarbers:", error);
+            throw error;
         }
     },
 

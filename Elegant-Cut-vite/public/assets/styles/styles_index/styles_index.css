@@ -403,157 +403,215 @@ main {
     line-height: 1.1;
 }
 
-/* ESCRITORIO: Grid normal */
-.experts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-    gap: clamp(1rem, 3vw, 2.5rem);
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: clamp(1rem, 4vw, 2rem);
-}
-
-.expert-card {
-    background: rgba(42, 42, 42, 0.6);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    overflow: hidden;
-    text-align: center;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.expert-card:hover {
-    transform: translateY(-15px) scale(1.02);
-    border-color: #BC2041;
-    box-shadow: 0 20px 40px rgba(188, 32, 65, 0.2);
-}
-
-.expert-image {
-    width: 100%;
-    aspect-ratio: 4/5;
-    background: #f1f1f1;
+/* ESCRITORIO: Carousel moderno de tarjetas apiladas */
+.team-carousel-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
+    gap: 15%;
+    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
-.expert-img {
+.team-cards-stack {
+    position: relative;
+    width: 380px;
+    height: 480px;
+    perspective: 1000px;
+}
+
+.team-stacked-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.team-expert-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    text-indent: -9999px;
-    color: transparent;
+    pointer-events: none;
 }
 
-.expert-image::before {
-    content: '\f2bd';
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    font-size: 3rem;
-    color: #ccc;
-    position: absolute;
+.team-expert-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f1f1;
+    color: #a0aec0;
+    font-size: 5rem;
 }
 
-.expert-image::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
+.team-carousel-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: white;
+    min-width: 320px;
 }
 
-.expert-image .image-placeholder {
-    position: relative;
-    z-index: 2;
+.team-carousel-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    align-self: flex-start;
+}
+
+.carousel-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: white;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.carousel-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.carousel-btn:active {
+    transform: scale(0.95);
+}
+
+.carousel-btn.next-btn {
+    background: #BC2041;
+    border-color: #BC2041;
     color: white;
 }
 
-.expert-info {
-    padding: 2rem 1.5rem;
+.carousel-btn.next-btn:hover {
+    background: #a01b36;
+    border-color: #a01b36;
 }
 
-.expert-name {
-    font-size: 1.4rem;
-    font-weight: 600;
+.team-expert-name {
+    font-size: 2.5rem;
+    font-weight: 700;
     margin-bottom: 0.5rem;
     color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
 }
 
-.expert-role {
-    font-size: 1rem;
-    color: #BC2041;
-    font-weight: 500;
+.team-expert-name::after {
+    content: '';
+    display: block;
+    height: 2px;
+    width: 60px;
+    background: #BC2041;
+}
+
+.team-expert-role {
+    font-size: 1.1rem;
+    color: #a0aec0;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 3px;
+    margin-bottom: 2.5rem;
+    font-weight: 500;
 }
 
+.team-decorative-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 140px;
+}
 
-
-/* Agrega esto a tu CSS */
-.expert-img {
+.team-decorative-lines .line {
+    height: 2px;
+    background: rgba(255, 255, 255, 0.15);
     width: 100%;
-    height: 100%;
-    object-fit: cover;
 }
 
-/* Para quitar el fondo gradiente cuando uses imágenes reales */
-.expert-image {
-    background: transparent;
-    position: relative;
-    overflow: hidden;
+.team-decorative-lines .line.highlight-line {
+    background: #BC2041;
+    width: 80%;
 }
 
-.expert-image::before {
-    display: none;
-    /* Oculta el overlay gradiente */
-}
-
-/* MÓVIL: Mejora de responsividad */
-@media (max-width: 768px) {
-    .experts-section {
-        padding: 4rem 1.5rem;
-    }
-
-    .experts-grid {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        gap: 1.5rem;
-        padding: 1rem 0.5rem 2rem;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        justify-content: flex-start;
-    }
-
-    .experts-grid::-webkit-scrollbar {
-        display: none;
-    }
-
-    .expert-card {
-        scroll-snap-align: center;
-        min-width: 280px;
-        flex: 0 0 auto;
-    }
-
-    .expert-image {
-        height: 280px;
+/* MÓVIL: Mejora de responsividad para el Carousel */
+@media (max-width: 900px) {
+    .experts-header {
+        margin-bottom: 2rem;
     }
 
     .experts-header h2 {
         font-size: clamp(1.8rem, 7vw, 2.5rem);
         padding: 0 0.5rem;
     }
+
+    .team-carousel-container {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .team-cards-stack {
+        width: 280px;
+        height: 350px;
+        /* Centrar visualmente compensando el offset de +45px a la derecha */
+        transform: translateX(-22px);
+        /* Compensar el desplazamiento hacia abajo (+90px max) para no superponer el texto */
+        margin-bottom: 90px;
+    }
+
+    .team-carousel-info {
+        align-items: center;
+        text-align: center;
+        min-width: 100%;
+        max-width: 400px;
+        margin-top: 1rem;
+    }
+
+    .team-carousel-controls {
+        align-self: center;
+        margin-bottom: 2rem;
+        gap: 1.5rem;
+        /* Separar botones para pulgar */
+    }
+
+    .carousel-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+        /* Botones más amplios */
+    }
+
+    .team-expert-name {
+        font-size: 2.2rem;
+        justify-content: center;
+    }
+
+    .team-expert-name::after {
+        display: none;
+    }
+
+    .team-decorative-lines {
+        align-items: center;
+        margin: 0 auto;
+    }
 }
 
 @media (max-width: 480px) {
-    .expert-card {
-        min-width: 85vw;
+    .experts-section {
+        padding: 4rem 1.5rem;
     }
 
     .experts-header h2 {
@@ -563,6 +621,17 @@ main {
     .experts-header .subtitle {
         font-size: 0.85rem;
         letter-spacing: 2px;
+    }
+
+    .team-cards-stack {
+        width: 220px;
+        height: 280px;
+        transform: translateX(-20px);
+        margin-bottom: 80px;
+    }
+
+    .team-expert-name {
+        font-size: 1.8rem;
     }
 }
 

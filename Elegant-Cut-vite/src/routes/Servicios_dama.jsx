@@ -6,6 +6,7 @@ import { useAuth } from '../lib/hooks/UseAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedPage from "../components/shared/AnimatedPage";
 import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedList";
+import { getCloudinaryBannerUrl } from '../lib/utils/imageHelper';
 
 function Servicios_dama() {
     const navigate = useNavigate();
@@ -19,32 +20,32 @@ function Servicios_dama() {
     // --- CARRUSEL ESTILO XIAOMI ---
     const carouselSlidesDama = [
         {
-            img: '/assets/images/servicios_dama/Carrusel/Carrusel1.jpg',
+            img: getCloudinaryBannerUrl('Carrusel1_i2b3g9.jpg'),
             title: 'BELLEZA Y ELEGANCIA',
             subtitle: 'Descubre tu mejor versión con nuestros expertos'
         },
         {
-            img: '/assets/images/servicios_dama/Carrusel/Carrusel2.jpg',
+            img: getCloudinaryBannerUrl('Carrusel2_txzezq.jpg'),
             title: 'CUIDADO INTEGRAL',
             subtitle: 'Tratamientos exclusivos para tu cabello y piel'
         },
         {
-            img: '/assets/images/servicios_dama/Carrusel/Carrusel3.jpg',
+            img: getCloudinaryBannerUrl('Carrusel3_nzt3iw.jpg'),
             title: 'TENDENCIAS ACTUALES',
             subtitle: 'Lo último en cortes y coloración'
         },
         {
-            img: '/assets/images/servicios_dama/Carrusel/Carrusel4.jpg',
+            img: getCloudinaryBannerUrl('Carrusel4_rkib7p.jpg'),
             title: 'ESTILO ÚNICO',
             subtitle: 'Cada detalle pensado para ti'
         },
         {
-            img: '/assets/images/servicios_dama/Carrusel/Carrusel5.jpg',
+            img: getCloudinaryBannerUrl('Carrusel5_x5y09w.jpg'),
             title: 'TRANSFORMA TU LOOK',
             subtitle: 'Arte y precisión en cada servicio'
         },
         {
-            img: '/assets/images/servicios_dama/Carrusel/Carrusel6.jpg',
+            img: getCloudinaryBannerUrl('Carrusel6_sdzzfp.jpg'),
             title: 'EXPERIENCIA TOTAL',
             subtitle: 'Un espacio diseñado para tu bienestar'
         },

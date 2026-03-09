@@ -112,7 +112,7 @@ function Header() {
                 <div className="brand-container">
                     <div className="logo">
                         <img
-                            src="/assets/images/logo.png"
+                            src="/assets/logo.png"
                             alt="ElegantCut Barbería"
                             className="logo-img"
                         />
@@ -207,7 +207,7 @@ function Header() {
                 {/* Logo móvil pequeño - ORGANIZADO AL PRINCIPIO */}
                 <div className="mobile-brand">
                     <img
-                        src="/assets/images/logo.png"
+                        src="/assets/logo.png"
                         alt="ElegantCut Barbería"
                         className="mobile-logo-small"
                     />

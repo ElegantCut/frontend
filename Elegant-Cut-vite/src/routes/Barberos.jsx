@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedList';
 import { barberService } from '../lib/barberService';
+import { getCloudinaryUrl } from '../lib/utils/imageHelper';
 
 function Barberos() {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -90,7 +91,7 @@ function Barberos() {
       <div className="barber-image">
         {barber.image && !barber.image.includes('default.png') ? (
           <img
-            src={`https://res.cloudinary.com/dbuldg4dt/image/upload/c_fill,g_face,h_400,w_400/${barber.image}`}
+            src={getCloudinaryUrl(barber.image)}
             alt={`${barber.name} - ${barber.title}`}
             className="w-full h-full object-cover"
             onError={(e) => { e.target.style.display = 'none'; }}

@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useScroll } from '../../lib/hooks/useScroll'
 import AnimatedPage from '../../components/shared/AnimatedPage'
 import { AnimatedContainer, AnimatedItem } from '../../components/shared/AnimatedList'
+import { barberService } from '../../lib/barberService'
+import { getCloudinaryUrl } from '../../lib/utils/imageHelper'
 
 const fadeIn = {
     initial: { opacity: 0, y: 30 },
@@ -22,6 +24,29 @@ const slideInRight = {
 function Home() {
     // LLAMAR EL HOOK - Esto activa el efecto de scroll
     useScroll();
+
+    // ESTADO PARA BARBEROS
+    const [barbers, setBarbers] = useState([]);
+    const [loadingBarbers, setLoadingBarbers] = useState(true);
+
+    useEffect(() => {
+        const fetchBarbers = async () => {
+            try {
+                // LLAMA AL NUEVO ENDPOINT OPTIMIZADO
+                const data = await barberService.getPublicBarbers();
+                // Limitar a los primeros 4 barberos para el inicio (para no saturar la vista)
+                if (data && data.length > 0) {
+                    setBarbers(data.slice(0, 4));
+                }
+            } catch (err) {
+                console.error("Error al traer barberos para el Home:", err);
+            } finally {
+                setLoadingBarbers(false);
+            }
+        };
+
+        fetchBarbers();
+    }, []);
 
     return (
         <AnimatedPage>
@@ -135,32 +160,108 @@ function Home() {
                         <h2>Conoce a Nuestro Equipo</h2>
                     </motion.div>
 
-                    <AnimatedContainer className="experts-grid">
-                        <AnimatedItem className="expert-card">
-                            <div className="expert-image">
-                                <img src="/assets/images/barbero-1.jpg" alt="Barbero Especialista" className="expert-img" />
-                            </div>
-                            <div className="expert-info">
-                                <h3 className="expert-name">Carlos Rodríguez</h3>
-                                <p className="expert-role">Barbero Especialista</p>
-                            </div>
-                        </AnimatedItem>
-
-                        <AnimatedItem className="expert-card">
-                            <div className="expert-image">
-                                <img src="/assets/images/estilista-1.jpg" alt="Estilista Profesional" className="expert-img" />
-                            </div>
-                            <div className="expert-info">
-                                <h3 className="expert-name">Ana Martínez</h3>
-                                <p className="expert-role">Estilista Profesional</p>
-                            </div>
-                        </AnimatedItem>
-                        {/* ... etc ... */}
-                    </AnimatedContainer>
+                    {loadingBarbers ? (
+                        <p className="text-center text-white w-100">Cargando equipo...</p>
+                    ) : barbers.length > 0 ? (
+                        <TeamCarousel barbers={barbers} />
+                    ) : (
+                        <p className="text-center text-white w-100">Aún no hay barberos registrados.</p>
+                    )}
                 </section>
             </main>
         </AnimatedPage>
     )
 }
+
+// Componente Carousel para el Equipo
+const TeamCarousel = ({ barbers }) => {
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    const handleNext = () => {
+        setActiveIndex((prev) => (prev + 1) % barbers.length);
+    };
+
+    const handlePrev = () => {
+        setActiveIndex((prev) => (prev - 1 + barbers.length) % barbers.length);
+    };
+
+    return (
+        <div className="team-carousel-container">
+            <div className="team-cards-stack">
+                {barbers.map((barber, index) => {
+                    let offset = (index - activeIndex + barbers.length) % barbers.length;
+
+                    // Ajuste para suavizar cuando el elemento vuelve al final de la cola
+                    const isPrev = offset === barbers.length - 1 && barbers.length > 2;
+                    if (isPrev) {
+                        offset = 3;
+                    }
+
+                    return (
+                        <motion.div
+                            key={barber.id_usuario}
+                            className="team-stacked-card"
+                            initial={false}
+                            animate={{
+                                top: offset * 30,
+                                left: offset * 15,
+                                scale: 1 - offset * 0.05,
+                                zIndex: barbers.length - offset,
+                                opacity: offset >= 3 ? 0 : 1
+                            }}
+                            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                            onClick={() => {
+                                if (offset !== 0 && offset < 3) {
+                                    setActiveIndex(index);
+                                }
+                            }}
+                        >
+                            {barber.foto_perfil ? (
+                                <img
+                                    src={getCloudinaryUrl(barber.foto_perfil)}
+                                    alt={`${barber.prim_nombre}`}
+                                    className="team-expert-img"
+                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                />
+                            ) : (
+                                <div className="team-expert-placeholder">
+                                    <i className="bi bi-person"></i>
+                                </div>
+                            )}
+                        </motion.div>
+                    );
+                })}
+            </div>
+
+            <div className="team-carousel-info">
+                <div className="team-carousel-controls">
+                    <button onClick={handlePrev} className="carousel-btn prev-btn">
+                        <i className="bi bi-chevron-up"></i>
+                    </button>
+                    <button onClick={handleNext} className="carousel-btn next-btn">
+                        <i className="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+
+                <motion.div
+                    key={activeIndex}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <h3 className="team-expert-name">
+                        {`${barbers[activeIndex]?.prim_nombre || ''} ${barbers[activeIndex]?.apellido1 || ''}`.trim()}
+                    </h3>
+                    <p className="team-expert-role">Barbero Profesional</p>
+                    <div className="team-decorative-lines">
+                        <div className="line"></div>
+                        <div className="line"></div>
+                        <div className="line highlight-line"></div>
+                    </div>
+                </motion.div>
+            </div>
+        </div>
+    );
+};
 
 export default Home
