@@ -16,6 +16,7 @@ export const barberService = {
         }
     },
 
+    // Función pública para traer barberos en el Home (sin autenticación)
     getPublicBarbers: async () => {
         try {
             const response = await api.get('/barbers/public');
@@ -23,6 +24,18 @@ export const barberService = {
         } catch (error) {
             console.error("Error en getPublicBarbers:", error);
             throw error;
+        }
+    },
+
+    // Función para traer los portafolios de todos los barberos
+    getAllPortfolios: async () => {
+        try {
+            const response = await api.get('/barbers/portfolios');
+            return response.data;
+        } catch (error) {
+            console.error("Error en getAllPortfolios:", error);
+            // Retornamos array vacío para no bloquear el renderizado si falla
+            return [];
         }
     },
 
