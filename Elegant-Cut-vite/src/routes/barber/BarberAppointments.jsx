@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedContainer, AnimatedItem } from '../../components/shared/AnimatedList';
 import { Calendar, Clock, User, Phone, Mail, CheckCircle, XCircle, Edit } from 'lucide-react';
 import { appointmentService } from '../../lib/appointmentService';
-import { useAuth } from '../../lib/hooks/UseAuth.jsx';
+import { useAuth } from '../../auth/UseAuth.jsx';
 
 const BarberAppointments = () => {
     const [appointments, setAppointments] = useState([]);

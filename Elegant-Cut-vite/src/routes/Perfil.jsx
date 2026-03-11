@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthClient } from '../lib/utils/authClient';
+import { AuthClient } from '../auth/authClient';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedList';
 

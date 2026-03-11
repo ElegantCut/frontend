@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthClient } from '../lib/utils/authClient';
-import { useAuth } from '../lib/hooks/UseAuth';
+import { AuthClient } from '../auth/authClient';
+import { useAuth } from '../auth/UseAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedPage from "../components/shared/AnimatedPage";
 import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedList";

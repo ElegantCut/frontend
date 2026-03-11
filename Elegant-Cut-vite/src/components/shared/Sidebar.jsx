@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink, useNavigate } from 'react-router-dom';
 import '../../styles/Sidebar.css';
-import { AuthClient } from '../../lib/utils/authClient';
+import { AuthClient } from '../../auth/authClient';
 
 const Sidebar = ({ isOpen, closeSidebar }) => {
   const navigate = useNavigate();
