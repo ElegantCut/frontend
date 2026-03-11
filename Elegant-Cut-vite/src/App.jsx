@@ -1,5 +1,7 @@
+import ForgotPassword from './auth/ForgotPassword'
+import ResetPassword from './auth/ResetPassword'
 import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom'
-import { AuthProvider } from './lib/hooks/UseAuth.jsx'
+import { AuthProvider } from './auth/UseAuth.jsx'
 import { AnimatePresence } from 'framer-motion'
 import Home from './routes/home/Home'
 import Reseñas from './routes/Reseñas'
@@ -7,7 +9,7 @@ import Header from './components/shared/Header'
 import Footer from './components/shared/Footer'
 import Barberos from './routes/Barberos'
 import './App.css'
-import LoginForm from './components/shared/LoginForm'
+import LoginForm from './auth/LoginForm'
 import Servicios_dama from './routes/Servicios_dama'
 import Servicios_caballero from './routes/Servicios_caballero'
 import Form_agenda from './routes/Form_agenda'
@@ -16,7 +18,7 @@ import Pqrs from './routes/Pqrs'
 import Perfil from './routes/Perfil'
 import ProtectedRoute from './components/shared/ProtectedRoute'
 import EjemploDB from './routes/EjemploDB'
-import Unauthorized from './routes/Unauthorized'
+import Unauthorized from './auth/Unauthorized'
 
 // Importar componentes de Admin
 import DashboardTab from './components/admin/DashboardTab'
@@ -40,7 +42,8 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/login" element={<LoginForm />} />
-
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/resetear-password" element={<ResetPassword />} />
         <Route
           path="/admin"
           element={

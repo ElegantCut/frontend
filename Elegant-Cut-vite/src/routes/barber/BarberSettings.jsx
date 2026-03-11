@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AuthClient } from "../../lib/utils/authClient";
+import { AuthClient } from "../../auth/authClient";
 import { Camera, Save, AlertCircle, CheckCircle } from 'lucide-react';
 
 const BarberSettings = () => {

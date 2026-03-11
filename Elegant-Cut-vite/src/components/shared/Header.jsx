@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from "../../lib/hooks/UseAuth.jsx";
+import { useAuth } from "../../auth/UseAuth.jsx";
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);

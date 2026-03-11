@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authService } from '../authService';
+import { authService } from './authService';
 
 // 1. Creamos el Contexto Global de Autenticación
 const AuthContext = createContext(null);

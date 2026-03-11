@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform } from 'framer-motion';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import '../styles/pqrs/pqrs.css';
-import { AuthClient } from '../lib/utils/authClient';
+import { AuthClient } from '../auth/authClient';
 
 export default function Pqrs() {
   const [formData, setFormData] = useState({

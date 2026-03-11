@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Calendar, LogOut, User, Settings } from 'lucide-react';
-import { AuthClient } from '../../lib/utils/authClient';
+import { AuthClient } from '../../auth/authClient';
 
 const BarberSidebar = () => {
     const navigate = useNavigate();

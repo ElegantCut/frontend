@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { AuthClient } from '../../lib/utils/authClient';
+import { AuthClient } from './authClient';
 import { useNavigate } from 'react-router-dom';
 import './LoginForm.css';
-import { authService } from '../../lib/authService';
-import { useAuth } from '../../lib/hooks/UseAuth.jsx';
+import { authService } from './authService';
+import { useAuth } from './UseAuth.jsx';
 
 function LoginForm() {
   const { login } = useAuth();
@@ -24,7 +24,7 @@ function LoginForm() {
   const [forgotPasswordData, setForgotPasswordData] = useState({
     email: '',
     codigo: '',
-    nuevaContrasena: '',
+    newPassword: '',
     confirmarContrasena: ''
   });
   const [loading, setLoading] = useState(false);
@@ -135,7 +135,7 @@ function LoginForm() {
 
   // Solicitar código de recuperación
   const handleSolicitarCodigo = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setLoading(true);
     mostrarMensaje('Enviando código de verificación...', 'info');
 
@@ -146,18 +146,12 @@ function LoginForm() {
     }
 
     try {
-      const result = await AuthClient.solicitarRecuperacion(forgotPasswordData.email);
-
-      if (result.success) {
-        mostrarMensaje('Código enviado a tu email', 'success');
-        setEmailSolicitado(forgotPasswordData.email);
-        setUsernameRecuperacion(result.username);
-        setActiveView('verification');
-      } else {
-        mostrarMensaje('Error: ' + (result.error || 'Ocurrió un error inesperado'), 'error');
-      }
+      const result = await authService.forgotPassword(forgotPasswordData.email);
+      mostrarMensaje('✅ Código enviado a tu email', 'success');
+      setEmailSolicitado(forgotPasswordData.email);
+      setActiveView('verification');
     } catch (error) {
-      mostrarMensaje('Error de conexión: ' + error.message, 'error');
+      mostrarMensaje('Error: ' + (error.message || 'No se pudo enviar el código'), 'error');
     } finally {
       setLoading(false);
     }
@@ -169,51 +163,44 @@ function LoginForm() {
     setLoading(true);
     mostrarMensaje('Verificando código...', 'info');
 
-    // Validaciones
     if (!forgotPasswordData.codigo) {
       mostrarMensaje('Por favor ingresa el código de verificación', 'error');
       setLoading(false);
       return;
     }
 
-    if (!forgotPasswordData.nuevaContrasena) {
+    if (!forgotPasswordData.newPassword) {
       mostrarMensaje('Por favor ingresa la nueva contraseña', 'error');
       setLoading(false);
       return;
     }
 
-    if (forgotPasswordData.nuevaContrasena !== forgotPasswordData.confirmarContrasena) {
+    if (forgotPasswordData.newPassword !== forgotPasswordData.confirmarContrasena) {
       mostrarMensaje('Las contraseñas no coinciden', 'error');
       setLoading(false);
       return;
     }
 
-    if (forgotPasswordData.nuevaContrasena.length < 6) {
+    if (forgotPasswordData.newPassword.length < 6) {
       mostrarMensaje('La contraseña debe tener al menos 6 caracteres', 'error');
       setLoading(false);
       return;
     }
 
     try {
-      const result = await AuthClient.verificarCodigoRecuperacion(
+      await authService.resetPassword(
         emailSolicitado,
         forgotPasswordData.codigo,
-        forgotPasswordData.nuevaContrasena
+        forgotPasswordData.newPassword
       );
 
-      if (result.success) {
-        mostrarMensaje('¡Contraseña actualizada exitosamente!', 'success');
-
-        // Limpiar y volver al login
-        setTimeout(() => {
-          setForgotPasswordData({ email: '', codigo: '', nuevaContrasena: '', confirmarContrasena: '' });
-          switchToLogin();
-        }, 2000);
-      } else {
-        mostrarMensaje('Error: ' + (result.error || 'Ocurrió un error inesperado'), 'error');
-      }
+      mostrarMensaje('¡Contraseña actualizada exitosamente!', 'success');
+      setTimeout(() => {
+        setForgotPasswordData({ email: '', codigo: '', newPassword: '', confirmarContrasena: '' });
+        switchToLogin();
+      }, 2000);
     } catch (error) {
-      mostrarMensaje('Error de conexión: ' + error.message, 'error');
+      mostrarMensaje('Error: ' + (error.message || 'Código inválido o expirado'), 'error');
     } finally {
       setLoading(false);
     }
@@ -495,12 +482,12 @@ function LoginForm() {
               <div className="form-group">
                 <input
                   type="password"
-                  name="nuevaContrasena"
+                  name="newPassword"
                   placeholder="Nueva contraseña"
                   required
                   className="form-input"
-                  value={forgotPasswordData.nuevaContrasena}
-                  onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, nuevaContrasena: e.target.value })}
+                  value={forgotPasswordData.newPassword}
+                  onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, newPassword: e.target.value })}
                   disabled={loading}
                 />
               </div>

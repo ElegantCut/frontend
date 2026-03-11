@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AuthClient } from '../../lib/utils/authClient';
+import { AuthClient } from '../../auth/authClient';
 
 const SettingsTab = () => {
   const [activeTab, setActiveTab] = useState('profile');
