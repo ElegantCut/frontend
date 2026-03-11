@@ -4,7 +4,8 @@ import { useAuth } from "../auth/UseAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedPage from "../components/shared/AnimatedPage";
 import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedList";
-import { servicesService } from '../lib/servicesService'; //Este es el que imprtamos con la lógica de conexión xd
+import { servicesService } from '../lib/servicesService';
+import { getCloudinaryServiceUrl } from '../lib/utils/imageHelper';
 
 function Servicios_caballero() {
   const navigate = useNavigate();
@@ -60,18 +61,46 @@ function Servicios_caballero() {
 
         // TRANSFORMACIÓN: Adaptamos los nombres de tu Base de Datos
         // a los nombres que usas en tu diseño (HTML/CSS)
-        const serviciosLimpios = datosBrutos.map((s) => ({
-          id: s.id_servicio,      // Como se llame en tu Prisma
-          nombre: s.nom_servicio, // Como se llame en tu Prisma
-          name: s.nom_servicio,   // Soporte para la interfaz gráfica
+
+        // 1. OBTENEMOS EL NOMBRE DE LA CATEGORÍA RELACIONADA (asegurando minúsculas)
+        // El backend ahora incluye 'categorias' { id_categoria, nombre, etc. }
+        const datosConCategoria = datosBrutos.map(s => {
+          const categoriaNombre = s.categorias?.nombre ? s.categorias.nombre.toLowerCase().trim() : 'otros';
+          return { ...s, categoriaAsignada: categoriaNombre };
+        });
+
+        // 2. FILTRAMOS SOLO LAS CATEGORÍAS DE CABALLERO
+        // Solo aceptamos servicios que pertenezcan a Cortes, Barba, o Otros (relacionados a caballeros).
+        // Ajusta las palabras en el arreglo `categoriasCaballero` si en tu BD las llamaste distinto.
+        const categoriasCaballero = ['cortes', 'corte', 'barba', 'otros', 'tratamientos especiales'];
+        const serviciosFiltrados = datosConCategoria.filter(s =>
+          categoriasCaballero.includes(s.categoriaAsignada)
+        );
+
+        // 3. MAPEO FINAL PARA EL FRONTEND
+        // Aquí adaptamos los datos del Backend a lo que espera el diseño visual
+        const serviciosLimpios = serviciosFiltrados.map((s) => ({
+          id: s.id_servicio,
+          nombre: s.nombre,
+          name: s.nombre,
           precio: s.precio,
-          price: s.precio,        // Soporte para la interfaz gráfica
+          price: s.precio,
           descripcion: s.descripcion || "Servicio premium",
           description: s.descripcion || "Servicio premium",
-          category: s.categoria || "cortes",
-          categoryLabel: s.categoria || "Corte",
+
+          // CATEGORÍA: Usamos el nombre de la tabla relacional
+          category: s.categoriaAsignada === 'corte' ? 'cortes' : s.categoriaAsignada,
+          categoryLabel: s.categorias?.nombre || "Corte",
+
+          // IMAGEN: Imagen del servicio o una por defecto
           image: s.imagen || "/assets/images/servicios_caballeros/cortes/buzzz cut.png",
-          features: s.caracteristicas ? JSON.parse(s.caracteristicas) : ["Servicio", "45 min"]
+
+          // CARACTERÍSTICAS: Ahora usamos la DURACIÓN real de la Base de Datos
+          // reemplazando el antiguo sistema de features estáticas.
+          features: [
+            "Servicio Profesional",
+            `${s.duracion || 30} min` // <- USANDO COLUMNA DURACIÓN
+          ]
         }));
 
         setServicios(serviciosLimpios); // Guardamos la lista ya limpia
@@ -238,11 +267,16 @@ function Servicios_caballero() {
             {filteredServices.map((service) => (
               <AnimatedItem key={service.id} className="service-card" data-category={service.category}>
                 <div className="category-indicator">{service.categoryLabel}</div>
-                <img
-                  src={service.image}
-                  alt={service.name}
-                  className="service-image"
-                />
+                <div className="service-image">
+                  {service.image && !service.image.includes('default.png') ? (
+                    <img
+                      src={getCloudinaryServiceUrl(service.image)}
+                      alt={service.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  ) : null}
+                </div>
                 <div className="service-content">
                   {/* Aquí mostramos el nombre del servicio que viene de la base de datos */}
                   <h3 className="service-title">{service.name}</h3>

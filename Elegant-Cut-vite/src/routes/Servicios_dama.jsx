@@ -6,7 +6,8 @@ import { useAuth } from '../auth/UseAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedPage from "../components/shared/AnimatedPage";
 import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedList";
-import { getCloudinaryBannerUrl } from '../lib/utils/imageHelper';
+import { getCloudinaryBannerUrl, getCloudinaryServiceUrl } from '../lib/utils/imageHelper';
+import { servicesService } from '../lib/servicesService';
 
 function Servicios_dama() {
     const navigate = useNavigate();
@@ -15,12 +16,15 @@ function Servicios_dama() {
     const [cartItems, setCartItems] = useState([]);
     const [alertVisible, setAlertVisible] = useState(false); // Alerta de carrito vacío (dentro del modal)
     const [loginAlertVisible, setLoginAlertVisible] = useState(false); // Alerta de login (flotante)
-    const [activeCategory, setActiveCategory] = useState('uñas');
+    const [activeCategory, setActiveCategory] = useState('todos');
+    const [servicios, setServicios] = useState([]);
+    const [cargando, setCargando] = useState(true);
+
 
     // --- CARRUSEL ESTILO XIAOMI ---
     const carouselSlidesDama = [
         {
-            img: getCloudinaryBannerUrl('Carrusel1_olqz0t.jpg'),
+            img: getCloudinaryBannerUrl('Carrusel1_i2b3g9'),
             title: 'BELLEZA Y ELEGANCIA',
             subtitle: 'Descubre tu mejor versión con nuestros expertos'
         },
@@ -66,6 +70,65 @@ function Servicios_dama() {
     }, [currentSlide, carouselSlidesDama.length]);
     // --- FIN CARRUSEL ---
 
+    // Llamada a la API para obtener los servicios
+    useEffect(() => {
+        const obtenerDatos = async () => {
+            try {
+                setCargando(true);
+                const datosBrutos = await servicesService.getAllServices();
+
+                // Adaptamos los datos tal como en Servicios_caballero.jsx
+
+                // 1. OBTENEMOS EL NOMBRE DE LA CATEGORÍA RELACIONADA (asegurando minúsculas)
+                // El backend ahora incluye 'categorias' { id_categoria, nombre, etc. }
+                const datosConCategoria = datosBrutos.map(s => {
+                    const categoriaNombre = s.categorias?.nombre ? s.categorias.nombre.toLowerCase().trim() : 'otros';
+                    return { ...s, categoriaAsignada: categoriaNombre };
+                });
+
+                // 2. FILTRAMOS SOLO LAS CATEGORÍAS DE DAMA
+                // Solo aceptamos servicios que pertenezcan a mujeres.
+                const categoriasDamas = ['uñas', 'largo', 'corto', 'tinte', 'peinados', 'mascarillas', 'depilación'];
+                const serviciosFiltrados = datosConCategoria.filter(s =>
+                    categoriasDamas.includes(s.categoriaAsignada)
+                );
+
+                // 3. MAPEO FINAL PARA EL FRONTEND
+                // Adaptamos la data de la DB a las propiedades del componente React
+                const serviciosLimpios = serviciosFiltrados.map((s) => ({
+                    id: s.id_servicio,
+                    nombre: s.nombre,
+                    name: s.nombre,
+                    precio: s.precio,
+                    price: s.precio,
+                    descripcion: s.descripcion || "Servicio premium",
+                    description: s.descripcion || "Servicio premium",
+
+                    // CATEGORÍA: Valor detectado desde la tabla relacional
+                    category: s.categoriaAsignada,
+                    categoryLabel: s.categorias?.nombre || "Servicio Dama",
+
+                    // IMAGEN: Usamos la de la DB o la de Manicure por defecto
+                    image: s.imagen || "/assets/images/servicios_dama/Uñas/ManicureSinDiseño.png",
+
+                    // DURACIÓN: Implementamos el uso de la columna duracion de la DB
+                    features: [
+                        "Calidad Garantizada",
+                        `${s.duracion || 45} min` // <- DURACIÓN REAL DESDE DB
+                    ]
+                }));
+
+                setServicios(serviciosLimpios);
+            } catch (error) {
+                console.error("No se pudo conectar con el backend", error);
+            } finally {
+                setCargando(false);
+            }
+        };
+
+        obtenerDatos();
+    }, []);
+
     // Calcular total y cantidad
     const cartTotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
@@ -108,6 +171,7 @@ function Servicios_dama() {
 
     // Categorías disponibles
     const categories = [
+        { id: 'todos', name: 'Todos los Servicios' },
         { id: 'uñas', name: 'Uñas' },
         { id: 'largo', name: 'Cortes Cabello Largo' },
         { id: 'corto', name: 'Cortes Cabello Corto' },
@@ -116,250 +180,12 @@ function Servicios_dama() {
         { id: 'mascarillas', name: 'Mascarillas' }
     ];
 
-    // Productos disponibles
-    const products = [
-        // Uñas
-        {
-            category: 'uñas',
-            name: 'Uñas sin diseño',
-            price: 10000,
-            image: '/assets/images/servicios_dama/Uñas/ManicureSinDiseño.png',
-            oldPrice: 12000,
-            description: 'Manicure básico sin Diseño',
-            features: ['Limpieza', 'Esmalte', '30 min'],
-            categoryLabel: 'Uñas'
-        },
-        {
-            category: 'uñas',
-            name: 'Manicure Básico con color',
-            price: 11000,
-            image: '/assets/images/servicios_dama/Uñas/ManicureConColor.png',
-            oldPrice: 13000,
-            description: 'Manicure Básico con Color',
-            features: ['Limpieza', 'Color', '35 min'],
-            categoryLabel: 'Uñas'
-        },
-        {
-            category: 'uñas',
-            name: 'Uñas con diseño sencillo',
-            price: 15000,
-            image: '/assets/images/servicios_dama/Uñas/ManicureConDiseño.png',
-            oldPrice: 18000,
-            description: 'Uñas Básicas con diseño sencillo',
-            features: ['Diseño', 'Arte', '45 min'],
-            categoryLabel: 'Uñas'
-        },
-        {
-            category: 'uñas',
-            name: 'Uñas acrílicas básicas',
-            price: 25000,
-            image: '/assets/images/servicios_dama/Uñas/UñasAcrilicasMedio.png',
-            oldPrice: 35000,
-            description: 'Uñas acrílicas básicas',
-            features: ['Acrílico', 'Duración', '90 min'],
-            categoryLabel: 'Uñas'
-        },
-        {
-            category: 'uñas',
-            name: 'Manicure Largas',
-            price: 40000,
-            image: '/assets/images/servicios_dama/Uñas/Uñas AcrilicasLargas.png',
-            oldPrice: 45000,
-            description: 'Uñas acrílicas largas',
-            features: ['Extensión', 'Estilo', '120 min'],
-            categoryLabel: 'Uñas'
-        },
-        // Cortes Largo
-        {
-            category: 'largo',
-            name: 'Corte Mariposa',
-            price: 18000,
-            image: '/assets/images/servicios_dama/Corte Largo/corte_mariposa.png',
-            oldPrice: 22000,
-            description: 'Corte en capas estilo Mariposa',
-            features: ['Volumen', 'Capas', '60 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'largo',
-            name: 'Corte Recto',
-            price: 15000,
-            image: '/assets/images/servicios_dama/Corte Largo/corte_recto.png',
-            oldPrice: 18000,
-            description: 'Corte recto clásico para puntas sanas',
-            features: ['Puntas', 'Sano', '45 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'largo',
-            name: 'Corte en V',
-            price: 16000,
-            image: '/assets/images/servicios_dama/Corte Largo/corte_v.png',
-            oldPrice: 20000,
-            description: 'Corte en V para dar movimiento',
-            features: ['Movimiento', 'Estilo', '50 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'largo',
-            name: 'Corte en Capas',
-            price: 17000,
-            image: '/assets/images/servicios_dama/Corte Largo/corte_capas.png',
-            oldPrice: 21000,
-            description: 'Corte en capas para dar movimiento',
-            features: ['Movimiento', 'Estilo', '55 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'largo',
-            name: 'Desfilado',
-            price: 17000,
-            image: '/assets/images/servicios_dama/Corte Largo/corte_desfilado.png',
-            oldPrice: 21000,
-            description: 'Corte desfilado para dar movimiento',
-            features: ['Movimiento', 'Estilo', '55 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'largo',
-            name: 'corte con Flequillo',
-            price: 17000,
-            image: '/assets/images/servicios_dama/Corte Largo/corte_flequillo.png',
-            oldPrice: 21000,
-            description: 'Corte con Flequillo para dar movimiento',
-            features: ['Movimiento', 'Estilo', '55 min'],
-            categoryLabel: 'Corte'
-        },
-        // Cortes Corto
-        {
-            category: 'corto',
-            name: 'Bob Clásico',
-            price: 20000,
-            image: '/assets/images/servicios_dama/Corte Corto/Bob Clasico.png',
-            oldPrice: 25000,
-            description: 'Estilo Bob elegante y atemporal',
-            features: ['Elegancia', 'Corto', '50 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'corto',
-            name: 'Pixie Cut',
-            price: 22000,
-            image: '/assets/images/servicios_dama/Corte Corto/Pixie.png',
-            oldPrice: 28000,
-            description: 'Estilo Pixie moderno y audaz',
-            features: ['Audaz', 'Moderno', '45 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'corto',
-            name: 'Bob Capas Cortas',
-            price: 20000,
-            image: '/assets/images/servicios_dama/Corte Corto/bob_capas_cortas.png',
-            oldPrice: 25000,
-            description: 'Estilo Bob elegante y atemporal',
-            features: ['Elegancia', 'Corto', '50 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'corto',
-            name: 'Bixie Cut',
-            price: 22000,
-            image: '/assets/images/servicios_dama/Corte Corto/bixie_cut.png',
-            oldPrice: 26000,
-            description: 'Fusión moderna entre Bob y Pixie',
-            features: ['Textura', 'Híbrido', '50 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'corto',
-            name: 'Bob Asimétrico',
-            price: 21000,
-            image: '/assets/images/servicios_dama/Corte Corto/bob_asimétrico.png',
-            oldPrice: 25000,
-            description: 'Bob con longitudes desiguales',
-            features: ['Moderno', 'Atrevido', '50 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'corto',
-            name: 'Bob Invertido',
-            price: 21000,
-            image: '/assets/images/servicios_dama/Corte Corto/bob_invertido.png',
-            oldPrice: 25000,
-            description: 'Más corto atrás, largo adelante',
-            features: ['Volumen', 'Estilo', '55 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'corto',
-            name: 'Corte Garçon',
-            price: 19000,
-            image: '/assets/images/servicios_dama/Corte Corto/corte_garçon.png',
-            oldPrice: 23000,
-            description: 'Estilo clásico a lo chico',
-            features: ['Clásico', 'Práctico', '45 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'corto',
-            name: 'Micro Bob',
-            price: 20000,
-            image: '/assets/images/servicios_dama/Corte Corto/micro_bob.png',
-            oldPrice: 24000,
-            description: 'Versión ultra corta del Bob',
-            features: ['Chic', 'Minimalista', '45 min'],
-            categoryLabel: 'Corte'
-        },
-        {
-            category: 'corto',
-            name: 'Pixie Largo',
-            price: 23000,
-            image: '/assets/images/servicios_dama/Corte Corto/pixie_largo.png',
-            oldPrice: 27000,
-            description: 'Pixie con capas más largas',
-            features: ['Versátil', 'Textura', '50 min'],
-            categoryLabel: 'Corte'
-        },
-        // Peinados
-        {
-            category: 'peinados',
-            name: 'Peinado Especial',
-            price: 25000,
-            image: '/assets/images/servicios_dama/Peinados/peinado_especial.png',
-            oldPrice: 30000,
-            description: 'Peinado para ocasiones especiales',
-            features: ['Fiesta', 'Elegante', '60 min'],
-            categoryLabel: 'Peinados'
-        },
-        // Mascarillas
-        {
-            category: 'mascarillas',
-            name: 'Hidratación Profunda',
-            price: 35000,
-            image: '/assets/images/servicios_dama/Corte Largo/Corte Recto.png',
-            oldPrice: 45000,
-            description: 'Mascarilla capilar restauradora',
-            features: ['Hidratación', 'Brillo', '40 min'],
-            categoryLabel: 'Tratamiento'
-        },
-        // Tintes
-        {
-            category: 'tinte',
-            name: 'Tinte Completo',
-            price: 60000,
-            image: '/assets/images/servicios_dama/Corte Largo/Corte v.png',
-            oldPrice: 75000,
-            description: 'Aplicación de tinte completo',
-            features: ['Color', 'Cambio', '120 min'],
-            categoryLabel: 'Color'
-        }
-    ];
+    // Productos disponibles: Ahora provienen de `servicios` en lugar de una lista estática
 
     // Filtrar productos por categoría activa
-    const filteredProducts = activeCategory === 'all'
-        ? products
-        : products.filter(product => product.category === activeCategory);
+    const filteredProducts = activeCategory === 'todos'
+        ? servicios
+        : servicios.filter(product => product.category === activeCategory);
 
     return (
         <AnimatedPage>
@@ -465,14 +291,24 @@ function Servicios_dama() {
 
                 <AnimatedContainer className="catalog-container" id="catalog">
                     <AnimatePresence mode="popLayout">
-                        {filteredProducts.map((product, index) => (
+                        {filteredProducts.map((product) => (
                             <AnimatedItem
                                 key={product.name}
                                 className="product-card"
                                 data-category={product.category}
                             >
+                                <div className="service-image">
+                                    {product.image && !product.image.includes('default.png') ? (
+                                        <img
+                                            src={getCloudinaryServiceUrl(product.image)}
+                                            alt={product.description}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                        />
+                                    ) : null}
+                                </div>
                                 <div className="category-indicator">{product.categoryLabel}</div>
-                                <img src={product.image} alt={product.description} />
+
 
                                 <div className="service-content">
                                     <h3>{product.name}</h3>
@@ -543,7 +379,7 @@ function Servicios_dama() {
                                             </AnimatedItem>
                                         ) : (
                                             cartItems.map((item, index) => (
-                                                <AnimatedItem key={item.name} className="cart-item">
+                                                <AnimatedItem key={item.name || index} className="cart-item">
                                                     <div className="cart-item-info">
                                                         {item.image && <img src={item.image} alt={item.name} className="cart-item-img" />}
                                                         <div>
