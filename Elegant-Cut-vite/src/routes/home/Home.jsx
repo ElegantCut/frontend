@@ -4,7 +4,7 @@ import { useScroll } from '../../lib/hooks/useScroll'
 import AnimatedPage from '../../components/shared/AnimatedPage'
 import { AnimatedContainer, AnimatedItem } from '../../components/shared/AnimatedList'
 import { barberService } from '../../lib/barberService'
-import { getCloudinaryUrl } from '../../lib/utils/imageHelper'
+import { getCloudinaryUrl, getCloudinaryHomeUrl } from '../../lib/utils/imageHelper'
 
 const fadeIn = {
     initial: { opacity: 0, y: 30 },
@@ -61,7 +61,7 @@ function Home() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <img src="/assets/images/sec-1-img/imagen-sec-1.png" alt="Barbería Elegantcut" className="hero-image" />  {/* class → className */}
+                        <img src={getCloudinaryHomeUrl('sec-2_xgshzs.png')} alt="Barbería Elegantcut" className="hero-image" />  {/* class → className */}
                     </motion.div>
 
                     {/* Zona derecha - Mensaje con tipografía moderna */}
@@ -110,8 +110,8 @@ function Home() {
                         </motion.div>
 
                         <motion.div className="about-image" variants={slideInRight}>  {/* class → className */}
-                            <img src="/assets/images/sec-1-img/sec-2.png" alt="Historia de ElegantCut" className="about-hero-image" />  {/* class → className */}
-                        </motion.div>
+                            <img src={getCloudinaryHomeUrl('imagen-sec-1_dueyls')} alt="Historia de ElegantCut" className="about-hero-image" />  {/* class → className */}
+                        </motion.div>|
                     </div>
                 </motion.section>
 

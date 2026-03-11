@@ -20,7 +20,7 @@ function Servicios_dama() {
     // --- CARRUSEL ESTILO XIAOMI ---
     const carouselSlidesDama = [
         {
-            img: getCloudinaryBannerUrl('Carrusel1_i2b3g9.jpg'),
+            img: getCloudinaryBannerUrl('Carrusel1_olqz0t.jpg'),
             title: 'BELLEZA Y ELEGANCIA',
             subtitle: 'Descubre tu mejor versión con nuestros expertos'
         },

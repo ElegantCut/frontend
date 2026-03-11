@@ -8,3 +8,8 @@ export const getCloudinaryBannerUrl = (publicId) => {
     if (!publicId) return '';
     return `https://res.cloudinary.com/dbuldg4dt/image/upload/f_auto,q_auto,c_fill,w_1200,h_400/${publicId}`;
 };
+
+export const getCloudinaryHomeUrl = (publicId) => {
+    if (!publicId) return '';
+    return `https://res.cloudinary.com/dbuldg4dt/image/upload/f_auto,q_auto,c_fill/${publicId}`;
+};
