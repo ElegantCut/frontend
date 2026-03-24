@@ -19,5 +19,16 @@ export const servicesService = {
             console.error("Error al traer servicios desde el servidor:", error);
             throw error;
         }
+    },
+
+    // Esta función le pedirá al Backend los servicios filtrados por género
+    getServicesByGender: async (generoId) => {
+        try {
+            const response = await api.get(`/services/gender/${generoId}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error al traer servicios por género desde el servidor:", error);
+            throw error;
+        }
     }
 }

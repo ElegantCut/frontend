@@ -67,7 +67,7 @@ function Servicios_caballero() {
       try {
         setCargando(true);
         // Pedimos los datos al servicio
-        const datosBrutos = await servicesService.getAllServices();
+        const datosBrutos = await servicesService.getServicesByGender(1); // 1 = Caballero
 
         // TRANSFORMACIÓN: Adaptamos los nombres de tu Base de Datos
         // a los nombres que usas en tu diseño (HTML/CSS)
@@ -79,13 +79,8 @@ function Servicios_caballero() {
           return { ...s, categoriaAsignada: categoriaNombre };
         });
 
-        // 2. FILTRAMOS SOLO LAS CATEGORÍAS DE CABALLERO
-        // Solo aceptamos servicios que pertenezcan a Cortes, Barba, o Otros (relacionados a caballeros).
-        // Ajusta las palabras en el arreglo `categoriasCaballero` si en tu BD las llamaste distinto.
-        const categoriasCaballero = ['cortes', 'corte', 'barba', 'otros', 'tratamientos especiales'];
-        const serviciosFiltrados = datosConCategoria.filter(s =>
-          categoriasCaballero.includes(s.categoriaAsignada)
-        );
+        // Ya no filtramos localmente, el backend devuelve solo los de caballero
+        const serviciosFiltrados = datosConCategoria;
 
         // 3. MAPEO FINAL PARA EL FRONTEND
         // Aquí adaptamos los datos del Backend a lo que espera el diseño visual
@@ -99,7 +94,7 @@ function Servicios_caballero() {
           description: s.descripcion || "Servicio premium",
 
           // CATEGORÍA: Usamos el nombre de la tabla relacional
-          category: s.categoriaAsignada === 'corte' ? 'cortes' : s.categoriaAsignada,
+          category: s.categoriaAsignada,
           categoryLabel: s.categorias?.nombre || "Corte",
 
           // IMAGEN: Imagen del servicio o una por defecto
@@ -249,20 +244,20 @@ function Servicios_caballero() {
             Todos los Servicios
           </button>
           <button
-            className={`category-btn ${activeCategory === 'cortes' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('cortes')}
+            className={`category-btn ${activeCategory === 'cortes de cabello' ? 'active' : ''}`}
+            onClick={() => handleCategoryClick('cortes de cabello')}
           >
             Cortes de Cabello
           </button>
           <button
-            className={`category-btn ${activeCategory === 'barba' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('barba')}
+            className={`category-btn ${activeCategory === 'barba y afeitado' ? 'active' : ''}`}
+            onClick={() => handleCategoryClick('barba y afeitado')}
           >
             Barba y Afeitado
           </button>
           <button
-            className={`category-btn ${activeCategory === 'otros' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('otros')}
+            className={`category-btn ${activeCategory === 'tratamientos especiales' ? 'active' : ''}`}
+            onClick={() => handleCategoryClick('tratamientos especiales')}
           >
             Tratamientos Especiales
           </button>

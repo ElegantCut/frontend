@@ -75,7 +75,7 @@ function Servicios_dama() {
         const obtenerDatos = async () => {
             try {
                 setCargando(true);
-                const datosBrutos = await servicesService.getAllServices();
+                const datosBrutos = await servicesService.getServicesByGender(2); // 2 = Dama
 
                 // Adaptamos los datos tal como en Servicios_caballero.jsx
 
@@ -86,12 +86,8 @@ function Servicios_dama() {
                     return { ...s, categoriaAsignada: categoriaNombre };
                 });
 
-                // 2. FILTRAMOS SOLO LAS CATEGORÍAS DE DAMA
-                // Solo aceptamos servicios que pertenezcan a mujeres.
-                const categoriasDamas = ['uñas', 'largo', 'corto', 'tinte', 'peinados', 'mascarillas', 'depilación'];
-                const serviciosFiltrados = datosConCategoria.filter(s =>
-                    categoriasDamas.includes(s.categoriaAsignada)
-                );
+                // Ya no filtramos localmente, el backend devuelve solo los de dama
+                const serviciosFiltrados = datosConCategoria;
 
                 // 3. MAPEO FINAL PARA EL FRONTEND
                 // Adaptamos la data de la DB a las propiedades del componente React
@@ -173,9 +169,9 @@ function Servicios_dama() {
     const categories = [
         { id: 'todos', name: 'Todos los Servicios' },
         { id: 'uñas', name: 'Uñas' },
-        { id: 'largo', name: 'Cortes Cabello Largo' },
-        { id: 'corto', name: 'Cortes Cabello Corto' },
-        { id: 'tinte', name: 'Color / Tintes' },
+        { id: 'cortes cabello largo', name: 'Cortes Cabello Largo' },
+        { id: 'cortes cabello corto', name: 'Cortes Cabello Corto' },
+        { id: 'color / tintes', name: 'Color / Tintes' },
         { id: 'peinados', name: 'Peinados' },
         { id: 'mascarillas', name: 'Mascarillas' }
     ];
