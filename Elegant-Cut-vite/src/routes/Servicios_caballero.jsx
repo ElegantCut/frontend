@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AnimatedPage from "../components/shared/AnimatedPage";
 import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedList";
 import { servicesService } from '../lib/servicesService';
-import { getCloudinaryServiceUrl } from '../lib/utils/imageHelper';
+import { getCloudinaryServiceUrl, getCloudinaryBannerUrl } from '../lib/utils/imageHelper';
 
 function Servicios_caballero() {
   const navigate = useNavigate();
@@ -21,19 +21,29 @@ function Servicios_caballero() {
   // --- CARRUSEL ESTILO XIAOMI ---
   const carouselSlidesCab = [
     {
-      img: '/assets/images/servicios_caballeros/carrusel/barberia.png',
-      title: 'ESTILO Y TRADICIÓN',
-      subtitle: 'Técnicas clásicas con tendencias modernas'
+      img: getCloudinaryBannerUrl('Carrusel1_qq4zok'),
+      title: 'ESTILO MASCULINO',
+      subtitle: 'Refuerza tu imagen con cortes de alto nivel'
     },
     {
-      img: '/assets/images/servicios_caballeros/carrusel/servicios_general.png',
-      title: 'SERVICIOS PREMIUM',
-      subtitle: 'Cortes, barbas y tratamientos para el caballero moderno'
+      img: getCloudinaryBannerUrl('carrusel2_plq7dc.jpg'),
+      title: 'CUIDADO PERSONAL',
+      subtitle: 'Servicios diseñados para el hombre moderno'
     },
     {
-      img: '/assets/images/servicios_caballeros/carrusel/varios.png',
-      title: 'AMBIENTE ÚNICO',
-      subtitle: 'Diseñado para tu comodidad y relajación'
+      img: getCloudinaryBannerUrl('carrusel3_zgjztj'),
+      title: 'TENDENCIAS ACTUALES',
+      subtitle: 'Cortes y estilos que marcan presencia'
+    },
+    {
+      img: getCloudinaryBannerUrl('carrusel4_vbjpsm.jpg'),
+      title: 'PRECISIÓN Y DETALLE',
+      subtitle: 'Cada línea definida con perfección'
+    },
+    {
+      img: getCloudinaryBannerUrl('carrusel5_w14mpz.jpg'),
+      title: 'RENUEVA TU IMAGEN',
+      subtitle: 'Transforma tu look con expertos barberos'
     },
   ];
   const [currentSlide, setCurrentSlide] = useState(0);
