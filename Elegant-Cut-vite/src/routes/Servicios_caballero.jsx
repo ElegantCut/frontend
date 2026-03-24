@@ -6,6 +6,7 @@ import AnimatedPage from "../components/shared/AnimatedPage";
 import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedList";
 import { servicesService } from '../lib/servicesService';
 import { getCloudinaryServiceUrl, getCloudinaryBannerUrl } from '../lib/utils/imageHelper';
+import '../assets/styles/servicios_caballero/caballero.css';
 
 function Servicios_caballero() {
   const navigate = useNavigate();
