@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Instagram, Star, Award, Scissors, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import '../styles/Barbero_Portafolio/BarberPortfolioModal.css';
+import { getCloudinaryUrl } from '../lib/utils/imageHelper';
 
 const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberImage, barberTitle, portfolioDataProp }) => {
     const [portfolioData, setPortfolioData] = useState(null);
@@ -79,7 +80,7 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
                             <div className="portfolio-header">
                                 <div className="portfolio-avatar-container">
                                     <img
-                                        src={barberImage ? `/assets/images/barberos/${barberImage}` : '/assets/images/default-avatar.png'}
+                                        src={barberImage ? getCloudinaryUrl(barberImage) : '/assets/images/default-avatar.png'}
                                         alt={barberName}
                                         className="portfolio-avatar"
                                         onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(barberName) + '&background=random' }}
