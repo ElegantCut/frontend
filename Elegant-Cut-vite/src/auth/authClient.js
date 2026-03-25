@@ -242,7 +242,21 @@ export class AuthClient {
   // Obtener datos del usuario
   static getUser() {
     const userData = localStorage.getItem('user_data');
-    return userData ? JSON.parse(userData) : null;
+    if (userData && userData !== 'undefined' && userData !== 'null') {
+      try { return JSON.parse(userData); } catch(e) {}
+    }
+    
+    // Fallback: decode from token
+    const token = this.getToken();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload;
+      } catch (error) {
+        return null;
+      }
+    }
+    return null;
   }
 
   // Verificar si está logueado

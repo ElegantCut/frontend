@@ -81,13 +81,13 @@ const BarberAppointments = () => {
 
     const handleStatusUpdate = async (appointmentId, newStatus) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/barber-panel/appointments/${appointmentId}/status`, {
-                method: 'PUT',
+            const response = await fetch(`http://localhost:3001/api/appointments/${appointmentId}`, {
+                method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ newStatus })
+                body: JSON.stringify({ id_estado_cita: newStatus })
             });
 
             if (response.ok) {
@@ -107,13 +107,13 @@ const BarberAppointments = () => {
         if (!newDate || !newTime) return alert('Selecciona fecha y hora');
 
         try {
-            const response = await fetch(`http://localhost:3001/api/barber-panel/appointments/${selectedApt.id_reservas}/reschedule`, {
-                method: 'PUT',
+            const response = await fetch(`http://localhost:3001/api/appointments/${selectedApt.id_reservas}`, {
+                method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ newDate, newTime })
+                body: JSON.stringify({ fecha: newDate, id_horarios: parseInt(newTime) })
             });
 
             if (response.ok) {
@@ -460,8 +460,8 @@ const BarberAppointments = () => {
                                         required
                                     >
                                         <option value="">Selecciona una hora</option>
-                                        {availableSlots.map(slot => (
-                                            <option key={slot} value={slot}>{slot}</option>
+                                        {Array.isArray(availableSlots) && availableSlots.filter(s => s.isAvailable).map(slot => (
+                                            <option key={slot.id} value={slot.id}>{slot.time}</option>
                                         ))}
                                     </select>
                                     {loadingSlots && <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.25rem' }}>Cargando disponibilidad...</p>}

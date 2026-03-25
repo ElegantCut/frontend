@@ -19,6 +19,9 @@ const BarbersTab = () => {
     apellido1: '',
     apellido2: '',
     telefono: '',
+    biografia: '',
+    experiencia: '',
+    especialidades: '',
     image: null
   });
 
@@ -63,6 +66,9 @@ const BarbersTab = () => {
       Object.keys(newBarber).forEach(key => {
         if (key === 'image' && newBarber[key]) {
           formData.append('image', newBarber[key]);
+        } else if (key === 'especialidades' && newBarber[key]) {
+          const arr = newBarber[key].split(',').map(item => item.trim()).filter(Boolean);
+          formData.append('especialidades', JSON.stringify(arr));
         } else if (key !== 'image') {
           formData.append(key, newBarber[key]);
         }
@@ -83,7 +89,7 @@ const BarbersTab = () => {
         setNewBarber({
           username: '', password: '', email: '',
           prim_nombre: '', seg_nombre: '', apellido1: '', apellido2: '',
-          telefono: '', image: null
+          telefono: '', biografia: '', experiencia: '', especialidades: '', image: null
         });
         loadBarbers();
       } else {
@@ -229,6 +235,22 @@ const BarbersTab = () => {
                         <label className="form-label">Foto de Perfil</label>
                         <input type="file" className="form-control" accept="image/*" onChange={handleFileChange} />
                         <div className="form-text">Formatos: JPG, PNG. Máx 5MB.</div>
+                      </div>
+                      <div className="col-12 mt-4">
+                        <h6 className="border-bottom pb-2">Información del Portafolio</h6>
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Biografía (Sobre mí)</label>
+                        <textarea className="form-control" name="biografia" value={newBarber.biografia} onChange={handleInputChange} rows="3" placeholder="Ej. Profesional con más de 5 años de experiencia en cortes clásicos..."></textarea>
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Experiencia</label>
+                        <input type="text" className="form-control" name="experiencia" value={newBarber.experiencia} onChange={handleInputChange} placeholder="Ej. Senior Barber" />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Especialidades</label>
+                        <input type="text" className="form-control" name="especialidades" value={newBarber.especialidades} onChange={handleInputChange} placeholder="Ej. Corte Clásico, Fade, Barba" />
+                        <div className="form-text">Separadas por comas.</div>
                       </div>
                     </div>
                   </div>

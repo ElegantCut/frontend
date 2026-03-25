@@ -24,19 +24,14 @@ function Barberos() {
     const fetchBarbers = async () => {
       try {
         // Obtenemos los barberos base y los portafolios nuevos en paralelo
-        const [data, portfolios] = await Promise.all([
-          barberService.getAllBarbers(),
-          barberService.getAllPortfolios()
+        const [data] = await Promise.all([
+          barberService.getAllBarbers()
         ]);
 
         if (data) {
           const transformedBarbers = data.map((realBarber) => {
             // Buscamos si el barbero tiene un portafolio registrado en la tabla portabarbero
-            // Matchamos convirtiendo a String por seguridad del tipo de dato
-            const portfolio = portfolios.find(p =>
-              String(p.id_usuario) === String(realBarber.id_usuario) ||
-              String(p.barbero_id) === String(realBarber.id_usuario) // asumiendo posibles nombres para la FK
-            );
+            const portfolio = (realBarber.portafolios && realBarber.portafolios[0]);
             return {
               id: realBarber.id_usuario,
               name: `${realBarber.prim_nombre} ${realBarber.apellido1}`,
