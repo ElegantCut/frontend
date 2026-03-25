@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../lib/hooks/UseAuth';
+import { useAuth } from '../auth/UseAuth';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedList';
 import './Reseñas.css';

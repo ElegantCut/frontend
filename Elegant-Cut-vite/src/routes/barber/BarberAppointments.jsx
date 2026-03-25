@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedContainer, AnimatedItem } from '../../components/shared/AnimatedList';
 import { Calendar, Clock, User, Phone, Mail, CheckCircle, XCircle, Edit } from 'lucide-react';
-import { AuthClient } from '../../lib/utils/authClient';
+import { appointmentService } from '../../lib/appointmentService';
+import { useAuth } from '../../auth/UseAuth.jsx';
 
 const BarberAppointments = () => {
     const [appointments, setAppointments] = useState([]);
@@ -10,6 +11,7 @@ const BarberAppointments = () => {
     const [filter, setFilter] = useState('all'); // all, pending, completed, cancelled
 
     // Estados para Reprogramación (Aplazar)
+    const { user, token } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [selectedApt, setSelectedApt] = useState(null);
     const [newDate, setNewDate] = useState('');
@@ -30,19 +32,30 @@ const BarberAppointments = () => {
 
     const fetchAppointments = async () => {
         try {
-            const token = AuthClient.getToken();
-            const response = await fetch('http://localhost:3001/api/barber-panel/my-appointments', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            const barberId = user?.userId || user?.id;
 
-            if (response.ok) {
-                const data = await response.json();
-                setAppointments(data.data || []);
-            } else {
-                console.error('Error fetching appointments');
-            }
+            if (!barberId) return;
+
+            // Llamada a tu NUEVA ruta en NestJS
+            const rawData = await appointmentService.getAppointmentsByBarber(barberId);
+
+            // Garantizar que sea un arreglo (si Nest retorna { data: [...] } lo extraemos)
+            const aptList = Array.isArray(rawData) ? rawData : (rawData.data || []);
+
+            // Mapeo seguro para que el Frontend detecte las propiedades prisma
+            const mappedAppointments = aptList.map(apt => ({
+                id_reservas: apt.id_reservas || apt.id,
+                fecha: apt.fecha,
+                hora_inicio_formatted: apt.hora_inicio_formatted || apt.hora_inicio?.substring(0, 5) || "00:00",
+                id_estado_cita: apt.id_estado_cita || apt.estado || 1,
+                cliente_nombre: apt.cliente_nombre || (apt.usuario ? `${apt.usuario.prim_nombre} ${apt.usuario.apellido1}` : 'Cliente Sin Nombre'),
+                cliente_telefono: apt.cliente_telefono || (apt.usuario ? apt.usuario.telefono : 'N/A'),
+                cliente_email: apt.cliente_email || (apt.usuario ? apt.usuario.email : ''),
+                servicios: apt.servicios || (apt.servicio ? apt.servicio.nombre_servicio : 'Servicio general'),
+                observaciones: apt.observaciones || apt.notas || ''
+            }));
+
+            setAppointments(mappedAppointments);
         } catch (error) {
             console.error('Error:', error);
         } finally {
@@ -53,7 +66,7 @@ const BarberAppointments = () => {
     const fetchAvailableSlots = async () => {
         setLoadingSlots(true);
         try {
-            const barberId = AuthClient.getUser()?.userId;
+            const barberId = user?.userId || user?.id;
             const response = await fetch(`http://localhost:3001/api/appointments/availability?date=${newDate}&barberId=${barberId}`);
             if (response.ok) {
                 const slots = await response.json();
@@ -68,14 +81,13 @@ const BarberAppointments = () => {
 
     const handleStatusUpdate = async (appointmentId, newStatus) => {
         try {
-            const token = AuthClient.getToken();
-            const response = await fetch(`http://localhost:3001/api/barber-panel/appointments/${appointmentId}/status`, {
-                method: 'PUT',
+            const response = await fetch(`http://localhost:3001/api/appointments/${appointmentId}`, {
+                method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ newStatus })
+                body: JSON.stringify({ id_estado_cita: newStatus })
             });
 
             if (response.ok) {
@@ -95,14 +107,13 @@ const BarberAppointments = () => {
         if (!newDate || !newTime) return alert('Selecciona fecha y hora');
 
         try {
-            const token = AuthClient.getToken();
-            const response = await fetch(`http://localhost:3001/api/barber-panel/appointments/${selectedApt.id_reservas}/reschedule`, {
-                method: 'PUT',
+            const response = await fetch(`http://localhost:3001/api/appointments/${selectedApt.id_reservas}`, {
+                method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ newDate, newTime })
+                body: JSON.stringify({ fecha: newDate, id_horarios: parseInt(newTime) })
             });
 
             if (response.ok) {
@@ -449,8 +460,8 @@ const BarberAppointments = () => {
                                         required
                                     >
                                         <option value="">Selecciona una hora</option>
-                                        {availableSlots.map(slot => (
-                                            <option key={slot} value={slot}>{slot}</option>
+                                        {Array.isArray(availableSlots) && availableSlots.filter(s => s.isAvailable).map(slot => (
+                                            <option key={slot.id} value={slot.id}>{slot.time}</option>
                                         ))}
                                     </select>
                                     {loadingSlots && <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.25rem' }}>Cargando disponibilidad...</p>}

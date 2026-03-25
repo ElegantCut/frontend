@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from "../../lib/hooks/UseAuth";
+import { useAuth } from "../../auth/UseAuth.jsx";
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -112,7 +112,7 @@ function Header() {
                 <div className="brand-container">
                     <div className="logo">
                         <img
-                            src="/assets/images/logo.png"
+                            src="/assets/logo.png"
                             alt="ElegantCut Barbería"
                             className="logo-img"
                         />
@@ -207,7 +207,7 @@ function Header() {
                 {/* Logo móvil pequeño - ORGANIZADO AL PRINCIPIO */}
                 <div className="mobile-brand">
                     <img
-                        src="/assets/images/logo.png"
+                        src="/assets/logo.png"
                         alt="ElegantCut Barbería"
                         className="mobile-logo-small"
                     />

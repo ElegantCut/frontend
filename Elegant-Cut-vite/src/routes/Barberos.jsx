@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedList';
+import { barberService } from '../lib/barberService';
+import { getCloudinaryUrl } from '../lib/utils/imageHelper';
+import BarberPortfolioModal from './BarberPortfolioModal';
 
 function Barberos() {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -8,36 +11,65 @@ function Barberos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Plantillas de datos enriquecidos (para UI)
-  // Fetch de barberos desde el backend
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBarber, setSelectedBarber] = useState(null);
+
+  const handleOpenPortfolio = (barber) => {
+    setSelectedBarber(barber);
+    setIsModalOpen(true);
+  };
+
   useEffect(() => {
     const fetchBarbers = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/barbers');
-        const result = await response.json();
+        // Obtenemos los barberos base y los portafolios nuevos en paralelo
+        const [data] = await Promise.all([
+          barberService.getAllBarbers()
+        ]);
 
-        if (result.success) {
-          // Transformar datos reales a estructura de UI
-          const transformedBarbers = result.data.map((realBarber) => ({
-            id: realBarber.id_usuario,
-            name: `${realBarber.prim_nombre} ${realBarber.apellido1}`, // Nombre real de la BD
-            title: "Barbero Profesional", // Default
-            experience: "Experto", // Default
-            rating: "5.0", // Default
-            bio: "Barbero profesional del equipo Elegant Cut, dedicado a ofrecer la mejor experiencia y estilo a nuestros clientes.", // Default
-            stats: { clients: "+1000", recommend: "100%" }, // Default
-            categories: ["classic", "modern"], // Default categories for filtering
-            specialties: ["Corte Clásico", "Barba"], // Default
-            badge: "expert", // Default tag
-            image: realBarber.foto_perfil || null // Use DB photo or null (render logic handles fallback) 
-          }));
+        if (data) {
+          const transformedBarbers = data.map((realBarber) => {
+            // Buscamos si el barbero tiene un portafolio registrado en la tabla portabarbero
+            const portfolio = (realBarber.portafolios && realBarber.portafolios[0]);
+            return {
+              id: realBarber.id_usuario,
+              name: `${realBarber.prim_nombre} ${realBarber.apellido1}`,
+              title: "Barbero Profesional",
+              experience: portfolio?.experiencia || "Experto",
+              rating: portfolio?.calificacion ? String(portfolio.calificacion) : "5.0",
+              bio: portfolio?.biografia || "Barbero profesional del equipo Elegant Cut...",
+              stats: {
+                clients: portfolio?.reseñas_count ? `+${portfolio.reseñas_count * 10}` : "+1000",
+                recommend: "100%"
+              },
+              categories: ["classic", "modern"],
+              specialties: (() => {
+                try {
+                  // MySQL JSON return stringified array or real array depending on the db driver
+                  const specs = typeof portfolio?.especialidades === 'string'
+                    ? JSON.parse(portfolio.especialidades)
+                    : portfolio?.especialidades;
+
+                  return Array.isArray(specs) && specs.length > 0 ? specs : ["Corte Clásico", "Barba"];
+                } catch (e) {
+                  return ["Corte Clásico", "Barba"];
+                }
+              })(),
+              badge: "expert",
+              image: realBarber.foto_perfil || null, // Se mantiene foto_perfil del usuario base
+              portfolioData: portfolio || null
+            };
+          });
+
           setBarbers(transformedBarbers);
         } else {
           setError('Error al cargar los barberos');
         }
       } catch (err) {
         console.error("Error fetching barbers:", err);
-        setError('Error de conexión con el servidor');
+        // Mejor manejo de errores para que no esté hardcodeado al puerto 3001 siempre.
+        setError(err.message === 'Network Error' ? 'Error de red: Verifica que el servidor (puerto 3001) esté corriendo y permita CORS.' : 'Error al cargar los datos del servidor');
       } finally {
         setLoading(false);
       }
@@ -87,10 +119,14 @@ function Barberos() {
         <div className="barber-experience">{barber.experience}</div>
       </div>
       <div className="barber-image">
-        <img
-          src={`/assets/images/barberos/${barber.image}`}
-          alt={`${barber.name} - ${barber.title}`}
-        />
+        {barber.image && !barber.image.includes('default.png') ? (
+          <img
+            src={getCloudinaryUrl(barber.image)}
+            alt={`${barber.name} - ${barber.title}`}
+            className="w-full h-full object-cover"
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+        ) : null}
         <div className="barber-overlay">
           <div className="specialties">
             {barber.specialties.map((specialty, index) => (
@@ -124,7 +160,7 @@ function Barberos() {
           </div>
         </div>
         <div className="barber-actions">
-          <button className="btn-primary">Ver Portafolio</button>
+          <button className="btn-primary" onClick={() => handleOpenPortfolio(barber)}>Ver Portafolio</button>
           <button className="btn-secondary">Reservar Cita</button>
         </div>
       </div>
@@ -146,6 +182,19 @@ function Barberos() {
           {/* ... existing CTA ... */}
         </main>
       </div>
+
+      {/* Portfolio Modal Integration */}
+      {selectedBarber && (
+        <BarberPortfolioModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          barberId={selectedBarber.id}
+          barberName={selectedBarber.name}
+          barberImage={selectedBarber.image}
+          barberTitle={selectedBarber.title}
+          portfolioDataProp={selectedBarber.portfolioData}
+        />
+      )}
     </AnimatedPage>
   )
 }

@@ -99,6 +99,11 @@
     transition: transform 0.5s ease;
 }
 
+/* Ocultar el icono por defecto "person" */
+.barber-image::before {
+    display: none !important;
+}
+
 .barber-card:hover .barber-image img {
     transform: scale(1.05);
 }
