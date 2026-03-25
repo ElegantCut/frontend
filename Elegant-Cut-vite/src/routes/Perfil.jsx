@@ -55,7 +55,6 @@ function Perfil() {
 
     const handleLogout = () => {
         AuthClient.logout();
-        navigate('/login');
     };
 
     if (loading) {

@@ -231,7 +231,10 @@ export class AuthClient {
   static logout() {
     localStorage.removeItem('jwt_token');
     localStorage.removeItem('user_data');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     console.log('👋 Sesión cerrada');
+    window.location.replace('/login');
   }
 
   // Obtener token

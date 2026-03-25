@@ -11,7 +11,6 @@ const BarberSidebar = () => {
 
     const handleLogout = () => {
         AuthClient.logout();
-        navigate('/login');
     };
 
     const menuItems = [

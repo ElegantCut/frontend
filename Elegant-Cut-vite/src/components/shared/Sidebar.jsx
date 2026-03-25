@@ -10,7 +10,6 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
 
   const handleLogout = () => {
     AuthClient.logout();
-    navigate('/login');
   };
 
   const menuItems = [

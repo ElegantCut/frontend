@@ -33,7 +33,9 @@ export const authService = {
     logout: () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        localStorage.removeItem('jwt_token');
+        localStorage.removeItem('user_data');
+        window.location.replace('/login');
     },
 
     // 4. Método para solicitar recuperación de contraseña

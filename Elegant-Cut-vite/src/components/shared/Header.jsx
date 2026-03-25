@@ -46,7 +46,6 @@ function Header() {
     const handleLogout = () => {
         logout();
         closeMenu();
-        navigate('/');
     };
 
     const handleLogin = () => {
