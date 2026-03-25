@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { Navigate } from 'react-router-dom'
 import { useScroll } from '../../lib/hooks/useScroll'
 import AnimatedPage from '../../components/shared/AnimatedPage'
 import { AnimatedContainer, AnimatedItem } from '../../components/shared/AnimatedList'
 import { barberService } from '../../lib/barberService'
 import { getCloudinaryUrl, getCloudinaryHomeUrl } from '../../lib/utils/imageHelper'
+import { useAuth } from '../../auth/UseAuth'
 
 const fadeIn = {
     initial: { opacity: 0, y: 30 },
@@ -22,6 +24,14 @@ const slideInRight = {
 };
 
 function Home() {
+    const { isAuthenticated, user } = useAuth();
+    
+    // REDIRECCIÓN AUTÓMATICA POR ROL SI LA SESIÓN ESTÁ ACTIVA
+    if (isAuthenticated && user) {
+        if (user.id_rol === 1 || user.role === 'admin') return <Navigate to="/admin" replace />;
+        if (user.id_rol === 3 || user.role === 'barber') return <Navigate to="/barber" replace />;
+    }
+
     // LLAMAR EL HOOK - Esto activa el efecto de scroll
     useScroll();
 

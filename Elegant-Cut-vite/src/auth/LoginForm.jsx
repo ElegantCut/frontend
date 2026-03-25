@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import { AuthClient } from './authClient';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import './LoginForm.css';
 import { authService } from './authService';
 import { useAuth } from './UseAuth.jsx';
 
 function LoginForm() {
-  const { login } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
+  
+  // Si ya tiene sesión, redirigir según su rol
+  if (isAuthenticated && user) {
+    if (user.id_rol === 1 || user.role === 'admin') return <Navigate to="/admin" replace />;
+    if (user.id_rol === 3 || user.role === 'barber') return <Navigate to="/barber" replace />;
+    return <Navigate to="/" replace />;
+  }
+
   // State for active view: 'login', 'register', 'forgot-password', 'verification'
   const [activeView, setActiveView] = useState('login');
 
