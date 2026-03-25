@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthClient } from '../auth/authClient';
+import { useAuth } from '../auth/UseAuth.jsx';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedList';
 
 function Perfil() {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const { isAuthenticated, user, loading: authLoading, logout } = useAuth();
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState({
         nombre: '',
@@ -18,25 +17,24 @@ function Perfil() {
     });
 
     useEffect(() => {
-        // Verificar si hay sesión iniciada
-        if (!AuthClient.isLoggedIn()) {
-            // Si no hay sesión, redirigir al login
+        // Si ya cargó y no está autenticado, pa fuera
+        if (!authLoading && !isAuthenticated) {
             navigate('/login');
-            return;
         }
+    }, [authLoading, isAuthenticated, navigate]);
 
-        // Obtener datos del usuario
-        const userData = AuthClient.getUser();
-        setUser(userData);
-        setFormData({
-            nombre: userData.nombre || '',
-            apellido: userData.apellido || '',
-            email: userData.email || '',
-            telefono: userData.telefono || '',
-            direccion: userData.direccion || ''
-        });
-        setLoading(false);
-    }, [navigate]);
+    useEffect(() => {
+        // Llenar el formulario con los datos globales del usuario
+        if (user) {
+            setFormData({
+                nombre: user.nombre || user.name || '',
+                apellido: user.apellido || '',
+                email: user.email || '',
+                telefono: user.telefono || '',
+                direccion: user.direccion || ''
+            });
+        }
+    }, [user]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -47,17 +45,15 @@ function Perfil() {
     };
 
     const handleSaveChanges = async () => {
-        // Aquí puedes agregar la lógica para guardar cambios en el backend
         console.log('Guardando cambios:', formData);
         setEditMode(false);
-        // TODO: Llamar al backend para actualizar datos
     };
 
     const handleLogout = () => {
-        AuthClient.logout();
+        logout();
     };
 
-    if (loading) {
+    if (authLoading) {
         return (
             <div className="perfil-container">
                 <div className="loading-spinner">
@@ -82,7 +78,7 @@ function Perfil() {
                         <div className="perfil-avatar">
                             <div className="avatar-circle">
                                 <span className="avatar-initials">
-                                    {user.nombre?.charAt(0)}{user.apellido?.charAt(0)}
+                                    {(user.nombre || user.name)?.charAt(0)}{(user.apellido || '')?.charAt(0)}
                                 </span>
                             </div>
                             <button className="avatar-edit-btn">
@@ -90,7 +86,7 @@ function Perfil() {
                             </button>
                         </div>
                         <div className="perfil-header-info">
-                            <h1>{user.nombre} {user.apellido}</h1>
+                            <h1>{user.nombre || user.name} {user.apellido}</h1>
                             <p className="perfil-username">@{user.username}</p>
                             <span className={`perfil-role role-${user.role}`}>
                                 {user.role === 'admin' ? 'Administrador' :
@@ -150,7 +146,7 @@ function Perfil() {
                                             className="edit-input"
                                         />
                                     ) : (
-                                        <p>{user.nombre}</p>
+                                        <p>{user.nombre || user.name}</p>
                                     )}
                                 </div>
 
