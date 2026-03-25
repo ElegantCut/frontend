@@ -1,0 +1,191 @@
+/* src/components/shared/PerfilModals.css */
+.perfil-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.perfil-modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: modalScaleIn 0.3s ease;
+}
+
+.perfil-modal-content.notificaciones-content {
+    max-width: 500px;
+}
+
+@keyframes modalScaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.perfil-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s;
+}
+
+.perfil-modal-close:hover {
+    color: #c62828;
+}
+
+.perfil-modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.perfil-modal-msg {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.msg-error { background: #ffebee; color: #c62828; }
+.msg-success { background: #e8f5e9; color: #2e7d32; }
+.msg-info { background: #e3f2fd; color: #1565c0; }
+
+.perfil-modal-step p {
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #444;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #c62828;
+}
+
+.perfil-modal-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.perfil-modal-btn.primary {
+    background-color: #c62828;
+    color: white;
+}
+
+.perfil-modal-btn.primary:hover:not(:disabled) {
+    background-color: #b71c1c;
+}
+
+.perfil-modal-btn.secondary {
+    background-color: #f5f5f5;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.perfil-modal-btn.secondary:hover:not(:disabled) {
+    background-color: #e0e0e0;
+}
+
+.perfil-modal-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.perfil-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.notificaciones-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.notif-loading, .notif-empty {
+    text-align: center;
+    color: #666;
+    padding: 20px 0;
+}
+
+.notif-item {
+    display: flex;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    gap: 15px;
+}
+
+.notif-item:last-child {
+    border-bottom: none;
+}
+
+.notif-icon {
+    font-size: 1.5rem;
+    padding-top: 2px;
+}
+
+.notif-item.success .notif-icon { color: #2e7d32; }
+.notif-item.warning .notif-icon { color: #f57c00; }
+
+.notif-body h4 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.notif-body p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.notif-date {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: #999;
+}

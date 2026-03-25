@@ -30,27 +30,35 @@ const itemVariants = {
     }
 };
 
-export const AnimatedContainer = ({ children, className }) => (
-    <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className={className}
-    >
-        {children}
-    </motion.div>
-);
+export const AnimatedContainer = ({ children, className, tag = 'div', ...props }) => {
+    const MotionComponent = motion[tag] || motion.div;
+    return (
+        <MotionComponent
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className={className}
+            {...props}
+        >
+            {children}
+        </MotionComponent>
+    );
+};
 
-export const AnimatedItem = ({ children, className }) => (
-    <motion.div
-        variants={itemVariants}
-        className={className}
-        whileHover={{
-            y: -5,
-            transition: { duration: 0.3, ease: "easeOut" }
-        }}
-        whileTap={{ scale: 0.98 }}
-    >
-        {children}
-    </motion.div>
-);
+export const AnimatedItem = ({ children, className, tag = 'div', ...props }) => {
+    const MotionComponent = motion[tag] || motion.div;
+    return (
+        <MotionComponent
+            variants={itemVariants}
+            className={className}
+            whileHover={{
+                y: -5,
+                transition: { duration: 0.3, ease: "easeOut" }
+            }}
+            whileTap={{ scale: 0.98 }}
+            {...props}
+        >
+            {children}
+        </MotionComponent>
+    );
+};
