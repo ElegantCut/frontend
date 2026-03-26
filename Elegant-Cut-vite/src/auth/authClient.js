@@ -1,4 +1,4 @@
-// src/utils/authClient.js
+import api from '../lib/axios';
 
 export class AuthClient {
 
@@ -7,22 +7,15 @@ export class AuthClient {
     try {
       console.log('Enviando registro al servidor...');
 
-      const response = await fetch('http://localhost:3001/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registerData),
-      });
-
-      const data = await response.json();
+      const response = await api.post('/auth/register', registerData);
+      const data = response.data;
 
       console.log(' Respuesta del servidor (registro):', data);
 
       if (data.success && data.token) {
         // Guardar token y datos del usuario automáticamente
-        localStorage.setItem('jwt_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
 
         console.log(' Registro exitoso!');
         return { success: true, user: data.user };
@@ -42,22 +35,20 @@ export class AuthClient {
       const token = this.getToken();
       if (!token) return { success: false, error: 'No autenticado' };
 
-      const response = await fetch('http://localhost:3001/api/users/profile-photo', {
-        method: 'POST',
+      const response = await api.post('/users/profile-photo', formData, {
         headers: {
           'Authorization': `Bearer ${token}`
-        },
-        body: formData
+        }
       });
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         // Actualizar datos locales del usuario con la nueva foto
         const userData = this.getUser();
         if (userData) {
           userData.photoUrl = data.photoUrl;
-          localStorage.setItem('user_data', JSON.stringify(userData));
+          localStorage.setItem('user', JSON.stringify(userData));
         }
         return { success: true, photoUrl: data.photoUrl };
       } else {
@@ -74,22 +65,15 @@ export class AuthClient {
     try {
       console.log('📞 Enviando login al servidor...');
 
-      const response = await fetch('http://localhost:3001/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
+      const response = await api.post('/auth/login', { username, password });
+      const data = response.data;
 
       console.log('📨 Respuesta del servidor:', data);
 
       if (data.success && data.token) {
         // Guardar token y datos del usuario
-        localStorage.setItem('jwt_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
 
         console.log('✅ Login exitoso!');
         return { success: true, user: data.user };
@@ -108,15 +92,8 @@ export class AuthClient {
     try {
       console.log('📧 Solicitando código de recuperación para:', email);
 
-      const response = await fetch('http://localhost:3001/auth/solicitar-recuperacion', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
+      const response = await api.post('/auth/solicitar-recuperacion', { email });
+      const data = response.data;
 
       console.log('📨 Respuesta del servidor (solicitar-recuperacion):', data);
 
@@ -142,15 +119,8 @@ export class AuthClient {
     try {
       console.log('🔐 Verificando código para:', email);
 
-      const response = await fetch('http://localhost:3001/auth/restablecer-contrasena', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, codigo, newPassword: nuevaContrasena }),
-      });
-
-      const data = await response.json();
+      const response = await api.post('/auth/restablecer-contrasena', { email, codigo, newPassword: nuevaContrasena });
+      const data = response.data;
 
       console.log('📨 Respuesta del servidor (verificar-codigo-recuperacion):', data);
 
@@ -172,15 +142,8 @@ export class AuthClient {
     try {
       console.log('📞 Recuperando contraseña para:', username);
 
-      const response = await fetch('http://localhost:3001/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, newPassword }),
-      });
-
-      const data = await response.json();
+      const response = await api.post('/auth/forgot-password', { username, newPassword });
+      const data = response.data;
 
       console.log('📨 Respuesta del servidor (forgot-password):', data);
 
@@ -202,15 +165,8 @@ export class AuthClient {
     try {
       console.log('📞 Actualizando contraseña para:', username);
 
-      const response = await fetch('http://localhost:3001/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, newPassword }),
-      });
-
-      const data = await response.json();
+      const response = await api.post('/auth/forgot-password', { username, newPassword });
+      const data = response.data;
 
       console.log('📨 Respuesta del servidor (update-password):', data);
 
@@ -229,19 +185,19 @@ export class AuthClient {
 
   // Función para cerrar sesión
   static logout() {
-    localStorage.removeItem('jwt_token');
-    localStorage.removeItem('user_data');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     console.log('👋 Sesión cerrada');
   }
 
   // Obtener token
   static getToken() {
-    return localStorage.getItem('jwt_token');
+    return localStorage.getItem('token');
   }
 
   // Obtener datos del usuario
   static getUser() {
-    const userData = localStorage.getItem('user_data');
+    const userData = localStorage.getItem('user');
     if (userData && userData !== 'undefined' && userData !== 'null') {
       try { return JSON.parse(userData); } catch(e) {}
     }

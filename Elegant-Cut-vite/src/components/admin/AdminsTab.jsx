@@ -1,3 +1,4 @@
+import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
@@ -25,8 +26,8 @@ const AdminsTab = () => {
 
     const loadAdmins = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:3001/admin/administrators');
-            const data = await response.json();
+            const response = await api.get('/admin/administrators');
+            const data = response.data;
 
             if (data.success && data.data) {
                 setAdmins(data.data);
@@ -45,18 +46,14 @@ const AdminsTab = () => {
         e.preventDefault();
         try {
             const url = editingId
-                ? `http://127.0.0.1:3001/admin/administrators/${editingId}`
-                : 'http://127.0.0.1:3001/admin/administrators';
+                ? `/admin/administrators/${editingId}`
+                : '/admin/administrators';
 
-            const method = editingId ? 'PUT' : 'POST';
+            const method = editingId ? 'put' : 'post';
 
-            const response = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
+            const response = await api[method](url, formData);
 
-            const data = await response.json();
+            const data = response.data;
 
             if (data.success) {
                 loadAdmins();
@@ -76,10 +73,8 @@ const AdminsTab = () => {
         if (!window.confirm(`¿${action.charAt(0).toUpperCase() + action.slice(1)} este administrador?`)) return;
 
         try {
-            const response = await fetch(`http://127.0.0.1:3001/admin/administrators/${id}/toggle`, {
-                method: 'PUT'
-            });
-            const data = await response.json();
+            const response = await api.put(`/admin/administrators/${id}/toggle`);
+            const data = response.data;
 
             if (data.success) {
                 setAdmins(admins.map(a =>

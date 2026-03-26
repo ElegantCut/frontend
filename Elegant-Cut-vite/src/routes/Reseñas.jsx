@@ -1,3 +1,4 @@
+import api from '../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../auth/UseAuth';
 import AnimatedPage from '../components/shared/AnimatedPage';
@@ -34,13 +35,8 @@ const Reseñas = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/reviews');
-      if (response.ok) {
-        const data = await response.json();
-        setReviews(data);
-      } else {
-        console.error('Error fetching reviews');
-      }
+      const response = await api.get('/reviews');
+      setReviews(response.data);
     } catch (error) {
       console.error('Network error:', error);
     } finally {
@@ -61,33 +57,23 @@ const Reseñas = () => {
     setStatus({ type: 'loading', message: '' });
 
     try {
-      const response = await fetch('http://localhost:3001/api/reviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      const response = await api.post('/reviews', formData);
+
+      setStatus({ type: 'success', message: '¡Gracias por tu reseña!' });
+      setFormData({
+        nombre_cliente: (isAuthenticated && user?.name) || '',
+        email_cliente: (isAuthenticated && user?.email) || '',
+        calificacion: '5',
+        comentario: ''
       });
+      fetchReviews();
 
-      if (response.ok) {
-        setStatus({ type: 'success', message: '¡Gracias por tu reseña!' });
-        setFormData({
-          nombre_cliente: (isAuthenticated && user?.name) || '',
-          email_cliente: (isAuthenticated && user?.email) || '',
-          calificacion: '5',
-          comentario: ''
-        });
-        fetchReviews();
-
-        setTimeout(() => {
-          setStatus({ type: '', message: '' });
-        }, 3000);
-      } else {
-        setStatus({ type: 'error', message: 'Error al enviar la reseña' });
-      }
+      setTimeout(() => {
+        setStatus({ type: '', message: '' });
+      }, 3000);
     } catch (error) {
       console.error('Error:', error);
-      setStatus({ type: 'error', message: 'Error de conexión' });
+      setStatus({ type: 'error', message: 'Error al enviar la reseña' });
     }
   };
 

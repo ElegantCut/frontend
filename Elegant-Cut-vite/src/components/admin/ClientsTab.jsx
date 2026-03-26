@@ -1,3 +1,4 @@
+import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
 
@@ -12,8 +13,8 @@ const ClientsTab = () => {
 
   const loadClients = async () => {
     try {
-      const response = await fetch('http://localhost:3001/admin/clients');
-      const data = await response.json();
+      const response = await api.get('/clients');
+      const data = response.data;
 
       if (data.success && data.data) {
         setClients(data.data);
@@ -31,8 +32,8 @@ const ClientsTab = () => {
   const handleDeactivate = async (id) => {
     if (!window.confirm('¿Desactivar este cliente?')) return;
     try {
-      const response = await fetch(`http://localhost:3001/admin/clients/${id}`, { method: 'DELETE' });
-      const data = await response.json();
+      const response = await api.delete(`/clients/${id}`);
+      const data = response.data;
       if (data.success) {
         loadClients();
       } else {

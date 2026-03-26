@@ -1,3 +1,4 @@
+import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,23 +28,17 @@ const ReviewsTab = () => {
         setLoading(true);
         setError(null);
         try {
-            const token = localStorage.getItem('jwt_token');
             const url = filter === 'all'
-                ? 'http://localhost:3001/api/reviews/admin/all'
-                : `http://localhost:3001/api/reviews/admin/all?status=${filter}`;
+                ? '/reviews/admin/all'
+                : `/reviews/admin/all?status=${filter}`;
 
-            const response = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await api.get(url);
 
-            if (response.ok) {
-                const data = await response.json();
-                setReviews(Array.isArray(data) ? data : []);
-            } else {
-                setError('No se pudieron cargar las reseñas.');
-            }
+            const data = response.data;
+            setReviews(Array.isArray(data) ? data : []);
         } catch (err) {
-            setError('Error de conexión con el servidor.');
+            setError('No se pudieron cargar las reseñas.');
+            console.error('Error loading reviews:', err);
         } finally {
             setLoading(false);
         }
@@ -51,16 +46,8 @@ const ReviewsTab = () => {
 
     const handleStatusChange = async (id, newStatus) => {
         try {
-            const token = localStorage.getItem('jwt_token');
-            const response = await fetch(`http://localhost:3001/api/reviews/admin/${id}/status`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ estado: newStatus })
-            });
-            if (response.ok) {
+            const response = await api.patch(`/reviews/admin/${id}/status`, { estado: newStatus });
+            if (response.status === 200) {
                 setReviews(prev => prev.map(r => r.id_resena === id ? { ...r, estado: newStatus } : r));
             }
         } catch (err) { alert('Error de conexión'); }
@@ -69,12 +56,8 @@ const ReviewsTab = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('¿Eliminar permanentemente?')) return;
         try {
-            const token = localStorage.getItem('jwt_token');
-            const response = await fetch(`http://localhost:3001/api/reviews/admin/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (response.ok) {
+            const response = await api.delete(`/reviews/admin/${id}`);
+            if (response.status === 200) {
                 setReviews(prev => prev.filter(r => r.id_resena !== id));
             }
         } catch (err) { alert('Error de conexión'); }

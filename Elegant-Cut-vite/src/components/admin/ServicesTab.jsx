@@ -1,3 +1,4 @@
+import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
 
@@ -12,8 +13,8 @@ const ServicesTab = () => {
 
   const loadServices = async () => {
     try {
-      const response = await fetch('http://localhost:3001/admin/services');
-      const data = await response.json();
+      const response = await api.get('/services');
+      const data = response.data;
       if (data.success && data.data) {
         setServices(data.data);
       } else {

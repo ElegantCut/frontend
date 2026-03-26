@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedContainer, AnimatedItem } from '../../components/shared/AnimatedList';
 import { Calendar, Clock, User, Phone, Mail, CheckCircle, XCircle, Edit } from 'lucide-react';
 import { appointmentService } from '../../lib/appointmentService';
+import api from '../../lib/axios';
 import { useAuth } from '../../auth/UseAuth.jsx';
 
 const BarberAppointments = () => {
@@ -67,11 +68,8 @@ const BarberAppointments = () => {
         setLoadingSlots(true);
         try {
             const barberId = user?.userId || user?.id;
-            const response = await fetch(`http://localhost:3001/api/appointments/availability?date=${newDate}&barberId=${barberId}`);
-            if (response.ok) {
-                const slots = await response.json();
-                setAvailableSlots(slots);
-            }
+            const response = await api.get(`/appointments/availability?date=${newDate}&barberId=${barberId}`);
+            setAvailableSlots(response.data);
         } catch (error) {
             console.error('Error fetching slots:', error);
         } finally {
@@ -81,16 +79,9 @@ const BarberAppointments = () => {
 
     const handleStatusUpdate = async (appointmentId, newStatus) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/appointments/${appointmentId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id_estado_cita: newStatus })
-            });
+            const response = await api.patch(`/appointments/${appointmentId}`, { id_estado_cita: newStatus });
 
-            if (response.ok) {
+            if (response.status === 200) {
                 alert('Estado actualizado correctamente');
                 fetchAppointments(); // Recargar lista
             } else {
@@ -107,16 +98,9 @@ const BarberAppointments = () => {
         if (!newDate || !newTime) return alert('Selecciona fecha y hora');
 
         try {
-            const response = await fetch(`http://localhost:3001/api/appointments/${selectedApt.id_reservas}`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ fecha: newDate, id_horarios: parseInt(newTime) })
-            });
+            const response = await api.patch(`/appointments/${selectedApt.id_reservas}`, { fecha: newDate, id_horarios: parseInt(newTime) });
 
-            if (response.ok) {
+            if (response.status === 200) {
                 alert('Cita reprogramada exitosamente');
                 setShowModal(false);
                 fetchAppointments();

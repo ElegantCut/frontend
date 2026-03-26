@@ -1,3 +1,4 @@
+import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
@@ -31,12 +32,8 @@ const BarbersTab = () => {
 
   const loadBarbers = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/barbers/all', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
-        }
-      });
-      const data = await response.json();
+      const response = await api.get('/barbers/all');
+      const data = response.data;
       if (data.success && data.data) {
         setBarbers(data.data);
       } else {
@@ -74,15 +71,9 @@ const BarbersTab = () => {
         }
       });
 
-      const response = await fetch('http://localhost:3001/api/barbers', {
-        method: 'POST',
-        headers: {
-          // 'Content-Type': 'multipart/form-data', // NO AGREGAR ESTO MANUALMENTE CON FORMDATA, EL BROWSER LO HACE
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
-        },
-        body: formData
-      });
-      const data = await response.json();
+      const response = await api.post('/barbers', formData);
+
+      const data = response.data;
       if (data.success) {
         alert('Barbero creado correctamente');
         setShowModal(false);
@@ -105,13 +96,8 @@ const BarbersTab = () => {
     const action = currentStatus ? 'desactivar' : 'activar';
     if (!window.confirm(`¿${action.charAt(0).toUpperCase() + action.slice(1)} este barbero?`)) return;
     try {
-      const response = await fetch(`http://localhost:3001/api/barbers/${id}/toggle`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
-        }
-      });
-      const data = await response.json();
+      const response = await api.put(`/barbers/${id}/toggle`);
+      const data = response.data;
       if (data.success) {
         setBarbers(barbers.map(b =>
           b.id_usuario === id ? { ...b, estado: data.newStatus } : b

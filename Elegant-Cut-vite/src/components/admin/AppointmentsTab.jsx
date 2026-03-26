@@ -1,3 +1,4 @@
+import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
 
@@ -12,8 +13,8 @@ const AppointmentsTab = () => {
 
   const loadAppointments = async () => {
     try {
-      const response = await fetch('http://localhost:3001/admin/appointments');
-      const data = await response.json();
+      const response = await api.get('/appointments/admin/all');
+      const data = response.data;
       if (data.success && data.data) {
         setAppointments(data.data);
       } else {
@@ -28,12 +29,8 @@ const AppointmentsTab = () => {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:3001/admin/appointments/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nuevoEstado: newStatus })
-      });
-      const data = await response.json();
+      const response = await api.patch(`/appointments/admin/${id}/status`, { nuevoEstado: newStatus });
+      const data = response.data;
       if (data.success) loadAppointments();
     } catch (e) { alert('Error actualizando cita'); }
   };

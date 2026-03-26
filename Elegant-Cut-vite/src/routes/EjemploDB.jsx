@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import '../App.css'; // Reutilizamos estilos básicos
+import api from '../lib/axios';
 
 function EjemploDB() {
     const [servicios, setServicios] = useState([]);
@@ -7,18 +6,11 @@ function EjemploDB() {
     const [cargando, setCargando] = useState(true);
 
     useEffect(() => {
-        // PASO 3: Hacer la petición al backend
-        // Nota: Asegúrate de que el puerto sea el correcto (3001 según tu auth_fixed.js)
-        fetch('http://localhost:3001/api/mis-consultas/ejemplo')
+        // PASO 3: Hacer la petición al backend usando el cliente API centralizado
+        api.get('/mis-consultas/ejemplo')
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la respuesta del servidor');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("Datos recibidos:", data);
-                setServicios(data); // Guardamos los datos en el estado
+                console.log("Datos recibidos:", response.data);
+                setServicios(response.data); // Guardamos los datos en el estado
                 setCargando(false);
             })
             .catch(err => {

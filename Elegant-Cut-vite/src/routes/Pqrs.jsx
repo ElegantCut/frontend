@@ -1,3 +1,4 @@
+import api from '../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform } from 'framer-motion';
@@ -70,8 +71,8 @@ export default function Pqrs() {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/pqrs/status/${radicadoSearch}`);
-      const result = await response.json();
+      const response = await api.get(`/pqrs/status/${radicadoSearch}`);
+      const result = response.data;
 
       if (result.success) {
         setTrackResult(result.data);
@@ -106,13 +107,9 @@ export default function Pqrs() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/api/pqrs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      const response = await api.post('/pqrs', formData);
 
-      const result = await response.json();
+      const result = response.data;
 
       if (result.success) {
         setSuccessMessage(`PQRS enviada con éxito. Su radicado es: ${result.radicado}`);

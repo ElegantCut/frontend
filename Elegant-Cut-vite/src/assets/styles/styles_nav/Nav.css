@@ -442,7 +442,7 @@ body.menu-open::before {
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
-}@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap");
+}
 
 /* VARIABLES GLOBALES */
 :root {

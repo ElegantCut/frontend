@@ -1,3 +1,4 @@
+import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { AuthClient } from '../../auth/authClient';
 
@@ -46,8 +47,8 @@ const SettingsTab = () => {
   const loadStats = async () => {
     setLoadingStats(true);
     try {
-      const response = await fetch('http://localhost:3001/admin/dashboard/reports');
-      const data = await response.json();
+      const response = await api.get('/dashboard/reports');
+      const data = response.data;
       if (data.success) setStats(data.data);
     } catch (e) { console.error(e); }
     finally { setLoadingStats(false); }
@@ -74,16 +75,8 @@ const SettingsTab = () => {
     // Solicitar Código
     setLoading(true);
     try {
-      const token = localStorage.getItem('jwt_token');
-      const response = await fetch('http://localhost:3001/auth/solicitar-recuperacion', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({ email: formData.confirmEmail }) // Usar el email confirmado
-      });
-      const data = await response.json();
+      const response = await api.post('/auth/solicitar-recuperacion', { email: formData.confirmEmail });
+      const data = response.data;
       if (data.success) {
         setStep('verify');
         setMessage({ text: 'Código enviado a: ' + formData.confirmEmail, type: 'info' });
@@ -113,16 +106,8 @@ const SettingsTab = () => {
       }
       setLoading(true);
       try {
-        const token = localStorage.getItem('jwt_token');
-        const response = await fetch('http://localhost:3001/auth/solicitar-recuperacion', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-          },
-          body: JSON.stringify({ email: formData.email })
-        });
-        const data = await response.json();
+        const response = await api.post('/auth/solicitar-recuperacion', { email: formData.email });
+        const data = response.data;
         if (data.success) {
           setStep('verify');
           setMessage({ text: 'Hemos enviado un código a tu correo: ' + formData.email, type: 'info' });
@@ -148,12 +133,8 @@ const SettingsTab = () => {
     setLoading(true);
     try {
       // 1. Verificar Código
-      const verifyResponse = await fetch('http://localhost:3001/auth/verify-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.confirmEmail, codigo: verificationCode })
-      });
-      const verifyData = await verifyResponse.json();
+      const verifyResponse = await api.post('/auth/verify-code', { email: formData.confirmEmail, codigo: verificationCode });
+      const verifyData = verifyResponse.data;
 
       if (verifyData.success) {
         // 2. Cambiar SOLO Contraseña
@@ -179,13 +160,9 @@ const SettingsTab = () => {
         telefono: formData.telefono
       };
 
-      const response = await fetch(`http://127.0.0.1:3001/admin/administrators/${user.id_usuario}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      const response = await api.put(`/admin/administrators/${user.id_usuario}`, payload);
 
-      const data = await response.json();
+      const data = response.data;
       if (data.success) {
         setMessage({ text: 'Perfil actualizado correctamente', type: 'success' });
         const updatedUser = { ...user, ...formData };
