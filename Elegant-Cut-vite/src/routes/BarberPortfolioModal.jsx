@@ -164,7 +164,7 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
                                         state: {
                                             barberName: portfolioData?.nombre_completo || barberName,
                                             barberId: barberId
-                                        }
+                                        } /*Redirige el boton de agendar al formulario de agendamiento */
                                     })
                                 }}>
                                     Agendar con {portfolioData?.nombre_completo?.split(' ')[0] || barberName?.split(' ')[0]}
