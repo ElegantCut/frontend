@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedList';
 import { barberService } from '../lib/barberService';
@@ -6,6 +7,7 @@ import { getCloudinaryUrl } from '../lib/utils/imageHelper';
 import BarberPortfolioModal from './BarberPortfolioModal';
 
 function Barberos() {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('all');
   const [barbers, setBarbers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -161,7 +163,7 @@ function Barberos() {
         </div>
         <div className="barber-actions">
           <button className="btn-primary" onClick={() => handleOpenPortfolio(barber)}>Ver Portafolio</button>
-          <button className="btn-secondary">Reservar Cita</button>
+          <button className="btn-secondary" onClick={() => navigate('/Form_agenda', { state: { barberName: barber.name, barberId: barber.id } })}>Reservar Cita</button>
         </div>
       </div>
     </AnimatedItem>
