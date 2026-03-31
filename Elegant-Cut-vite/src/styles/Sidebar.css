@@ -22,20 +22,17 @@
 .sidebar {
     width: 260px;
     height: 100vh;
-    background: var(--Blanco);
+    background-color: #ffffff !important;
     position: fixed;
     left: 0;
     top: 0;
     display: flex;
     flex-direction: column;
-    box-shadow: 2px 0 10px var(--Rojo);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05); /* Sombra sutil oscura, NO roja */
     z-index: 1000;
     padding: 1.5rem 0;
     transition: transform 0.3s ease-in-out;
-    /*hace que la barra lateral se desplace suavemente (ease-in-out), empieza lento acelera y termina lento*/
 }
-
-
 
 .logo-container {
     display: flex;
@@ -58,8 +55,7 @@
     padding: 0.8rem 1rem;
     border: none;
     background: transparent;
-    color: var(--Negro);
-    /*Color negro de las letras*/
+    color: #4a5568 !important; /* Gris oscuro elegante */
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -67,18 +63,17 @@
     font-weight: 500;
     font-size: 0.95rem;
     text-decoration: none;
-    /* Ensure no underline for NavLink */
 }
 
 .nav-item:hover {
-    background-color: #f8f9fa;
-    color: var(--Rojo);
+    background-color: #f7fafc !important;
+    color: var(--Rojo) !important;
 }
 
 /*items*/
 .nav-item.active {
-    background-color: var(--Blanco);
-    color: var(--Rojo);
+    background-color: var(--Rojo) !important; 
+    color: #ffffff !important;
     font-weight: 600;
 }
 

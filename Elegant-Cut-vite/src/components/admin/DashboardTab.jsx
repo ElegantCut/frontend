@@ -59,126 +59,97 @@ const DashboardTab = () => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2 className="mb-4">Panel de Control</h2>
+    <div className="dashboard-container">
+      <header className="tab-header">
+        <h2>Panel de Control</h2>
+        <div className="action-buttons">
+          <button className="btn-ios-secondary" onClick={loadStats}>
+            <i className="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </header>
 
-      <AnimatedContainer className="row g-4 mb-4">
-        <AnimatedItem className="col-12 col-sm-6 col-md-3">
-          <div className="card border-0 shadow-sm h-100">
-            <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <p className="text-muted mb-1">Citas Hoy</p>
-                  <h3 className="mb-0">{stats.citasHoy}</h3>
-                </div>
-                <div className="bg-primary bg-opacity-10 p-3 rounded">
-                  <i className="bi bi-calendar-check text-primary fs-4"></i>
-                </div>
-              </div>
-            </div>
+      <AnimatedContainer className="ios-widget-grid">
+        <AnimatedItem className="ios-widget">
+          <div className="ios-widget-icon" style={{ backgroundColor: 'rgba(0,122,255,0.1)', color: 'var(--ios-blue)' }}>
+            <i className="bi bi-calendar-check"></i>
           </div>
+          <h4>Citas Hoy</h4>
+          <p className="value">{stats.citasHoy}</p>
         </AnimatedItem>
 
-        <AnimatedItem className="col-12 col-sm-6 col-md-3">
-          <div className="card border-0 shadow-sm h-100">
-            <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <p className="text-muted mb-1">Ingresos Hoy</p>
-                  <h3 className="mb-0">${stats.ingresosHoy.toLocaleString()}</h3>
-                </div>
-                <div className="bg-success bg-opacity-10 p-3 rounded">
-                  <i className="bi bi-cash-stack text-success fs-4"></i>
-                </div>
-              </div>
-            </div>
+        <AnimatedItem className="ios-widget">
+          <div className="ios-widget-icon" style={{ backgroundColor: 'rgba(52,199,89,0.1)', color: 'var(--ios-green)' }}>
+            <i className="bi bi-cash-stack"></i>
           </div>
+          <h4>Ingresos Hoy</h4>
+          <p className="value">${stats.ingresosHoy.toLocaleString()}</p>
         </AnimatedItem>
 
-        <AnimatedItem className="col-12 col-sm-6 col-md-3">
-          <div className="card border-0 shadow-sm h-100">
-            <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <p className="text-muted mb-1">Clientes Nuevos</p>
-                  <h3 className="mb-0">{stats.clientesNuevos}</h3>
-                </div>
-                <div className="bg-info bg-opacity-10 p-3 rounded">
-                  <i className="bi bi-person-plus text-info fs-4"></i>
-                </div>
-              </div>
-            </div>
+        <AnimatedItem className="ios-widget">
+          <div className="ios-widget-icon" style={{ backgroundColor: 'rgba(188,32,65,0.1)', color: 'var(--ios-red)' }}>
+            <i className="bi bi-person-plus"></i>
           </div>
+          <h4>Clientes Nuevos</h4>
+          <p className="value">{stats.clientesNuevos}</p>
         </AnimatedItem>
 
-        <AnimatedItem className="col-12 col-sm-6 col-md-3">
-          <div className="card border-0 shadow-sm h-100">
-            <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <p className="text-muted mb-1">Pendientes</p>
-                  <h3 className="mb-0">{stats.citasPendientes}</h3>
-                </div>
-                <div className="bg-warning bg-opacity-10 p-3 rounded">
-                  <i className="bi bi-clock-history text-warning fs-4"></i>
-                </div>
-              </div>
-            </div>
+        <AnimatedItem className="ios-widget">
+          <div className="ios-widget-icon" style={{ backgroundColor: 'rgba(255,149,0,0.1)', color: 'var(--ios-orange)' }}>
+            <i className="bi bi-clock-history"></i>
           </div>
+          <h4>Pendientes</h4>
+          <p className="value">{stats.citasPendientes}</p>
         </AnimatedItem>
       </AnimatedContainer>
 
-      <AnimatedContainer className="row g-4">
+      <div className="row g-4">
         <AnimatedItem className="col-md-8">
-          <div className="card border-0 shadow-sm h-100">
-            <div className="card-body">
-              <h5 className="card-title mb-4">Resumen del Día</h5>
-              <div className="row text-center g-3">
-                <div className="col-12 col-sm-4">
-                  <div className="mb-2">
-                    <i className="bi bi-check-circle text-success fs-3"></i>
-                  </div>
-                  <h4>{stats.citasCompletadas}</h4>
-                  <p className="text-muted small mb-0">Completadas</p>
+          <div className="ios-card h-100">
+            <h5 className="ios-item-title mb-4">Resumen del Estado</h5>
+            <div className="row text-center g-3">
+              <div className="col-4">
+                <div className="mb-2">
+                  <i className="bi bi-check-circle text-success fs-3"></i>
                 </div>
-                <div className="col-12 col-sm-4">
-                  <div className="mb-2">
-                    <i className="bi bi-hourglass-split text-warning fs-3"></i>
-                  </div>
-                  <h4>{stats.citasPendientes}</h4>
-                  <p className="text-muted small mb-0">Pendientes</p>
+                <h4 className="fw-bold">{stats.citasCompletadas}</h4>
+                <p className="ios-item-subtitle mb-0">Completadas</p>
+              </div>
+              <div className="col-4">
+                <div className="mb-2">
+                  <i className="bi bi-hourglass-split text-warning fs-3"></i>
                 </div>
-                <div className="col-12 col-sm-4">
-                  <div className="mb-2">
-                    <i className="bi bi-x-circle text-danger fs-3"></i>
-                  </div>
-                  <h4>{stats.citasCanceladas}</h4>
-                  <p className="text-muted small mb-0">Canceladas</p>
+                <h4 className="fw-bold">{stats.citasPendientes}</h4>
+                <p className="ios-item-subtitle mb-0">Pendientes</p>
+              </div>
+              <div className="col-4">
+                <div className="mb-2">
+                  <i className="bi bi-x-circle text-danger fs-3"></i>
                 </div>
+                <h4 className="fw-bold">{stats.citasCanceladas}</h4>
+                <p className="ios-item-subtitle mb-0">Canceladas</p>
               </div>
             </div>
           </div>
         </AnimatedItem>
 
         <AnimatedItem className="col-md-4">
-          <div className="card border-0 shadow-sm h-100">
-            <div className="card-body">
-              <h5 className="card-title mb-4">Acciones Rápidas</h5>
-              <div className="d-grid gap-2">
-                <button className="btn btn-outline-primary">
-                  <i className="bi bi-calendar-plus me-2"></i>Nueva Cita
-                </button>
-                <button className="btn btn-outline-success">
-                  <i className="bi bi-person-plus me-2"></i>Nuevo Cliente
-                </button>
-                <button className="btn btn-outline-info">
-                  <i className="bi bi-file-earmark-text me-2"></i>Ver Reportes
-                </button>
-              </div>
+          <div className="ios-card h-100">
+            <h5 className="ios-item-title mb-4">Atajos Directos</h5>
+            <div className="d-grid gap-3">
+              <button className="btn-ios w-100 justify-content-center">
+                <i className="bi bi-calendar-plus"></i> Nueva Cita
+              </button>
+              <button className="btn-ios-secondary w-100 justify-content-center">
+                <i className="bi bi-person-plus"></i> Nuevo Cliente
+              </button>
+              <button className="btn-ios-secondary w-100 justify-content-center">
+                <i className="bi bi-file-earmark-text"></i> Ver Reportes
+              </button>
             </div>
           </div>
         </AnimatedItem>
-      </AnimatedContainer>
+      </div>
     </div>
   );
 };

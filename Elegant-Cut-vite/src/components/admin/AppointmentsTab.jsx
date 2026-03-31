@@ -39,51 +39,66 @@ const AppointmentsTab = () => {
   if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
   return (
-    <div className="p-4">
-      <h2>Gestión de Citas</h2>
-      <div className="card border-0 shadow-sm mt-4">
-        <div className="table-responsive">
-          <table className="table table-hover mb-0">
-            <thead className="table-light">
-              <tr>
-                <th>Fecha</th>
-                <th>Cliente</th>
-                <th>Servicio</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <AnimatedContainer component="tbody">
-              {appointments.map(apt => (
-                <AnimatedItem tag="tr" key={apt.id_reservas}>
-                  <td>
-                    <div>{new Date(apt.fecha).toLocaleDateString()}</div>
-                    <div className="small text-muted">{apt.hora_inicio}</div>
-                  </td>
-                  <td>{apt.cliente}</td>
-                  <td>{apt.servicio}</td>
-                  <td>
-                    <span className={`badge ${apt.estado === 'Completada' ? 'bg-success' :
-                      apt.estado === 'Cancelada' ? 'bg-danger' : 'bg-warning'
-                      }`}>{apt.estado}</span>
-                  </td>
-                  <td>
-                    {apt.estado === 'Pendiente' && (
-                      <>
-                        <button className="btn btn-sm btn-outline-success me-1" onClick={() => handleStatusChange(apt.id_reservas, 2)}>
-                          <i className="bi bi-check"></i>
-                        </button>
-                        <button className="btn btn-sm btn-outline-danger" onClick={() => handleStatusChange(apt.id_reservas, 3)}>
-                          <i className="bi bi-x"></i>
-                        </button>
-                      </>
-                    )}
-                  </td>
-                </AnimatedItem>
-              ))}
-            </AnimatedContainer>
-          </table>
+    <div className="appointments-container">
+      <header className="tab-header">
+        <h2>Citas</h2>
+        <div className="action-buttons">
+          <button className="btn-ios" onClick={() => alert('Próximamente: Crear Cita')}>
+             <i className="bi bi-calendar-plus me-1"></i> Nueva Cita
+          </button>
         </div>
+      </header>
+
+      <div className="ios-section-header">Agenda del Sistema</div>
+      <div className="ios-list-group">
+        <AnimatedContainer>
+          {appointments.length === 0 ? (
+            <div className="p-5 text-center text-muted">No hay citas registradas</div>
+          ) : (
+            appointments.map(apt => (
+              <AnimatedItem key={apt.id_reservas} className="ios-list-item">
+                <div className="ios-item-content">
+                  <span className="ios-item-title">
+                    {typeof apt.cliente === 'object' && apt.cliente
+                      ? `${apt.cliente.prim_nombre} ${apt.cliente.apellido1}`
+                      : (apt.cliente || 'Cliente')}
+                  </span>
+                  <span className="ios-item-subtitle">
+                    {apt.servicio} • {apt.fecha ? new Date(apt.fecha).toLocaleDateString() : 'Cita'} a las {apt.hora_inicio || '--:--'}
+                  </span>
+                </div>
+
+                <div className="ios-item-actions">
+                  <span className={`ios-badge ${
+                    apt.estado === 'Completada' ? 'success' :
+                    apt.estado === 'Cancelada' ? 'danger' : 'neutral'
+                  }`}>
+                    {apt.estado}
+                  </span>
+
+                  {apt.estado === 'Pendiente' && (
+                    <div className="d-flex gap-1">
+                      <button 
+                        className="ios-icon-btn success" 
+                        onClick={() => handleStatusChange(apt.id_reservas, 2)}
+                        title="Completar"
+                      >
+                        <i className="bi bi-check-circle"></i>
+                      </button>
+                      <button 
+                        className="ios-icon-btn danger" 
+                        onClick={() => handleStatusChange(apt.id_reservas, 3)}
+                        title="Cancelar"
+                      >
+                        <i className="bi bi-x-circle"></i>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </AnimatedItem>
+            ))
+          )}
+        </AnimatedContainer>
       </div>
     </div>
   );

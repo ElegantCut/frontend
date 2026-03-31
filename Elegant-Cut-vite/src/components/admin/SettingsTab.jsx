@@ -190,156 +190,190 @@ const SettingsTab = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="mb-4">Configuración y Reportes</h2>
+    <div className="settings-container">
+      <header className="tab-header">
+        <h2>Configuración</h2>
+      </header>
 
-      <div className="btn-group mb-4">
-        <button className={`btn ${activeTab === 'profile' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('profile')}>
-          <i className="bi bi-person-gear me-2"></i> Mi Perfil
+      {/* Segmented Control Refined */}
+      <div className="d-inline-flex bg-light p-1 rounded-3 mb-4 mx-auto w-100" style={{ maxWidth: '400px', backgroundColor: '#e3e3e8' }}>
+        <button 
+          className={`flex-grow-1 border-0 py-2 rounded-2 transition-all ${activeTab === 'profile' ? 'bg-white shadow-sm fw-bold' : 'bg-transparent text-muted'}`}
+          onClick={() => setActiveTab('profile')}
+        >
+          Perfil
         </button>
-        <button className={`btn ${activeTab === 'reports' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('reports')}>
-          <i className="bi bi-bar-chart-line me-2"></i> Estadísticas
+        <button 
+          className={`flex-grow-1 border-0 py-2 rounded-2 transition-all ${activeTab === 'reports' ? 'bg-white shadow-sm fw-bold' : 'bg-transparent text-muted'}`}
+          onClick={() => setActiveTab('reports')}
+        >
+          Reportes
         </button>
       </div>
 
       {activeTab === 'profile' && (
-        <div className="card border-0 shadow-sm">
-          <div className="card-body p-4">
-            {message.text && (<div className={`alert alert-${message.type.includes('error') ? 'danger' : message.type === 'success' ? 'success' : 'info'} mb-4`}>{message.text}</div>)}
+        <div className="ios-content">
+          {message.text && (
+            <div className={`ios-badge w-100 mb-3 text-center ${message.type === 'error' ? 'danger' : 'success'}`} style={{padding: '12px'}}>
+              {message.text}
+            </div>
+          )}
 
-            {step === 'edit' ? (
-              <>
-                {/* --- SECCIÓN 1: INFORMACIÓN PERSONAL --- */}
-                <form onSubmit={initiateUpdate}>
-                  <div className="row g-3 mb-5">
-                    <div className="col-12 border-bottom pb-2">
-                      <h5 className="text-primary"><i className="bi bi-person-badge me-2"></i>Información Personal</h5>
-                    </div>
-
-                    <div className="col-md-6"><label className="form-label">Usuario</label><input type="text" className="form-control" name="username" value={formData.username} onChange={handleChange} required /></div>
-                    <div className="col-md-6"><label className="form-label">Email</label><input type="email" className="form-control" name="email" value={formData.email} onChange={handleChange} required /></div>
-                    <div className="col-md-6"><label className="form-label">Nombre</label><input type="text" className="form-control" name="prim_nombre" value={formData.prim_nombre} onChange={handleChange} required /></div>
-                    <div className="col-md-6"><label className="form-label">Apellido</label><input type="text" className="form-control" name="apellido1" value={formData.apellido1} onChange={handleChange} required /></div>
-                    <div className="col-md-6"><label className="form-label">Teléfono</label><input type="tel" className="form-control" name="telefono" value={formData.telefono} onChange={handleChange} /></div>
-
-                    <div className="col-12 text-end">
-                      <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? 'Guardando...' : 'Actualizar Información'}</button>
-                    </div>
-                  </div>
-                </form>
-
-                {/* --- SECCIÓN 2: SEGURIDAD (CAMBIO DE CONTRASEÑA) --- */}
-                <div className="row g-3">
-                  <div className="col-12 border-bottom pb-2">
-                    <h5 className="text-danger"><i className="bi bi-shield-lock me-2"></i>Seguridad</h5>
-                  </div>
-
-                  <div className="alert alert-light border-start border-danger border-4">
-                    <i className="bi bi-info-circle-fill text-danger me-2"></i>
-                    Para cambiar su contraseña, confirme su usuario y correo electrónico. Le enviaremos un código de verificación.
-                  </div>
-
-                  <div className="col-md-6">
-                    <label className="form-label">Confirmar Usuario</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Ingrese su usuario actual"
-                      value={formData.confirmUsername || ''}
-                      onChange={(e) => setFormData({ ...formData, confirmUsername: e.target.value })}
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Confirmar Email</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      placeholder="Ingrese su email actual"
-                      value={formData.confirmEmail || ''}
-                      onChange={(e) => setFormData({ ...formData, confirmEmail: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="col-12 mt-3">
-                    <button
-                      type="button"
-                      className="btn btn-danger"
-                      disabled={loading}
-                      onClick={requestPasswordChange}
-                    >
-                      {loading ? 'Verificando...' : 'Solicitar Cambio de Contraseña'}
-                    </button>
+          {step === 'edit' ? (
+            <>
+              <div className="ios-section-header">Información de la Cuenta</div>
+              <div className="ios-list-group mb-4">
+                <div className="ios-list-item">
+                  <div className="ios-item-content">
+                    <span className="ios-item-subtitle">Usuario</span>
+                    <input type="text" className="border-0 w-100 p-0 fw-bold" name="username" value={formData.username} onChange={handleChange} style={{outline: 'none', background: 'transparent'}} />
                   </div>
                 </div>
-              </>
-            ) : (
-              <form onSubmit={verifyAndSave}>
-                <div className="text-center py-4">
-                  <i className="bi bi-envelope-check display-1 text-primary mb-3"></i>
-                  <h4>Verificación Requerida</h4>
-                  <p className="text-muted">Hemos enviado un código a <strong>{formData.confirmEmail}</strong></p>
+                <div className="ios-list-item">
+                  <div className="ios-item-content">
+                    <span className="ios-item-subtitle">Email</span>
+                    <input type="email" className="border-0 w-100 p-0 fw-bold" name="email" value={formData.email} onChange={handleChange} style={{outline: 'none', background: 'transparent'}} />
+                  </div>
+                </div>
+                <div className="ios-list-item">
+                  <div className="ios-item-content">
+                    <span className="ios-item-subtitle">Nombre</span>
+                    <input type="text" className="border-0 w-100 p-0 fw-bold" name="prim_nombre" value={formData.prim_nombre} onChange={handleChange} style={{outline: 'none', background: 'transparent'}} />
+                  </div>
+                </div>
+                <div className="ios-list-item">
+                  <div className="ios-item-content">
+                    <span className="ios-item-subtitle">Apellido</span>
+                    <input type="text" className="border-0 w-100 p-0 fw-bold" name="apellido1" value={formData.apellido1} onChange={handleChange} style={{outline: 'none', background: 'transparent'}} />
+                  </div>
+                </div>
+              </div>
 
-                  <div className="d-flex justify-content-center my-4">
-                    <input
-                      type="text"
-                      className="form-control form-control-lg text-center"
-                      style={{ maxWidth: '200px', letterSpacing: '5px' }}
-                      placeholder="000000"
-                      maxLength="6"
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value)}
-                      required
+              <div className="d-flex justify-content-end mb-5 pe-2">
+                <button className="btn-ios px-4" onClick={initiateUpdate} disabled={loading}>
+                  {loading ? 'Guardando...' : 'Guardar Cambios'}
+                </button>
+              </div>
+
+              <div className="ios-section-header">Seguridad y Acceso</div>
+              <div className="ios-list-group">
+                <div className="p-3 ios-item-subtitle bg-light border-bottom" style={{fontSize: '0.85rem'}}>
+                  Para cambiar su contraseña, ingrese sus datos actuales para recibir un código de verificación.
+                </div>
+                <div className="ios-list-item">
+                   <div className="ios-item-content">
+                    <span className="ios-item-subtitle">Confirmar Usuario</span>
+                    <input 
+                      type="text" 
+                      className="border-0 w-100 p-0" 
+                      placeholder="Username actual"
+                      value={formData.confirmUsername || ''} 
+                      onChange={(e) => setFormData({ ...formData, confirmUsername: e.target.value })} 
+                      style={{outline: 'none', background: 'transparent'}} 
                     />
                   </div>
-
-                  <h5 className="mt-4 mb-3">Establecer Nueva Contraseña</h5>
-                  <div className="row justify-content-center">
-                    <div className="col-md-6 mb-3">
-                      <input type="password" className="form-control" placeholder="Nueva Contraseña" name="password" value={formData.password} onChange={handleChange} required />
-                    </div>
-                  </div>
-                  <div className="row justify-content-center">
-                    <div className="col-md-6 mb-4">
-                      <input type="password" className="form-control" placeholder="Confirmar Contraseña" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
-                    </div>
-                  </div>
-
-                  <button type="submit" className="btn btn-success px-5" disabled={loading}>{loading ? 'Verificando...' : 'Confirmar y Cambiar Contraseña'}</button>
-                  <button type="button" className="btn btn-link mt-3 d-block mx-auto" onClick={() => setStep('edit')}>Cancelar</button>
                 </div>
-              </form>
-            )}
-          </div>
+                <div className="ios-list-item">
+                   <div className="ios-item-content">
+                    <span className="ios-item-subtitle">Confirmar Email</span>
+                    <input 
+                      type="email" 
+                      className="border-0 w-100 p-0" 
+                      placeholder="Email actual"
+                      value={formData.confirmEmail || ''} 
+                      onChange={(e) => setFormData({ ...formData, confirmEmail: e.target.value })} 
+                      style={{outline: 'none', background: 'transparent'}} 
+                    />
+                  </div>
+                </div>
+                <button 
+                  className="ios-list-item w-100 border-0 text-danger fw-bold justify-content-center"
+                  onClick={requestPasswordChange}
+                  disabled={loading}
+                  style={{background: 'transparent', cursor: 'pointer'}}
+                >
+                  {loading ? 'Procesando...' : 'Cambiar Contraseña'}
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="ios-card text-center py-5">
+              <i className="bi bi-shield-lock text-danger mb-3" style={{fontSize: '3rem'}}></i>
+              <h4 className="ios-item-title mb-1">Verificación de Seguridad</h4>
+              <p className="ios-item-subtitle mb-4">Ingresa el código enviado a tu correo.</p>
+
+              <div className="mb-4">
+                <input 
+                  type="text" 
+                  className="ios-search-bar text-center fs-2 fw-bold" 
+                  style={{maxWidth: '220px', letterSpacing: '6px'}} 
+                  maxLength="6"
+                  placeholder="000000"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                />
+              </div>
+
+              <div className="ios-section-header text-start mt-4">Nuevas Credenciales</div>
+              <div className="ios-list-group mb-4 text-start">
+                 <div className="ios-list-item">
+                    <input 
+                      type="password" 
+                      className="border-0 w-100 p-0" 
+                      placeholder="Nueva Contraseña" 
+                      name="password" value={formData.password} onChange={handleChange} 
+                      style={{outline: 'none', background: 'transparent'}}
+                    />
+                 </div>
+                 <div className="ios-list-item">
+                    <input 
+                      type="password" 
+                      className="border-0 w-100 p-0" 
+                      placeholder="Confirmar Nueva Contraseña" 
+                      name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} 
+                      style={{outline: 'none', background: 'transparent'}}
+                    />
+                 </div>
+              </div>
+
+              <div className="d-flex flex-column gap-2 px-4">
+                <button className="btn-ios w-100 py-3" onClick={verifyAndSave}>Guardar Nueva Contraseña</button>
+                <button className="btn-ios-secondary w-100" onClick={() => setStep('edit')}>Cancelar</button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {activeTab === 'reports' && (
-        <div className="card border-0 shadow-sm">
-          <div className="card-body p-4">
-            <h5 className="mb-4">Reporte de Crecimiento</h5>
-            {loadingStats ? <div className="spinner-border text-primary"></div> : stats ? (
-              <div className="row g-4">
-                <div className="col-md-4">
-                  <div className="p-3 border rounded bg-light text-center">
-                    <h3 className="text-primary display-6">{stats.newClientsCurrentMonth}</h3>
-                    <p className="text-muted mb-0">Clientes Nuevos (Este Mes)</p>
-                  </div>
-                </div>
-                <div className="col-md-4">
-                  <div className="p-3 border rounded bg-light text-center">
-                    <h3 className="text-secondary display-6">{stats.newClientsLastMonth}</h3>
-                    <p className="text-muted mb-0">Clientes Nuevos (Mes Pasado)</p>
-                  </div>
-                </div>
-                <div className="col-md-4">
-                  <div className="p-3 border rounded bg-light text-center">
-                    <h3 className="text-success display-6">{stats.totalActiveClients}</h3>
-                    <p className="text-muted mb-0">Total Clientes Activos</p>
-                  </div>
-                </div>
+        <div className="ios-content">
+           <div className="ios-section-header">Resumen de Clientes</div>
+           <div className="ios-widget-grid">
+              <div className="ios-widget">
+                 <h4 className="text-muted small">MES ACTUAL</h4>
+                 <p className="value" style={{color: 'var(--ios-blue)'}}>{stats?.newClientsCurrentMonth || 0}</p>
+                 <span className="ios-item-subtitle">Nuevos registros</span>
               </div>
-            ) : <p>No hay datos disponibles.</p>}
-          </div>
+              <div className="ios-widget">
+                 <h4 className="text-muted small">MES PASADO</h4>
+                 <p className="value text-secondary">{stats?.newClientsLastMonth || 0}</p>
+                 <span className="ios-item-subtitle">Comparativa mensual</span>
+              </div>
+              <div className="ios-widget" style={{backgroundColor: 'var(--ios-red)', color: 'white'}}>
+                 <h4 className="text-white-50 small">TOTAL ACTIVOS</h4>
+                 <p className="value text-white">{stats?.totalActiveClients || 0}</p>
+                 <span className="text-white-50">Clientes actuales</span>
+              </div>
+           </div>
+
+           <div className="ios-section-header mt-4">Predicción y Análisis</div>
+           <div className="ios-card mt-2">
+              <h5 className="ios-item-title mb-2">Estado del Crecimiento</h5>
+              <p className="ios-item-subtitle mb-0">
+                Tu base de datos de clientes activos es de {stats?.totalActiveClients || 0}. 
+                El flujo de nuevos registros se mantiene constante.
+              </p>
+           </div>
         </div>
       )}
     </div>
