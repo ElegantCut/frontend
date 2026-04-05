@@ -92,25 +92,19 @@ export class AuthClient {
     try {
       console.log('📧 Solicitando código de recuperación para:', email);
 
-      const response = await api.post('/auth/solicitar-recuperacion', { email });
+      // Usar el endpoint real del backend: /auth/forgot-password
+      const response = await api.post('/auth/forgot-password', { email });
       const data = response.data;
 
-      console.log('📨 Respuesta del servidor (solicitar-recuperacion):', data);
+      console.log('📨 Respuesta del servidor (forgot-password):', data);
 
-      if (data.success) {
-        console.log('✅ Código solicitado!');
-        return {
-          success: true,
-          message: data.mensaje,
-          username: data.username
-        };
-      } else {
-        console.log('❌ Error solicitando código:', data.error);
-        return { success: false, error: data.error };
-      }
+      return {
+        success: true,
+        message: data.message || 'Se ha enviado un código a tu correo.'
+      };
     } catch (error) {
       console.log('🚨 Error de conexión:', error);
-      return { success: false, error: 'No se pudo conectar al servidor' };
+      return { success: false, error: error.response?.data?.message || 'No se pudo conectar al servidor' };
     }
   }
 
@@ -119,10 +113,15 @@ export class AuthClient {
     try {
       console.log('🔐 Verificando código para:', email);
 
-      const response = await api.post('/auth/restablecer-contrasena', { email, codigo, newPassword: nuevaContrasena });
+      // Usar el endpoint real del backend: /auth/reset-password (PUT)
+      const response = await api.put('/auth/reset-password', { 
+        email, 
+        codigo, 
+        newPassword: nuevaContrasena 
+      });
       const data = response.data;
 
-      console.log('📨 Respuesta del servidor (verificar-codigo-recuperacion):', data);
+      console.log('📨 Respuesta del servidor (reset-password):', data);
 
       if (data.success) {
         console.log('✅ Contraseña cambiada exitosamente!');
@@ -133,7 +132,7 @@ export class AuthClient {
       }
     } catch (error) {
       console.log('🚨 Error de conexión:', error);
-      return { success: false, error: 'No se pudo conectar al servidor' };
+      return { success: false, error: error.response?.data?.message || 'Error al cambiar contraseña' };
     }
   }
 
