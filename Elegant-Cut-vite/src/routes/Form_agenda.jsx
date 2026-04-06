@@ -10,6 +10,7 @@ import '../styles/Form_agenda.css';
 import { barberService } from '../lib/barberService';
 import { servicesService } from '../lib/servicesService';
 import { appointmentService } from '../lib/appointmentService';
+import { AuthClient } from '../auth/authClient';
 
 // MOCK DATA Fallbacks
 const MOCK_BARBERS = [
@@ -79,17 +80,20 @@ function Form_agenda() {
 
   const [listaBarberos, setListaBarberos] = useState([]);
   const [listaServicios, setListaServicios] = useState([]);
-
+  const [realHorarios, setRealHorarios] = useState([]);
+  
   useEffect(() => {
     const cargarDatosIniciales = async () => {
       try {
-        const [barberos, servicios] = await Promise.all([
-          barberService.getAllBarbers(),
-          servicesService.getAllServices()
+        const [barberos, servicios, horarios] = await Promise.all([
+          barberService.getPublicBarbers ? barberService.getPublicBarbers() : barberService.getAllBarbers(),
+          servicesService.getAllServices(),
+          appointmentService.getHorarios()
         ]);
-        // Si el backend no devuelve nada, usamos los mocks temporalmente
+        
         setListaBarberos(barberos?.length > 0 ? barberos : MOCK_BARBERS);
         setListaServicios(servicios?.length > 0 ? servicios : MOCK_SERVICES);
+        setRealHorarios(horarios || []);
       } catch (error) {
         console.error("Error cargando datos:", error);
         setListaBarberos(MOCK_BARBERS);
@@ -124,20 +128,37 @@ function Form_agenda() {
   const handleConfirm = async () => {
     if (!contact.name || !contact.phone) return alert('Por favor completa nombre y teléfono.');
 
-    // Preparar formData para el backend (CreateAppointmentDto)
+    const currentUser = AuthClient.getUser();
+    if (!currentUser) return alert('Debes iniciar sesión para agendar una cita.');
+
+    // Mapear el tiempo seleccionado al ID de horario real
+    const selectedHorarioObj = realHorarios.find(h => {
+        let hFormat = h.hora_inicio.toString().padStart(4, '0');
+        let hh = parseInt(hFormat.slice(0, 2));
+        let mm = hFormat.slice(2, 4);
+        let ampm = hh >= 12 ? 'pm' : 'am';
+        let hh12 = hh % 12 || 12;
+        let timeStr = `${hh12}:${mm} ${ampm}`;
+        return timeStr === selectedTime;
+    });
+
+    const idHorario = Number(selectedHorarioObj?.id_horarios || 1);
+    const idBarbero = Number(selectedBarber?.id_usuario || selectedBarber?.id || 3);
+    const idServicio = Number(selectedService?.id_servicio || selectedService?.id || 1);
+
     const formData = {
-      fecha: `${selectedDate}T00:00:00.000Z`, // Formato ISO 8601 como en Postman
-      observaciones: contact.notes || "Cita agendada desde la web",
-      id_usuario: 2, // IDEALMENTE debe ser el ID del cliente logueado. Por ahora hardcodeado a 2 según el ejemplo de Postman
-      id_empleado: selectedBarber?.id || selectedBarber?.id_usuario || 3, // El ID del barbero
-      id_estado_cita: 1, // 1 para 'Pendiente' u 'Agendada'
-      id_horarios: 1 // IDEALMENTE buscar el id_horario real basado en selectedTime. Por ahora hardcodeado a 1.
+      fecha: `${selectedDate}T00:00:00.000Z`,
+      observaciones: contact.notes || "Cita agendada desde el Perfil",
+      id_usuario: Number(currentUser.userId),
+      id_empleado: idBarbero,
+      id_estado_cita: 1, // Pendiente
+      id_horarios: idHorario,
+      id_servicio: idServicio
     };
 
     try {
-      const resultado = await appointmentService.create(formData);
+      await appointmentService.create(formData);
       setConfirmed(true);
-      // Opcional: alert("¡Cita agendada con éxito!");
     } catch (error) {
       alert("Hubo un error al agendar la cita. Por favor intenta de nuevo.");
       console.error(error);
