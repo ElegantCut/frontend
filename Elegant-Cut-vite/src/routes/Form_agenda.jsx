@@ -153,11 +153,14 @@ function Form_agenda() {
       id_empleado: idBarbero,
       id_estado_cita: 1, // Pendiente
       id_horarios: idHorario,
-      id_servicio: idServicio
+      id_servicio: idServicio,
+      email_contacto: contact.email || undefined,
+      nombre_contacto: contact.name || undefined
     };
 
     try {
       await appointmentService.create(formData);
+
       setConfirmed(true);
     } catch (error) {
       alert("Hubo un error al agendar la cita. Por favor intenta de nuevo.");
