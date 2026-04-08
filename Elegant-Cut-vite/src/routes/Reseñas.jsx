@@ -8,11 +8,13 @@ import './Reseñas.css';
 const Reseñas = () => {
   const { isAuthenticated, user } = useAuth();
   const [reviews, setReviews] = useState([]);
+  const [barbers, setBarbers] = useState([]);
   const [formData, setFormData] = useState({
-    nombre_cliente: '',
-    email_cliente: '',
+    id_cliente: '',
     calificacion: '5',
-    comentario: ''
+    comentario: '',
+    dirigido_a: 'establecimiento',
+    id_barbero: ''
   });
   const [status, setStatus] = useState({ type: '', message: '' });
   const [loading, setLoading] = useState(true);
@@ -20,15 +22,27 @@ const Reseñas = () => {
   // Fetch reviews
   useEffect(() => {
     fetchReviews();
+    fetchBarbers();
   }, []);
+
+  const fetchBarbers = async () => {
+    try {
+      const response = await api.get('/barbers/all');
+      const data = response.data?.data || response.data || [];
+      if (Array.isArray(data)) {
+        setBarbers(data);
+      }
+    } catch (error) {
+      console.error('Error fetching barbers:', error);
+    }
+  };
 
   // Pre-fill form if user is logged in
   useEffect(() => {
     if (isAuthenticated && user) {
       setFormData(prev => ({
         ...prev,
-        nombre_cliente: user.name || '',
-        email_cliente: user.email || ''
+        id_cliente: user.userId || user.id_usuario || user.id || ''
       }));
     }
   }, [isAuthenticated, user]);
@@ -61,10 +75,11 @@ const Reseñas = () => {
 
       setStatus({ type: 'success', message: '¡Gracias por tu reseña!' });
       setFormData({
-        nombre_cliente: (isAuthenticated && user?.name) || '',
-        email_cliente: (isAuthenticated && user?.email) || '',
+        id_cliente: (isAuthenticated && (user?.userId || user?.id_usuario || user?.id)) || '',
         calificacion: '5',
-        comentario: ''
+        comentario: '',
+        dirigido_a: 'establecimiento',
+        id_barbero: ''
       });
       fetchReviews();
 
@@ -126,7 +141,7 @@ const Reseñas = () => {
                   reviews.map((review) => {
                     try {
                       if (!review || !review.id_resena) return null;
-                      const nombre = review.nombre_cliente || 'Cliente Anónimo';
+                      const nombre = review.usuarios_resenas_id_clienteTousuarios?.prim_nombre || 'Cliente Anónimo';
 
                       return (
                         <AnimatedItem key={review.id_resena} className="review-card">
@@ -139,6 +154,11 @@ const Reseñas = () => {
                               <span className="review-date">
                                 {formatDate(review.fecha_resena)}
                               </span>
+                              {review.barbero && (
+                                <span className="review-target" style={{display: 'block', fontSize: '0.85rem', color: '#888', marginTop: '2px'}}>
+                                  Dirigido a: {review.barbero.prim_nombre} {review.barbero.apellido1}
+                                </span>
+                              )}
                             </div>
                           </div>
                           <div className="review-rating">
@@ -185,35 +205,7 @@ const Reseñas = () => {
             )}
 
             <form onSubmit={handleSubmit} className={`review-form ${!isAuthenticated ? 'form-disabled' : ''}`}>
-              <div className="form-group">
-                <label htmlFor="nombre_cliente">Nombre Completo</label>
-                <input
-                  type="text"
-                  id="nombre_cliente"
-                  name="nombre_cliente"
-                  value={formData.nombre_cliente}
-                  onChange={handleChange}
-                  required
-                  readOnly={!isAuthenticated || !!user?.name}
-                  disabled={!isAuthenticated}
-                  placeholder="Tu nombre"
-                />
-              </div>
 
-              <div className="form-group">
-                <label htmlFor="email_cliente">Correo Electrónico</label>
-                <input
-                  type="email"
-                  id="email_cliente"
-                  name="email_cliente"
-                  value={formData.email_cliente}
-                  onChange={handleChange}
-                  required
-                  readOnly={!isAuthenticated || !!user?.email}
-                  disabled={!isAuthenticated}
-                  placeholder="tu@email.com"
-                />
-              </div>
 
               <div className="form-group">
                 <label htmlFor="calificacion">Calificación</label>
@@ -231,6 +223,57 @@ const Reseñas = () => {
                   <option value="1">★☆☆☆☆ Malo</option>
                 </select>
               </div>
+
+              <div className="form-group">
+                <label>Hacia quién va dirigida</label>
+                <div style={{ display: 'flex', gap: '15px', marginTop: '5px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'normal', gap: '5px', cursor: 'pointer' }}>
+                    <input
+                      type="radio"
+                      name="dirigido_a"
+                      value="establecimiento"
+                      checked={formData.dirigido_a === 'establecimiento'}
+                      onChange={handleChange}
+                      disabled={!isAuthenticated}
+                      style={{ margin: 0 }}
+                    />
+                    Al Establecimiento
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'normal', gap: '5px', cursor: 'pointer' }}>
+                    <input
+                      type="radio"
+                      name="dirigido_a"
+                      value="barbero"
+                      checked={formData.dirigido_a === 'barbero'}
+                      onChange={handleChange}
+                      disabled={!isAuthenticated}
+                      style={{ margin: 0 }}
+                    />
+                    A un Barbero
+                  </label>
+                </div>
+              </div>
+
+              {formData.dirigido_a === 'barbero' && (
+                <div className="form-group">
+                  <label htmlFor="id_barbero">Selecciona el Barbero</label>
+                  <select
+                    id="id_barbero"
+                    name="id_barbero"
+                    value={formData.id_barbero}
+                    onChange={handleChange}
+                    disabled={!isAuthenticated}
+                    required={formData.dirigido_a === 'barbero'}
+                  >
+                    <option value="">-- Elige un barbero --</option>
+                    {barbers.filter(b => b.estado).map(barbero => (
+                      <option key={barbero.id_usuario} value={barbero.id_usuario}>
+                        {barbero.prim_nombre} {barbero.apellido1}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="form-group">
                 <label htmlFor="comentario">Tu Reseña</label>
