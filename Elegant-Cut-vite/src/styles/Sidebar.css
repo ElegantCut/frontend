@@ -113,3 +113,35 @@
     }
 
 }
+
+/* Logout Button Premium Style */
+.btn-ios-logout {
+    background-color: #fff1f2; /* Color muy suave de fondo */
+    color: #e11d48; /* Rojo brillante */
+    border: 1.5px solid #fda4af;
+    border-radius: 14px;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-ios-logout:hover {
+    background-color: #ffe4e6;
+    border-color: #f43f5e;
+    transform: translateY(-1px);
+}
+
+.btn-ios-logout:active {
+    transform: scale(0.98);
+}
+
+.btn-ios-logout i {
+    font-size: 1.2rem;
+}

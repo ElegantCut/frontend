@@ -49,13 +49,24 @@ const AdminsTab = () => {
                 ? `/admin/administrators/${editingId}`
                 : '/admin/administrators';
 
-            const method = editingId ? 'put' : 'post';
+            const method = editingId ? 'patch' : 'post';
+            
+            // Si estamos editando y no hay contraseña, la quitamos del objeto para no sobreescribirla
+            const payload = { ...formData };
+            if (editingId && !payload.password) {
+                delete payload.password;
+            }
 
-            const response = await api[method](url, formData);
+            // Mapeamos password a password_hash si el backend lo requiere
+            if (payload.password) {
+                payload.password_hash = payload.password;
+                delete payload.password;
+            }
 
+            const response = await api[method](url, payload);
             const data = response.data;
 
-            if (data.success) {
+            if (data.success || data.id_usuario) { // NestJS a veces devuelve el objeto creado directamente
                 loadAdmins();
                 setShowModal(false);
                 resetForm();
@@ -64,28 +75,25 @@ const AdminsTab = () => {
             }
         } catch (error) {
             console.error('Error saving admin:', error);
-            alert('Error de conexión');
+            alert(error.response?.data?.message || 'Error de conexión');
         }
     };
 
     const handleToggleStatus = async (id, currentStatus) => {
-        const action = currentStatus === 1 ? 'desactivar' : 'activar';
-        if (!window.confirm(`¿${action.charAt(0).toUpperCase() + action.slice(1)} este administrador?`)) return;
+        const action = currentStatus ? 'desactivar' : 'activar';
+        if (!window.confirm(`¿Seguro que deseas ${action} este administrador?`)) return;
 
         try {
             const response = await api.put(`/admin/administrators/${id}/toggle`);
             const data = response.data;
 
-            if (data.success) {
-                setAdmins(admins.map(a =>
-                    a.id_usuario === id ? { ...a, estado: data.newStatus } : a
-                ));
-            } else {
-                alert(data.error || 'Error al cambiar estado');
+            // data es el objeto usuario actualizado
+            if (data) {
+                loadAdmins();
             }
         } catch (error) {
             console.error('Error toggling admin:', error);
-            alert('Error de conexión');
+            alert('Error al cambiar el estado');
         }
     };
 
@@ -93,7 +101,7 @@ const AdminsTab = () => {
         setEditingId(admin.id_usuario);
         setFormData({
             username: admin.username,
-            password: '', // Password not shown
+            password: '', 
             email: admin.email,
             prim_nombre: admin.prim_nombre,
             seg_nombre: admin.seg_nombre || '',
@@ -127,7 +135,7 @@ const AdminsTab = () => {
         <h2>Administradores</h2>
         <div className="action-buttons">
           <button className="btn-ios" onClick={() => { resetForm(); setShowModal(true); }}>
-            <i className="bi bi-plus-lg me-1"></i> Nuevo Admin
+            <i className="bi bi-person-plus me-1"></i> Nuevo Admin
           </button>
         </div>
       </header>
@@ -136,61 +144,67 @@ const AdminsTab = () => {
         {showModal && (
           <div className="admin-overlay d-flex align-items-center justify-content-center p-3">
             <motion.div
-              className="ios-card w-100"
-              style={{ maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="ios-card w-100 shadow-lg"
+              style={{ maxWidth: '550px', borderRadius: '24px', overflow: 'hidden' }}
+              initial={{ opacity: 0, scale: 0.95, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              exit={{ opacity: 0, scale: 0.95, y: 30 }}
             >
-              <div className="d-flex justify-content-between align-items-center mb-4">
-                 <h3 className="ios-item-title fs-4">{editingId ? 'Editar Administrador' : 'Nuevo Administrador'}</h3>
+              <div className="p-4 border-bottom d-flex justify-content-between align-items-center bg-white sticky-top">
+                 <h3 className="ios-item-title fs-5 m-0">{editingId ? 'Editar Administrador' : 'Nuevo Administrador'}</h3>
                  <button className="btn-close" onClick={() => setShowModal(false)}></button>
               </div>
 
-              <form onSubmit={handleSubmit}>
-                <div className="row g-3">
+              <form onSubmit={handleSubmit} className="p-4 bg-white" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
+                <div className="row g-4">
                   <div className="col-md-6">
-                    <label className="ios-item-subtitle mb-1 d-block">Usuario</label>
-                    <input type="text" className="ios-search-bar" required
+                    <label className="ios-label">Usuario</label>
+                    <input type="text" className="ios-input" required
+                      placeholder="Username..."
                       value={formData.username}
                       onChange={e => setFormData({ ...formData, username: e.target.value })}
                     />
                   </div>
                   <div className="col-md-6">
-                    <label className="ios-item-subtitle mb-1 d-block">Contraseña</label>
-                    <input type="password" className="ios-search-bar"
+                    <label className="ios-label">Contraseña</label>
+                    <input type="password" className="ios-input"
                       required={!editingId}
                       placeholder={editingId ? 'Sin cambios...' : '••••••••'}
                       value={formData.password}
                       onChange={e => setFormData({ ...formData, password: e.target.value })}
                     />
                   </div>
+
                   <div className="col-md-6">
-                    <label className="ios-item-subtitle mb-1 d-block">Nombre</label>
-                    <input type="text" className="ios-search-bar" required
+                    <label className="ios-label">Nombre</label>
+                    <input type="text" className="ios-input" required
+                      placeholder="Nombre..."
                       value={formData.prim_nombre}
                       onChange={e => setFormData({ ...formData, prim_nombre: e.target.value })}
                     />
                   </div>
                    <div className="col-md-6">
-                    <label className="ios-item-subtitle mb-1 d-block">Apellido</label>
-                    <input type="text" className="ios-search-bar" required
+                    <label className="ios-label">Apellido</label>
+                    <input type="text" className="ios-input" required
+                      placeholder="Apellido..."
                       value={formData.apellido1}
                       onChange={e => setFormData({ ...formData, apellido1: e.target.value })}
                     />
                   </div>
+
                   <div className="col-12">
-                     <label className="ios-item-subtitle mb-1 d-block">Email</label>
-                     <input type="email" className="ios-search-bar" required
+                     <label className="ios-label">Correo Electrónico</label>
+                     <input type="email" className="ios-input" required
+                        placeholder="email@ejemplo.com"
                         value={formData.email}
                         onChange={e => setFormData({ ...formData, email: e.target.value })}
                      />
                   </div>
                 </div>
 
-                <div className="mt-4 d-flex gap-2 justify-content-end">
-                   <button type="button" className="btn-ios-secondary px-4" onClick={() => setShowModal(false)}>Cancelar</button>
-                   <button type="submit" className="btn-ios px-4">Guardar</button>
+                <div className="mt-5 d-flex gap-2 justify-content-end">
+                   <button type="button" className="btn-ios-secondary px-4 py-2" onClick={() => setShowModal(false)}>Cancelar</button>
+                   <button type="submit" className="btn-ios px-4 py-2">Guardar</button>
                 </div>
               </form>
             </motion.div>
@@ -209,8 +223,8 @@ const AdminsTab = () => {
               </div>
 
               <div className="ios-item-actions">
-                <span className={`ios-badge ${admin.estado === 1 ? 'success' : 'neutral'}`}>
-                  {admin.estado === 1 ? 'Activo' : 'Inactivo'}
+                <span className={`ios-badge ${admin.estado ? 'success' : 'neutral'}`}>
+                  {admin.estado ? 'Activo' : 'Inactivo'}
                 </span>
                 
                 <button className="ios-icon-btn ms-2" onClick={() => handleEdit(admin)}>
@@ -218,10 +232,10 @@ const AdminsTab = () => {
                 </button>
 
                 <button 
-                  className={`ios-icon-btn ${admin.estado === 1 ? 'danger' : 'success'}`}
+                  className={`ios-icon-btn ${admin.estado ? 'danger' : 'success'}`}
                   onClick={() => handleToggleStatus(admin.id_usuario, admin.estado)}
                 >
-                   <i className={`bi ${admin.estado === 1 ? 'bi-person-x' : 'bi-person-check'}`}></i>
+                   <i className={`bi ${admin.estado ? 'bi-person-x' : 'bi-person-check'}`}></i>
                 </button>
               </div>
             </AnimatedItem>
