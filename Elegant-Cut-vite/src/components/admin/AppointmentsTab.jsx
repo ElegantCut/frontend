@@ -31,8 +31,15 @@ const AppointmentsTab = () => {
     try {
       const response = await api.patch(`/appointments/admin/${id}/status`, { nuevoEstado: newStatus });
       const data = response.data;
-      if (data.success) loadAppointments();
-    } catch (e) { alert('Error actualizando cita'); }
+      if (data.success) {
+        loadAppointments();
+      } else {
+        alert(data.message || 'Error actualizando cita');
+      }
+    } catch (e) { 
+      console.error(e);
+      alert('Error de conexión al actualizar la cita'); 
+    }
   };
 
   if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
@@ -42,11 +49,6 @@ const AppointmentsTab = () => {
     <div className="appointments-container">
       <header className="tab-header">
         <h2>Citas</h2>
-        <div className="action-buttons">
-          <button className="btn-ios" onClick={() => alert('Próximamente: Crear Cita')}>
-             <i className="bi bi-calendar-plus me-1"></i> Nueva Cita
-          </button>
-        </div>
       </header>
 
       <div className="ios-section-header">Agenda del Sistema</div>

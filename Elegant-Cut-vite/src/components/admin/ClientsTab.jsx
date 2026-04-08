@@ -42,6 +42,18 @@ const ClientsTab = () => {
     } catch (error) { console.error(error); }
   };
 
+  const handleActivate = async (id) => {
+    try {
+      const response = await api.patch(`/clients/${id}/activate`);
+      const data = response.data;
+      if (data.success) {
+        loadClients();
+      } else {
+        alert('No se pudo activar el cliente');
+      }
+    } catch (error) { console.error(error); }
+  };
+
   if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
   if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
@@ -73,16 +85,26 @@ const ClientsTab = () => {
                 </div>
 
                 <div className="ios-item-actions">
-                  <span className={`ios-badge ${client.estado === 1 ? 'success' : 'neutral'}`}>
-                    {client.estado === 1 ? 'Activo' : 'Inactivo'}
+                  <span className={`ios-badge ${client.estado ? 'success' : 'neutral'}`}>
+                    {client.estado ? 'Activo' : 'Inactivo'}
                   </span>
-                  <button 
-                    className="ios-icon-btn danger" 
-                    onClick={() => handleDeactivate(client.id_usuario)}
-                    title="Eliminar"
-                  >
-                    <i className="bi bi-trash"></i>
-                  </button>
+                  {!client.estado ? (
+                    <button 
+                      className="ios-icon-btn success" 
+                      onClick={() => handleActivate(client.id_usuario)}
+                      title="Activar"
+                    >
+                      <i className="bi bi-check-circle"></i>
+                    </button>
+                  ) : (
+                    <button 
+                      className="ios-icon-btn danger" 
+                      onClick={() => handleDeactivate(client.id_usuario)}
+                      title="Desactivar"
+                    >
+                      <i className="bi bi-trash"></i>
+                    </button>
+                  )}
                 </div>
               </AnimatedItem>
             ))
