@@ -15,19 +15,27 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const checkAuth = () => {
-    // Buscamos si existe un token y un usuario en el bolsillo del navegador
-    const token = localStorage.getItem('token');
+  const checkAuth = async () => {
+    // Buscamos si existen datos de usuario locales como primera instancia
     const userDataStr = localStorage.getItem('user');
+    setLoading(true);
 
-    if (token && userDataStr) {
+    if (userDataStr) {
       try {
-        const userData = JSON.parse(userDataStr);
-        setIsAuthenticated(true);
-        setUser(userData);
+        // Verificamos si la cookie sigue siendo válida contra el backend
+        const result = await authService.checkToken(); 
+
+        if (result.user) {
+          localStorage.setItem('user', JSON.stringify(result.user));
+          setIsAuthenticated(true);
+          setUser(result.user);
+        }
       } catch (error) {
-        console.error("Error leyendo datos del usuario local", error);
-        logout();
+        // Si hay un error de red pero tenemos datos locales, podrías elegir no desloguear
+        // Pero para seguridad estricta con HttpOnly, lo ideal es limpiar si el token no sirve
+        if (error !== "No se pudo conectar al servidor") {
+           logoutLocal(); 
+        }
       }
     } else {
       setIsAuthenticated(false);
@@ -37,18 +45,31 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (credentials) => {
-    // Llamamos a tu servicio que conecta con Axios y el Backend
-    const result = await authService.login(credentials);
-    // Luego de loguearnos con éxito, verificamos el localStorage de nuevo
-    checkAuth();
-    return result;
+    try {
+      const result = await authService.login(credentials);
+      
+      if (result.user) {
+        localStorage.setItem('user', JSON.stringify(result.user));
+        setUser(result.user);
+        setIsAuthenticated(true);
+      }
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const logout = () => {
-    // Tu servicio limpia el localStorage y redirige al login
-    authService.logout();
+  const logoutLocal = () => {
+    localStorage.removeItem('user');
     setIsAuthenticated(false);
     setUser(null);
+  };
+
+  const logout = async () => {
+    console.log("👋 Cerrando sesión...");
+    await authService.logout();
+    logoutLocal();
   };
 
   // Proveemos todas estas funciones "en vivo" a los demás componentes
