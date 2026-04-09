@@ -6,9 +6,12 @@ import { getCloudinaryUrl } from '../lib/utils/imageHelper';
 
 const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberImage, barberTitle, portfolioDataProp }) => {
     const [portfolioData, setPortfolioData] = useState(null);
+    const [barberReviews, setBarberReviews] = useState([]);
+    const [reviewsLoading, setReviewsLoading] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
+            fetchBarberReviews();
             // Intentar parsear los campos JSON en caso de que vengan como String de MySQL
             let especialidades = ["Corte Masculino"];
             let fotos = [];
@@ -46,6 +49,22 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
         }
     }, [isOpen, portfolioDataProp, barberName]);
 
+    const fetchBarberReviews = async () => {
+        if (!barberId) return;
+        setReviewsLoading(true);
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/reviews/barber/${barberId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setBarberReviews(data);
+            }
+        } catch (error) {
+            console.error("Error fetching barber reviews:", error);
+        } finally {
+            setReviewsLoading(false);
+        }
+    };
+
     // Prevent background scrolling when modal is open
     useEffect(() => {
         if (isOpen) {
@@ -57,6 +76,14 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
     }, [isOpen]);
 
     if (!isOpen) return null;
+
+    const renderStars = (rating) => {
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            stars.push(<Star key={i} size={14} fill={i <= rating ? "goldenrod" : "none"} color={i <= rating ? "goldenrod" : "#ccc"} />);
+        }
+        return stars;
+    };
 
     return (
         <AnimatePresence>
@@ -112,7 +139,7 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
                                 {/* Bio & Specialties */}
                                 <div className="portfolio-about-section">
                                     <h3>Sobre mí</h3>
-                                    <p className="portfolio-bio">{portfolioData.biografia}</p>
+                                    <p className="portfolio-bio">{portfolioData.biografia || "Sin biografía disponible."}</p>
 
                                     <h4>Especialidades</h4>
                                     <div className="portfolio-specialties">
@@ -136,7 +163,6 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
                                         <div className="portfolio-grid">
                                             {portfolioData.fotos_portafolio.map((foto, index) => (
                                                 <div key={index} className="portfolio-grid-item">
-                                                    {/* Usando la foto real del portafolio, extraída del array JSON */}
                                                     <img
                                                         src={foto}
                                                         alt={`Trabajo ${index + 1}`}
@@ -151,6 +177,30 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
                                             <ImageIcon size={48} color="#ccc" />
                                             <p>Este barbero aún no ha subido fotos a su portafolio.</p>
                                         </div>
+                                    )}
+                                </div>
+
+                                {/* Reviews Section */}
+                                <div className="portfolio-reviews-section mt-4 px-4 pb-4">
+                                    <h3 className="mb-3">Últimas Reseñas</h3>
+                                    {reviewsLoading ? (
+                                        <p className="text-muted">Cargando comentarios...</p>
+                                    ) : barberReviews.length > 0 ? (
+                                        <div className="barber-reviews-list">
+                                            {barberReviews.map((review) => (
+                                                <div key={review.id_resena} className="barber-review-item p-3 mb-2 rounded bg-light border-start border-4 border-rojo">
+                                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                                        <strong className="text-dark small">{review.nombre_cliente}</strong>
+                                                        <div className="d-flex gap-1">
+                                                            {renderStars(review.calificacion)}
+                                                        </div>
+                                                    </div>
+                                                    <p className="mb-0 text-muted smaller fst-italic">"{review.comentario}"</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-muted small">Aún no hay reseñas para este barbero.</p>
                                     )}
                                 </div>
                             </div>

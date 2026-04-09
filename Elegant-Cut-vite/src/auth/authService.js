@@ -16,10 +16,8 @@ export const authService = {
         try {
             const response = await api.post('/auth/login', credentials);
 
-            // Si el backend responde con éxito y trae token
-            if (response.data.token) {
-                // Guardamos el pase VIP y los datos del usuario (JWT)
-                localStorage.setItem('token', response.data.token);
+            // Ya no guardamos el token en localStorage, se maneja por cookies (HttpOnly)
+            if (response.data.user) {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
             }
 
@@ -31,7 +29,7 @@ export const authService = {
 
     // 3. Método para salir (Limpiar el bolsillo)
     logout: () => {
-        localStorage.removeItem('token');
+        // La limpieza de la cookie JWT la hace el backend en /auth/logout
         localStorage.removeItem('user');
         window.location.href = '/login';
     },

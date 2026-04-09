@@ -12,9 +12,8 @@ export class AuthClient {
 
       console.log(' Respuesta del servidor (registro):', data);
 
-      if (data.success && data.token) {
-        // Guardar token y datos del usuario automáticamente
-        localStorage.setItem('token', data.token);
+      if (data.success) {
+        // Ya no guardamos el token en localStorage (cookies)
         localStorage.setItem('user', JSON.stringify(data.user));
 
         console.log(' Registro exitoso!');
@@ -70,9 +69,8 @@ export class AuthClient {
 
       console.log('📨 Respuesta del servidor:', data);
 
-      if (data.success && data.token) {
-        // Guardar token y datos del usuario
-        localStorage.setItem('token', data.token);
+      if (data.success) {
+        // Ya no guardamos el token en localStorage (cookies)
         localStorage.setItem('user', JSON.stringify(data.user));
 
         console.log('✅ Login exitoso!');
@@ -189,9 +187,9 @@ export class AuthClient {
     console.log('👋 Sesión cerrada');
   }
 
-  // Obtener token
+  // Obtener token (Ya no se usa localStorage para esto)
   static getToken() {
-    return localStorage.getItem('token');
+    return null;
   }
 
   // Obtener datos del usuario
@@ -200,23 +198,12 @@ export class AuthClient {
     if (userData && userData !== 'undefined' && userData !== 'null') {
       try { return JSON.parse(userData); } catch(e) {}
     }
-    
-    // Fallback: decode from token
-    const token = this.getToken();
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload;
-      } catch (error) {
-        return null;
-      }
-    }
     return null;
   }
 
   // Verificar si está logueado
   static isLoggedIn() {
-    return this.getToken() !== null;
+    return this.getUser() !== null;
   }
 
   // Verificar si es admin
@@ -237,16 +224,8 @@ export class AuthClient {
     return user && user.role === 'cliente';
   }
 
-  // Verificar si el token es válido
+  // Verificar si el token es válido (Ahora se encarga el backend vía cookies)
   static isTokenValid() {
-    const token = this.getToken();
-    if (!token) return false;
-
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp * 1000 > Date.now();
-    } catch (error) {
-      return false;
-    }
+    return this.isLoggedIn();
   }
 }

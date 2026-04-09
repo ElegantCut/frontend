@@ -16,11 +16,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuth = () => {
-    // Buscamos si existe un token y un usuario en el bolsillo del navegador
-    const token = localStorage.getItem('token');
+    // Ya no buscamos el token en localStorage porque ahora se maneja por cookies HttpOnly.
+    // Solo verificamos si existen los datos del usuario.
     const userDataStr = localStorage.getItem('user');
 
-    if (token && userDataStr) {
+    if (userDataStr) {
       try {
         const userData = JSON.parse(userDataStr);
         setIsAuthenticated(true);

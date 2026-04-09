@@ -6,10 +6,32 @@ const ServicesTab = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    nombre: '',
+    descripcion: '',
+    precio: '',
+    duracion: '',
+    id_categoria: ''
+  });
 
   useEffect(() => {
     loadServices();
+    loadCategories();
   }, []);
+
+  const loadCategories = async () => {
+    try {
+      const response = await api.get('/services/categories');
+      if (response.data.success) {
+        setCategories(response.data.data);
+      }
+    } catch (err) {
+      console.error('Error loading categories:', err);
+    }
+  };
 
   const loadServices = async () => {
     try {
@@ -50,6 +72,33 @@ const ServicesTab = () => {
     } catch (e) { alert('Error de conexión'); }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      // Convertir valores a números
+      const payload = {
+        ...formData,
+        precio: parseFloat(formData.precio),
+        duracion: parseInt(formData.duracion),
+        id_categoria: parseInt(formData.id_categoria)
+      };
+
+      const response = await api.post('/services', payload);
+      if (response.data) {
+        alert('Servicio creado con éxito');
+        setShowModal(false);
+        setFormData({ nombre: '', descripcion: '', precio: '', duracion: '', id_categoria: '' });
+        loadServices(); // Recargar lista
+      }
+    } catch (err) {
+      console.error('Error creating service:', err);
+      alert('Error al crear el servicio: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
   if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
@@ -58,7 +107,10 @@ const ServicesTab = () => {
       <header className="tab-header">
         <h2>Servicios</h2>
         <div className="action-buttons">
-          <button className="btn-ios" onClick={() => alert('Función "Nuevo Servicio" en desarrollo.')}>
+          <button className="btn-ios" onClick={() => {
+            loadCategories(); // Asegurar recarga antes de abrir
+            setShowModal(true);
+          }}>
             <i className="bi bi-plus-lg me-1"></i> Nuevo Servicio
           </button>
         </div>
@@ -95,6 +147,91 @@ const ServicesTab = () => {
           )}
         </AnimatedContainer>
       </div>
+
+      {/* Modal de Nuevo Servicio */}
+      {showModal && (
+        <div className="ios-modal-overlay">
+          <div className="ios-modal">
+            <div className="ios-modal-header">
+              <h3>Nuevo Servicio</h3>
+              <button className="close-btn" onClick={() => setShowModal(false)}>&times;</button>
+            </div>
+            <form onSubmit={handleSubmit} className="ios-modal-form">
+              <div className="form-group">
+                <label>Nombre del Servicio</label>
+                <input 
+                  type="text" 
+                  required 
+                  className="ios-input" 
+                  value={formData.nombre}
+                  onChange={(e) => setFormData({...formData, nombre: e.target.value})}
+                  placeholder="Ej: Corte Degradado"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Descripción</label>
+                <textarea 
+                  required 
+                  className="ios-input" 
+                  value={formData.descripcion}
+                  onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
+                  placeholder="Describe brevemente el servicio..."
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group half">
+                  <label>Precio ($)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    className="ios-input" 
+                    value={formData.precio}
+                    onChange={(e) => setFormData({...formData, precio: e.target.value})}
+                    placeholder="25000"
+                  />
+                </div>
+                <div className="form-group half">
+                  <label>Duración (min)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    className="ios-input" 
+                    value={formData.duracion}
+                    onChange={(e) => setFormData({...formData, duracion: e.target.value})}
+                    placeholder="45"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Categoría y Género</label>
+                <select 
+                  required 
+                  className="ios-input"
+                  value={formData.id_categoria}
+                  onChange={(e) => setFormData({...formData, id_categoria: e.target.value})}
+                >
+                  <option value="">Seleccione una categoría...</option>
+                  {categories.map(cat => (
+                    <option key={cat.id_categoria} value={cat.id_categoria}>
+                      {cat.nombre} - {cat.genero_servicio?.nombre || 'General'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="ios-modal-footer">
+                <button type="button" className="ios-btn secondary" onClick={() => setShowModal(false)}>Cancelar</button>
+                <button type="submit" className="ios-btn primary" disabled={submitting}>
+                  {submitting ? 'Guardando...' : 'Crear Servicio'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

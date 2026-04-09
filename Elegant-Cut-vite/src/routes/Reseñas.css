@@ -358,3 +358,22 @@
         padding: 20px;
     }
 }
+
+.reviewed-barber-tag {
+    background: #f1f3f5;
+    color: #495057;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    margin-left: auto;
+    border: 1px solid #dee2e6;
+}
+
+.bg-rojo {
+    background-color: #bc2041 !important;
+    color: white !important;
+}

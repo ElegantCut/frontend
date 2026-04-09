@@ -8,18 +8,21 @@ import './Reseñas.css';
 const Reseñas = () => {
   const { isAuthenticated, user } = useAuth();
   const [reviews, setReviews] = useState([]);
+  const [barbers, setBarbers] = useState([]);
   const [formData, setFormData] = useState({
     nombre_cliente: '',
     email_cliente: '',
     calificacion: '5',
-    comentario: ''
+    comentario: '',
+    id_barbero: ''
   });
   const [status, setStatus] = useState({ type: '', message: '' });
   const [loading, setLoading] = useState(true);
 
-  // Fetch reviews
+  // Fetch reviews and barbers
   useEffect(() => {
     fetchReviews();
+    fetchBarbers();
   }, []);
 
   // Pre-fill form if user is logged in
@@ -44,6 +47,17 @@ const Reseñas = () => {
     }
   };
 
+  const fetchBarbers = async () => {
+    try {
+      const response = await api.get('/barbers/public');
+      // La respuesta parece venir en un array directo o en data
+      const data = response.data?.data || response.data || [];
+      setBarbers(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error fetching barbers:', error);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -54,6 +68,7 @@ const Reseñas = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Enviando reseña con datos:', formData);
     setStatus({ type: 'loading', message: '' });
 
     try {
@@ -64,7 +79,8 @@ const Reseñas = () => {
         nombre_cliente: (isAuthenticated && user?.name) || '',
         email_cliente: (isAuthenticated && user?.email) || '',
         calificacion: '5',
-        comentario: ''
+        comentario: '',
+        id_barbero: ''
       });
       fetchReviews();
 
@@ -73,6 +89,7 @@ const Reseñas = () => {
       }, 3000);
     } catch (error) {
       console.error('Error:', error);
+      alert('Error de conexión o servidor: ' + (error.response?.data?.message || error.message));
       setStatus({ type: 'error', message: 'Error al enviar la reseña' });
     }
   };
@@ -116,7 +133,12 @@ const Reseñas = () => {
         <div className="reviews-main-container">
           {/* LEFT SIDE - REVIEWS LIST */}
           <section className="reviews-section">
-            <h2>Todas las Reseñas</h2>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h2 className="m-0">Todas las Reseñas</h2>
+              <span className="badge bg-rojo px-3 py-2 rounded-pill shadow-sm">
+                {reviews.length} Comentarios
+              </span>
+            </div>
 
             {loading ? (
               <div className="loading-spinner">Cargando reseñas...</div>
@@ -127,6 +149,7 @@ const Reseñas = () => {
                     try {
                       if (!review || !review.id_resena) return null;
                       const nombre = review.nombre_cliente || 'Cliente Anónimo';
+                      const barbero = review.barbero;
 
                       return (
                         <AnimatedItem key={review.id_resena} className="review-card">
@@ -140,6 +163,12 @@ const Reseñas = () => {
                                 {formatDate(review.fecha_resena)}
                               </span>
                             </div>
+                            {barbero && (
+                               <div className="reviewed-barber-tag">
+                                 <i className="bi bi-scissors me-1"></i>
+                                 {barbero.prim_nombre}
+                               </div>
+                            )}
                           </div>
                           <div className="review-rating">
                             {renderStars(review.calificacion)}
@@ -215,21 +244,41 @@ const Reseñas = () => {
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="calificacion">Calificación</label>
-                <select
-                  id="calificacion"
-                  name="calificacion"
-                  value={formData.calificacion}
-                  onChange={handleChange}
-                  disabled={!isAuthenticated}
-                >
-                  <option value="5">★★★★★ Excelente</option>
-                  <option value="4">★★★★☆ Muy Bueno</option>
-                  <option value="3">★★★☆☆ Bueno</option>
-                  <option value="2">★★☆☆☆ Regular</option>
-                  <option value="1">★☆☆☆☆ Malo</option>
-                </select>
+              <div className="row g-3">
+                  <div className="col-md-6 form-group">
+                    <label htmlFor="calificacion">Calificación</label>
+                    <select
+                      id="calificacion"
+                      name="calificacion"
+                      value={formData.calificacion}
+                      onChange={handleChange}
+                      disabled={!isAuthenticated}
+                    >
+                      <option value="5">★★★★★ Excelente</option>
+                      <option value="4">★★★★☆ Muy Bueno</option>
+                      <option value="3">★★★☆☆ Bueno</option>
+                      <option value="2">★★☆☆☆ Regular</option>
+                      <option value="1">★☆☆☆☆ Malo</option>
+                    </select>
+                  </div>
+
+                  <div className="col-md-6 form-group">
+                    <label htmlFor="id_barbero">Barbero (Opcional)</label>
+                    <select
+                      id="id_barbero"
+                      name="id_barbero"
+                      value={formData.id_barbero}
+                      onChange={handleChange}
+                      disabled={!isAuthenticated}
+                    >
+                      <option value="">Cualquiera</option>
+                      {barbers.map(b => (
+                        <option key={b.id_usuario} value={b.id_usuario}>
+                          {b.prim_nombre} {b.apellido1}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
               </div>
 
               <div className="form-group">
