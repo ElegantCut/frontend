@@ -13,7 +13,7 @@ export class AuthClient {
       console.log(' Respuesta del servidor (registro):', data);
 
       if (data.success) {
-        // Ya no guardamos el token en localStorage (cookies)
+        // Guardar datos del usuario (el token ya está en la cookie HttpOnly)
         localStorage.setItem('user', JSON.stringify(data.user));
 
         console.log(' Registro exitoso!');
@@ -31,14 +31,7 @@ export class AuthClient {
   // Subir foto de perfil
   static async uploadProfilePhoto(formData) {
     try {
-      const token = this.getToken();
-      if (!token) return { success: false, error: 'No autenticado' };
-
-      const response = await api.post('/users/profile-photo', formData, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await api.post('/users/profile-photo', formData);
 
       const data = response.data;
 
@@ -70,7 +63,7 @@ export class AuthClient {
       console.log('📨 Respuesta del servidor:', data);
 
       if (data.success) {
-        // Ya no guardamos el token en localStorage (cookies)
+        // Guardar solo los datos del usuario (el token está en la cookie)
         localStorage.setItem('user', JSON.stringify(data.user));
 
         console.log('✅ Login exitoso!');
@@ -181,15 +174,19 @@ export class AuthClient {
   }
 
   // Función para cerrar sesión
-  static logout() {
-    localStorage.removeItem('token');
+  static async logout() {
+    try {
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Error al cerrar sesión en el servidor:', error);
+    }
     localStorage.removeItem('user');
     console.log('👋 Sesión cerrada');
   }
 
-  // Obtener token (Ya no se usa localStorage para esto)
+  // Obtener token (Ya no es posible con HttpOnly)
   static getToken() {
-    return null;
+    return null; 
   }
 
   // Obtener datos del usuario
@@ -201,7 +198,7 @@ export class AuthClient {
     return null;
   }
 
-  // Verificar si está logueado
+  // Verificar si está logueado (Aproximación basada en datos de usuario locales)
   static isLoggedIn() {
     return this.getUser() !== null;
   }
@@ -224,8 +221,13 @@ export class AuthClient {
     return user && user.role === 'cliente';
   }
 
-  // Verificar si el token es válido (Ahora se encarga el backend vía cookies)
-  static isTokenValid() {
-    return this.isLoggedIn();
+  // Verificar si el token es válido (Se verifica contra el backend vía cookies)
+  static async isTokenValid() {
+    try {
+      const response = await api.post('/auth/check-token');
+      return response.data.success || response.data.id !== undefined;
+    } catch (error) {
+      return false;
+    }
   }
 }

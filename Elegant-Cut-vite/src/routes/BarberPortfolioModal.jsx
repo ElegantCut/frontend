@@ -35,7 +35,9 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
             setPortfolioData(portfolioDataProp ? {
                 ...portfolioDataProp,
                 especialidades,
-                fotos_portafolio: Array.isArray(fotos) ? fotos : []
+                fotos_portafolio: Array.isArray(fotos) ? fotos : [],
+                calificacion: portfolioDataProp.calificacion || 5.0,
+                rese_as_count: portfolioDataProp.rese_as_count || 0
             } : {
                 // Fallback if not found in db
                 nombre_completo: barberName,
@@ -43,7 +45,7 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
                 experiencia: "Profesional",
                 especialidades: ["Corte Masculino"],
                 calificacion: 5.0,
-                reseñas_count: 0,
+                rese_as_count: 0,
                 fotos_portafolio: []
             });
         }
@@ -121,9 +123,28 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
 
                                     <div className="portfolio-rating-row">
                                         <div className="portfolio-stars">
-                                            <Star size={16} fill="goldenrod" color="goldenrod" />
-                                            <span>{portfolioData.calificacion}</span>
-                                            <span className="reviews-count">({portfolioData.reseñas_count} reseñas)</span>
+                                            {[...Array(5)].map((_, i) => {
+                                                const rating = parseFloat(portfolioData.calificacion);
+                                                return (
+                                                    <Star 
+                                                        key={i} 
+                                                        size={16} 
+                                                        fill={rating >= i + 1 ? "goldenrod" : (rating >= i + 0.5 ? "url(#half-star)" : "none")} 
+                                                        color="goldenrod" 
+                                                    />
+                                                );
+                                            })}
+                                            {/* Def para estrella media */}
+                                            <svg width="0" height="0" style={{ position: 'absolute' }}>
+                                                <defs>
+                                                    <linearGradient id="half-star">
+                                                        <stop offset="50%" stopColor="goldenrod" />
+                                                        <stop offset="50%" stopColor="transparent" stopOpacity="1" />
+                                                    </linearGradient>
+                                                </defs>
+                                            </svg>
+                                            <span style={{ marginLeft: '8px' }}>{portfolioData.calificacion}</span>
+                                            <span className="reviews-count">({portfolioData.rese_as_count} reseñas)</span>
                                         </div>
                                         {portfolioData.instagram && (
                                             <a href={`https://instagram.com/${portfolioData.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="instagram-link">

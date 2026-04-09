@@ -8,10 +8,7 @@ const api = axios.create({
     withCredentials: true // Permite enviar y recibir cookies (JWT)
 });
 
-
-
 // Eliminamos el interceptor que pegaba el token desde localStorage,
 // ahora las cookies se encargan automáticamente de esto.
-
 export default api;
 ;

@@ -72,7 +72,12 @@ const ReviewsTab = () => {
     const filtered = reviews.filter(r => {
         if (!r) return false;
         const term = (searchTerm || '').toLowerCase();
-        return (r.nombre_cliente || '').toLowerCase().includes(term) ||
+        const clienteNom = `${r.usuarios_resenas_id_clienteTousuarios?.prim_nombre || ''} ${r.usuarios_resenas_id_clienteTousuarios?.apellido1 || ''}`.toLowerCase();
+        const clienteUser = (r.usuarios_resenas_id_clienteTousuarios?.username || '').toLowerCase();
+        const barberoNom = `${r.barbero?.prim_nombre || ''} ${r.barbero?.apellido1 || ''}`.toLowerCase();
+        return clienteNom.includes(term) ||
+            clienteUser.includes(term) ||
+            barberoNom.includes(term) ||
             (r.comentario || '').toLowerCase().includes(term);
     });
 
@@ -120,10 +125,22 @@ const ReviewsTab = () => {
               <AnimatedItem key={r.id_resena} className="ios-list-item">
                 <div className="ios-item-content">
                   <div className="d-flex align-items-center gap-2 mb-1">
-                    <span className="ios-item-title">{r.nombre_cliente || 'Anónimo'}</span>
+                    <span className="ios-item-title">
+                        {r.usuarios_resenas_id_clienteTousuarios?.prim_nombre} {r.usuarios_resenas_id_clienteTousuarios?.apellido1 || 'Anónimo'} 
+                        {r.usuarios_resenas_id_clienteTousuarios?.username && (
+                            <small className="text-muted ms-1" style={{fontSize: '0.8rem', fontWeight: 'normal'}}>
+                                (@{r.usuarios_resenas_id_clienteTousuarios.username})
+                            </small>
+                        )}
+                    </span>
                     <span style={{ color: '#ffc107', fontSize: '1rem' }}>{'★'.repeat(parseInt(r.calificacion))}{'☆'.repeat(5-parseInt(r.calificacion))}</span>
                   </div>
-                  <span className="ios-item-subtitle mb-2 d-block">{r.email_cliente}</span>
+                  <span className="ios-item-subtitle mb-1 d-block">{r.usuarios_resenas_id_clienteTousuarios?.email}</span>
+                  {r.barbero && (
+                    <span className="text-muted extra-small d-block mb-2" style={{fontSize: '0.75rem'}}>
+                        Dirigido a: {r.barbero.prim_nombre} {r.barbero.apellido1}
+                    </span>
+                  )}
                   <p className="mb-0 text-dark small" style={{lineHeight: '1.4'}}>{r.comentario}</p>
                 </div>
 

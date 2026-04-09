@@ -1,6 +1,16 @@
 import api from "../lib/axios";
 
 export const authService = {
+    // 0. Método para verificar el token (sesión activa)
+    checkToken: async () => {
+        try {
+            const response = await api.post('/auth/check-token');
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || "Sesión inválida";
+        }
+    },
+
     // 1. Método para el Registro
     register: async (userData) => {
         try {
@@ -16,8 +26,9 @@ export const authService = {
         try {
             const response = await api.post('/auth/login', credentials);
 
-            // Ya no guardamos el token en localStorage, se maneja por cookies (HttpOnly)
+            // Si el backend responde con éxito (el token ya está en la cookie HttpOnly)
             if (response.data.user) {
+                // Guardamos solo los datos del usuario localmente (el token se maneja por cookies)
                 localStorage.setItem('user', JSON.stringify(response.data.user));
             }
 
@@ -27,9 +38,13 @@ export const authService = {
         }
     },
 
-    // 3. Método para salir (Limpiar el bolsillo)
-    logout: () => {
-        // La limpieza de la cookie JWT la hace el backend en /auth/logout
+    // 3. Método para salir (Limpia la cookie en el backend y datos locales)
+    logout: async () => {
+        try {
+            await api.post('/auth/logout');
+        } catch (error) {
+            console.error("Error al cerrar sesión", error);
+        }
         localStorage.removeItem('user');
         window.location.href = '/login';
     },
