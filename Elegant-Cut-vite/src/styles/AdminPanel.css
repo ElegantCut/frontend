@@ -29,12 +29,25 @@ body {
     display: flex;
     flex-direction: column;
     margin-left: 260px;
+    transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 992px) {
+    .admin-content {
+        margin-left: 0;
+    }
 }
 
 .admin-main {
     flex: 1;
     padding: 2rem;
     overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .admin-main {
+        padding: 1rem;
+    }
 }
 
 /* iOS Large Title styling */
@@ -133,6 +146,9 @@ body {
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .btn-ios-secondary {
@@ -142,6 +158,9 @@ body {
     padding: 0.5rem 1rem;
     border-radius: 20px;
     font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .ios-icon-btn {
@@ -231,6 +250,12 @@ body {
     gap: 1.2rem;
 }
 
+@media (max-width: 576px) {
+    .ios-widget-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .ios-widget {
     background-color: var(--ios-card);
     border-radius: 20px;
@@ -242,4 +267,138 @@ body {
     font-size: 2.4rem;
     font-weight: 700;
     margin: 5px 0;
+}
+
+/* Modal Premium iOS */
+.ios-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.ios-modal {
+    background-color: #fff;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: slideUp 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (max-width: 576px) {
+    .ios-modal {
+        width: 95%;
+        margin: 10px;
+        border-radius: 15px;
+    }
+}
+
+.ios-modal-header {
+    padding: 1.5rem;
+    border-bottom: 0.5px solid var(--ios-separator);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ios-modal-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.ios-modal-header .close-btn {
+    background: #e5e5ea;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--ios-text-secondary);
+}
+
+.ios-modal-form {
+    padding: 1.5rem;
+}
+
+.ios-modal-form .form-group {
+    margin-bottom: 1.2rem;
+}
+
+.ios-modal-form .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ios-text-secondary);
+    margin-bottom: 6px;
+    margin-left: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ios-modal-form .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.ios-modal-form .form-group.half {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.ios-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ios-btn.primary {
+    background-color: var(--ios-red);
+    color: #fff;
+}
+
+.ios-btn.primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ios-btn.secondary {
+    background-color: #f2f2f7;
+    color: var(--ios-text);
+    margin-right: 10px;
+}
+
+.ios-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }

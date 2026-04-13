@@ -16,7 +16,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuth = async () => {
-    // Buscamos si existen datos de usuario locales como primera instancia
+    // Ya no buscamos el token en localStorage porque ahora se maneja por cookies HttpOnly.
+    // Solo verificamos si existen los datos del usuario localmente como primera instancia.
     const userDataStr = localStorage.getItem('user');
     setLoading(true);
 

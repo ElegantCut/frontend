@@ -221,7 +221,7 @@ export class AuthClient {
     return user && user.role === 'cliente';
   }
 
-  // Verificar si el token es válido
+  // Verificar si el token es válido (Se verifica contra el backend vía cookies)
   static async isTokenValid() {
     try {
       const response = await api.post('/auth/check-token');

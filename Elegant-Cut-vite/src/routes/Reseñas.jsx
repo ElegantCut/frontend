@@ -20,7 +20,7 @@ const Reseñas = () => {
   const [loading, setLoading] = useState(true);
   const [hoverRating, setHoverRating] = useState(0);
 
-  // Fetch reviews
+  // Fetch reviews and barbers
   useEffect(() => {
     fetchReviews();
     fetchBarbers();
@@ -28,7 +28,7 @@ const Reseñas = () => {
 
   const fetchBarbers = async () => {
     try {
-      const response = await api.get('/barbers/all');
+      const response = await api.get('/barbers/public'); // Usamos public para las reseñas
       const data = response.data?.data || response.data || [];
       if (Array.isArray(data)) {
         setBarbers(data);
@@ -59,6 +59,8 @@ const Reseñas = () => {
     }
   };
 
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -69,6 +71,7 @@ const Reseñas = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Enviando reseña con datos:', formData);
     setStatus({ type: 'loading', message: '' });
 
     try {
@@ -89,6 +92,7 @@ const Reseñas = () => {
       }, 3000);
     } catch (error) {
       console.error('Error:', error);
+      alert('Error de conexión o servidor: ' + (error.response?.data?.message || error.message));
       setStatus({ type: 'error', message: 'Error al enviar la reseña' });
     }
   };
@@ -132,7 +136,12 @@ const Reseñas = () => {
         <div className="reviews-main-container">
           {/* LEFT SIDE - REVIEWS LIST */}
           <section className="reviews-section">
-            <h2>Todas las Reseñas</h2>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h2 className="m-0">Todas las Reseñas</h2>
+              <span className="badge bg-rojo px-3 py-2 rounded-pill shadow-sm">
+                {reviews.length} Comentarios
+              </span>
+            </div>
 
             {loading ? (
               <div className="loading-spinner">Cargando reseñas...</div>
@@ -142,7 +151,8 @@ const Reseñas = () => {
                   reviews.map((review) => {
                     try {
                       if (!review || !review.id_resena) return null;
-                      const nombre = review.usuarios_resenas_id_clienteTousuarios?.prim_nombre || 'Cliente Anónimo';
+                      const nombre = review.usuarios_resenas_id_clienteTousuarios?.prim_nombre || review.nombre_cliente || 'Cliente Anónimo';
+                      const barbero = review.barbero;
 
                       return (
                         <AnimatedItem key={review.id_resena} className="review-card">
@@ -161,6 +171,12 @@ const Reseñas = () => {
                                 </span>
                               )}
                             </div>
+                            {barbero && (
+                               <div className="reviewed-barber-tag">
+                                 <i className="bi bi-scissors me-1"></i>
+                                 {barbero.prim_nombre}
+                               </div>
+                            )}
                           </div>
                           <div className="review-rating">
                             {renderStars(review.calificacion)}

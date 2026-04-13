@@ -28,7 +28,7 @@ export const authService = {
 
             // Si el backend responde con éxito (el token ya está en la cookie HttpOnly)
             if (response.data.user) {
-                // Guardamos solo los datos del usuario
+                // Guardamos solo los datos del usuario localmente (el token se maneja por cookies)
                 localStorage.setItem('user', JSON.stringify(response.data.user));
             }
 

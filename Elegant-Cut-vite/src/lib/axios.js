@@ -5,8 +5,10 @@ export const UPLOADS_BASE_URL = API_BASE_URL.replace('/api', '/uploads');
 
 const api = axios.create({
     baseURL: API_BASE_URL,
-    withCredentials: true // Permite enviar cookies en las peticiones
+    withCredentials: true // Permite enviar y recibir cookies (JWT)
 });
 
+// Eliminamos el interceptor que pegaba el token desde localStorage,
+// ahora las cookies se encargan automáticamente de esto.
 export default api;
 ;
