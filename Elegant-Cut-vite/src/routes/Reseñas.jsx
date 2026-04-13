@@ -18,6 +18,7 @@ const Reseñas = () => {
   });
   const [status, setStatus] = useState({ type: '', message: '' });
   const [loading, setLoading] = useState(true);
+  const [hoverRating, setHoverRating] = useState(0);
 
   // Fetch reviews
   useEffect(() => {
@@ -208,20 +209,37 @@ const Reseñas = () => {
 
 
               <div className="form-group">
-                <label htmlFor="calificacion">Calificación</label>
-                <select
-                  id="calificacion"
-                  name="calificacion"
-                  value={formData.calificacion}
-                  onChange={handleChange}
-                  disabled={!isAuthenticated}
+                <label>Calificación</label>
+                <div 
+                  className={`star-input-container ${!isAuthenticated ? 'disabled' : ''}`}
+                  onMouseLeave={() => setHoverRating(0)}
                 >
-                  <option value="5">★★★★★ Excelente</option>
-                  <option value="4">★★★★☆ Muy Bueno</option>
-                  <option value="3">★★★☆☆ Bueno</option>
-                  <option value="2">★★☆☆☆ Regular</option>
-                  <option value="1">★☆☆☆☆ Malo</option>
-                </select>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      className={`star-btn ${star <= (hoverRating || Number(formData.calificacion)) ? 'active' : ''}`}
+                      onClick={() => !isAuthenticated ? null : setFormData(prev => ({ ...prev, calificacion: star.toString() }))}
+                      onMouseEnter={() => !isAuthenticated ? null : setHoverRating(star)}
+                      disabled={!isAuthenticated}
+                      aria-label={`Calificar con ${star} estrellas`}
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path 
+                          d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
+                          className="star-path"
+                        />
+                      </svg>
+                    </button>
+                  ))}
+                  <span className="rating-label">
+                    {Number(hoverRating || formData.calificacion) === 5 && '¡Excelente!'}
+                    {Number(hoverRating || formData.calificacion) === 4 && 'Muy Bueno'}
+                    {Number(hoverRating || formData.calificacion) === 3 && 'Bueno'}
+                    {Number(hoverRating || formData.calificacion) === 2 && 'Regular'}
+                    {Number(hoverRating || formData.calificacion) === 1 && 'Malo'}
+                  </span>
+                </div>
               </div>
 
               <div className="form-group">

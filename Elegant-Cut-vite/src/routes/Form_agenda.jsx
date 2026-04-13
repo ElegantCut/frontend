@@ -11,6 +11,8 @@ import { barberService } from '../lib/barberService';
 import { servicesService } from '../lib/servicesService';
 import { appointmentService } from '../lib/appointmentService';
 import { AuthClient } from '../auth/authClient';
+import { useLocation } from 'react-router-dom';
+import { getCloudinaryServiceUrl } from '../lib/utils/imageHelper';
 
 // MOCK DATA Fallbacks
 const MOCK_BARBERS = [
@@ -71,6 +73,10 @@ const slideVariants = {
 
 // ── COMPONENT ──────────────────────────────────────────
 function Form_agenda() {
+  const location = useLocation();
+  const prepickedServices = location.state?.cart || [];
+  const preselectedBarberOpt = location.state?.preselectedBarber || null;
+  
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -105,8 +111,8 @@ function Form_agenda() {
 
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [selectedBarber, setBarber] = useState(null);
-  const [selectedService, setService] = useState(null);
+  const [selectedBarber, setBarber] = useState(preselectedBarberOpt || null);
+  const [selectedService, setService] = useState(prepickedServices.length > 0 ? prepickedServices[0] : null);
   const [payMethod, setPayMethod] = useState('efectivo');
   const [contact, setContact] = useState({ name: '', phone: '', email: '', notes: '' });
   const [confirmed, setConfirmed] = useState(false);
@@ -148,7 +154,7 @@ function Form_agenda() {
 
     const formData = {
       fecha: `${selectedDate}T00:00:00.000Z`,
-      observaciones: contact.notes || "Cita agendada desde el Perfil",
+      observaciones: `Reserva a nombre de: ${contact.name} (${contact.phone}). ${contact.notes ? 'Notas: ' + contact.notes : ''}`,
       id_usuario: Number(currentUser.userId),
       id_empleado: idBarbero,
       id_estado_cita: 1, // Pendiente
@@ -409,72 +415,130 @@ function Form_agenda() {
                       Elige tu profesional y servicio
                     </div>
 
-                    <div className="fa-subsection">Profesional</div>
-                    <div className="fa-barbers-grid">
-                      {listaBarberos.map(b => {
-                        const bId = b.id || b.id_usuario;
-                        const bName = b.name || b.prim_nombre;
-                        const bLast = b.last || b.apellido1 || '';
-                        const bSpecialty = b.specialty || b.especialidad || 'Barbero';
-                        const bEmoji = b.emoji || (bName ? bName.charAt(0) : 'B');
-                        const isSelected = selectedBarber?.id === bId || selectedBarber?.id_usuario === bId;
-
-                        return (
-                          <motion.div
-                            key={bId}
-                            className={`fa-barber-card ${isSelected ? 'selected' : ''}`}
-                            onClick={() => setBarber(b)}
-                            whileHover={{ y: -3 }}
-                            whileTap={{ scale: 0.96 }}
-                          >
-                            <div className="fa-barber-avatar">{bEmoji}</div>
-                            <div className="fa-barber-name">{bName} {bLast}</div>
-                            <div className="fa-barber-specialty">{bSpecialty}</div>
-                            {isSelected && (
-                              <motion.div
-                                className="fa-barber-check"
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ type: 'spring', stiffness: 300 }}
-                              >
-                                <Check size={16} />
-                              </motion.div>
-                            )}
-                          </motion.div>
-                        )
-                      })}
-                    </div>
-
-                    <div className="fa-subsection">Servicio</div>
-                    <div className="fa-services-list">
-                      {listaServicios.map(s => {
-                        const sId = s.id || s.id_servicio;
-                        const sName = s.name || s.nombre;
-                        const sPrice = s.price || s.precio || 0;
-                        const sDuration = s.duration || s.duracion || 30;
-                        const isSelected = selectedService?.id === sId || selectedService?.id_servicio === sId;
-
-                        return (
-                          <motion.div
-                            key={sId}
-                            className={`fa-service-card ${isSelected ? 'selected' : ''}`}
-                            onClick={() => setService(s)}
-                            whileTap={{ scale: 0.985 }}
-                          >
-                            <div className="fa-service-info">
-                              <div className="fa-service-name">{sName}</div>
-                              <div className="fa-service-duration">
-                                <Clock size={12} />{sDuration} min
+                    {preselectedBarberOpt ? (
+                      <>
+                        <div className="fa-subsection">Profesional elegido</div>
+                        <div className="fa-barbers-grid" style={{ gridTemplateColumns: '1fr' }}>
+                           <div className="fa-barber-card selected" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'default', padding: '10px 15px', gap: '15px' }}>
+                              <div className="fa-barber-avatar">{preselectedBarberOpt.emoji || preselectedBarberOpt.name?.charAt(0) || 'B'}</div>
+                              <div style={{ flexGrow: 1, textAlign: 'left' }}>
+                                <div className="fa-barber-name">{preselectedBarberOpt.name || preselectedBarberOpt.prim_nombre} {(preselectedBarberOpt.last || preselectedBarberOpt.apellido1 || '')}</div>
+                                <div className="fa-barber-specialty">{preselectedBarberOpt.title || preselectedBarberOpt.specialty || preselectedBarberOpt.especialidad || 'Barbero Profesional'}</div>
                               </div>
-                            </div>
-                            <div className="fa-service-price">{priceFormat(sPrice)}</div>
-                            <div className="fa-service-radio">
-                              {isSelected && <div className="fa-service-radio-dot" />}
-                            </div>
-                          </motion.div>
-                        )
-                      })}
-                    </div>
+                              <div className="fa-barber-check" style={{ position: 'relative', top: 'auto', right: 'auto' }}>
+                                <Check size={16} />
+                              </div>
+                           </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="fa-subsection">Profesional</div>
+                        <div className="fa-barbers-grid">
+                          {listaBarberos.map(b => {
+                            const bId = b.id || b.id_usuario;
+                            const bName = b.name || b.prim_nombre;
+                            const bLast = b.last || b.apellido1 || '';
+                            const bSpecialty = b.specialty || b.especialidad || 'Barbero';
+                            const bEmoji = b.emoji || (bName ? bName.charAt(0) : 'B');
+                            const isSelected = selectedBarber?.id === bId || selectedBarber?.id_usuario === bId;
+
+                            return (
+                              <motion.div
+                                key={bId}
+                                className={`fa-barber-card ${isSelected ? 'selected' : ''}`}
+                                onClick={() => setBarber(b)}
+                                whileHover={{ y: -3 }}
+                                whileTap={{ scale: 0.96 }}
+                              >
+                                <div className="fa-barber-avatar">{bEmoji}</div>
+                                <div className="fa-barber-name">{bName} {bLast}</div>
+                                <div className="fa-barber-specialty">{bSpecialty}</div>
+                                {isSelected && (
+                                  <motion.div
+                                    className="fa-barber-check"
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ type: 'spring', stiffness: 300 }}
+                                  >
+                                    <Check size={16} />
+                                  </motion.div>
+                                )}
+                              </motion.div>
+                            )
+                          })}
+                        </div>
+                      </>
+                    )}
+
+                    {prepickedServices.length > 0 ? (
+                      <>
+                        <div className="fa-subsection">Servicios elegidos</div>
+                        <div className="fa-services-list" style={{ gridTemplateColumns: '1fr', gap: '10px' }}>
+                          {prepickedServices.map((s, idx) => {
+                            const sName = s.name || s.nombre;
+                            const sPrice = s.price || s.precio || 0;
+                            // Intentamos obtener la duración de features si es que viene del carrito 
+                            let sDuration = s.duration || s.duracion || '30 min';
+                            if (!s.duration && !s.duracion && s.features && s.features.length > 1) {
+                                sDuration = s.features[1];
+                            }
+
+                            return (
+                              <div key={idx} className="fa-service-card selected" style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '10px 15px', cursor: 'default', flexDirection: 'row' }}>
+                                {s.image && (
+                                  <img 
+                                    src={getCloudinaryServiceUrl(s.image)} 
+                                    alt={sName} 
+                                    style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '8px' }} 
+                                  />
+                                )}
+                                <div className="fa-service-info" style={{ flexGrow: 1 }}>
+                                  <div className="fa-service-name" style={{ marginBottom: '4px' }}>{sName}</div>
+                                  <div className="fa-service-duration">
+                                    <Clock size={12} />{sDuration}
+                                  </div>
+                                </div>
+                                <div className="fa-service-price" style={{ whiteSpace: 'nowrap' }}>{priceFormat(sPrice)}</div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="fa-subsection">Servicio</div>
+                        <div className="fa-services-list">
+                          {listaServicios.map(s => {
+                            const sId = s.id || s.id_servicio;
+                            const sName = s.name || s.nombre;
+                            const sPrice = s.price || s.precio || 0;
+                            const sDuration = s.duration || s.duracion || 30;
+                            const isSelected = selectedService?.id === sId || selectedService?.id_servicio === sId;
+
+                            return (
+                              <motion.div
+                                key={sId}
+                                className={`fa-service-card ${isSelected ? 'selected' : ''}`}
+                                onClick={() => setService(s)}
+                                whileTap={{ scale: 0.985 }}
+                              >
+                                <div className="fa-service-info">
+                                  <div className="fa-service-name">{sName}</div>
+                                  <div className="fa-service-duration">
+                                    <Clock size={12} />{sDuration} min
+                                  </div>
+                                </div>
+                                <div className="fa-service-price">{priceFormat(sPrice)}</div>
+                                <div className="fa-service-radio">
+                                  {isSelected && <div className="fa-service-radio-dot" />}
+                                </div>
+                              </motion.div>
+                            )
+                          })}
+                        </div>
+                      </>
+                    )}
 
                     <div className="fa-nav-btns">
                       <button className="fa-btn-back" onClick={() => goStep(1)}>

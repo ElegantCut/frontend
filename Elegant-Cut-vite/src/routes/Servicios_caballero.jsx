@@ -7,8 +7,10 @@ import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedLi
 import { servicesService } from '../lib/servicesService';
 import { getCloudinaryServiceUrl, getCloudinaryBannerUrl } from '../lib/utils/imageHelper';
 import '../assets/styles/servicios_caballero/caballero.css';
+import { useLocation } from "react-router-dom";
 
 function Servicios_caballero() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [activeCategory, setActiveCategory] = useState("todos");
@@ -18,6 +20,13 @@ function Servicios_caballero() {
   const [loginAlertVisible, setLoginAlertVisible] = useState(false);
   const [servicios, setServicios] = useState([]);
   const [cargando, setCargando] = useState(true);
+  useEffect(() => {
+    const queryparams = new URLSearchParams(location.search);
+    const categoria = queryparams.get('categoria');
+    if (categoria) {
+      setActiveCategory(categoria);
+    }
+  }, [location.search]);
 
   // --- CARRUSEL ESTILO XIAOMI ---
   const carouselSlidesCab = [
@@ -138,7 +147,9 @@ function Servicios_caballero() {
   }; //Abre o cierra el carrito
 
   const calculateTotal = () => {
-    return cart.reduce((total, item) => total + item.price, 0);
+    // Number() convierte el precio a número aunque el backend lo envíe como texto
+    // Así evitamos que 0 + "18000" se convierta en "018000" (concatenación)
+    return cart.reduce((total, item) => total + Number(item.price), 0);
   }; //Calcula el total del carrito
 
   const filteredServices = activeCategory === "todos"
@@ -270,7 +281,12 @@ function Servicios_caballero() {
         {/* para dibujar gráficamente tus tarjetas de diseño en la página. */}
         <AnimatedContainer className="services-grid">
           <AnimatePresence mode="popLayout">
-            {filteredServices.map((service) => (
+            {filteredServices.map((service) => {
+              const isSelected = cart.some(item => item.id === service.id);
+              const isCategorySelected = cart.some(item => item.category === service.category);
+              const isDisabled = isSelected || isCategorySelected;
+
+              return (
               <AnimatedItem key={service.id} className="service-card" data-category={service.category}>
                 <div className="category-indicator">{service.categoryLabel}</div>
                 <div className="service-image">
@@ -298,16 +314,24 @@ function Servicios_caballero() {
                     ))}
                   </div>
                   <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={!isDisabled ? { scale: 1.05 } : {}}
+                    whileTap={!isDisabled ? { scale: 0.95 } : {}}
                     className="service-button"
-                    onClick={() => addToCart(service)} //Cuando haces clic en el botón de agregar al carrito, se agrega el servicio al carrito
+                    onClick={() => {
+                      if (!isDisabled) addToCart(service);
+                    }}
+                    style={{
+                      backgroundColor: isSelected ? '#198754' : (isCategorySelected ? '#6c757d' : ''),
+                      cursor: isDisabled ? 'not-allowed' : 'pointer',
+                      opacity: (isCategorySelected && !isSelected) ? 0.6 : 1,
+                      border: isDisabled ? 'none' : ''
+                    }}
                   >
-                    Agregar al Carrito
+                    {isSelected ? "Seleccionado" : (isCategorySelected ? "1 por categoría" : "Agregar al Carrito")}
                   </motion.button>
                 </div>
               </AnimatedItem>
-            ))}
+            )})}
           </AnimatePresence>
         </AnimatedContainer>
 
@@ -356,7 +380,8 @@ function Servicios_caballero() {
                       cart.map((item, index) => (
                         <AnimatedItem key={index} className="cart-item">
                           <div className="cart-item-info">
-                            <img src={item.image} alt={item.name} className="cart-item-img" />
+                            {/* getCloudinaryServiceUrl convierte el ID de Cloudinary en la URL completa de la imagen */}
+                            <img src={getCloudinaryServiceUrl(item.image)} alt={item.name} className="cart-item-img" />
                             <div>
                               <h4 style={{ margin: '0 0 5px 0', fontSize: '1rem' }}>{item.name}</h4>
                               <p style={{ margin: 0, color: '#bc2041', fontWeight: 'bold' }}>
@@ -381,7 +406,8 @@ function Servicios_caballero() {
 
                 <div className="cart-total">
                   <span>Total a Pagar:</span>
-                  <span>${calculateTotal().toLocaleString()}</span>
+                  {/* toLocaleString('es-CO') formatea el número con separadores colombianos: 18.000 */}
+                  <span>${calculateTotal().toLocaleString('es-CO')}</span>
                 </div>
 
                 <div style={{ padding: '0 30px 30px 30px' }}>
@@ -398,7 +424,7 @@ function Servicios_caballero() {
                         setTimeout(() => setLoginAlertVisible(false), 5000);
                       } else {
                         setIsCartOpen(false);
-                        navigate('/Form_agenda');
+                        navigate('/Form_agenda', { state: { cart } });
                       }
                     }}
                   >

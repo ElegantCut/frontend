@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Instagram, Star, Award, Scissors, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import '../styles/Barbero_Portafolio/BarberPortfolioModal.css';
 import { getCloudinaryUrl } from '../lib/utils/imageHelper';
 
-const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberImage, barberTitle, portfolioDataProp }) => {
+const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberImage, barberTitle, portfolioDataProp, fullBarberData }) => {
+    const navigate = useNavigate();
     const [portfolioData, setPortfolioData] = useState(null);
 
     useEffect(() => {
@@ -180,7 +182,9 @@ const BarberPortfolioModal = ({ isOpen, onClose, barberId, barberName, barberIma
                             <div className="portfolio-footer">
                                 <button className="btn-primary" style={{ width: '100%' }} onClick={() => {
                                     onClose();
-                                    // Optional: trigger navigation to booking here
+                                    if (fullBarberData) {
+                                        navigate('/Form_agenda', { state: { preselectedBarber: fullBarberData } });
+                                    }
                                 }}>
                                     Agendar con {portfolioData?.nombre_completo?.split(' ')[0] || barberName?.split(' ')[0]}
                                 </button>
