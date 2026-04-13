@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '../components/shared/AnimatedPage';
 import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedList';
 import { barberService } from '../lib/barberService';
@@ -6,6 +7,7 @@ import { getCloudinaryUrl } from '../lib/utils/imageHelper';
 import BarberPortfolioModal from './BarberPortfolioModal';
 
 function Barberos() {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('all');
   const [barbers, setBarbers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,20 +29,21 @@ function Barberos() {
         const [data] = await Promise.all([
           barberService.getAllBarbers()
         ]);
-
+        
         if (data) {
           const transformedBarbers = data.map((realBarber) => {
             // Buscamos si el barbero tiene un portafolio registrado en la tabla portabarbero
-            const portfolio = (realBarber.portafolios && realBarber.portafolios[0]);
+            // Manejamos si portafolios viene como array (1:N) o como objeto directo (1:1) según Prisma
+            const portfolio = Array.isArray(realBarber.portafolios) ? realBarber.portafolios[0] : realBarber.portafolios;
             return {
               id: realBarber.id_usuario,
               name: `${realBarber.prim_nombre} ${realBarber.apellido1}`,
               title: "Barbero Profesional",
               experience: portfolio?.experiencia || "Experto",
-              rating: portfolio?.calificacion ? String(portfolio.calificacion) : "5.0",
+              rating: realBarber.calificacion_promedio !== undefined ? String(realBarber.calificacion_promedio) : (portfolio?.calificacion ? String(portfolio.calificacion) : "5.0"),
               bio: portfolio?.biografia || "Barbero profesional del equipo Elegant Cut...",
               stats: {
-                clients: portfolio?.reseñas_count ? `+${portfolio.reseñas_count * 10}` : "+1000",
+                clients: realBarber.total_resenas !== undefined ? String(realBarber.total_resenas) : (portfolio?.rese_as_count !== undefined ? String(portfolio.rese_as_count) : "0"),
                 recommend: "100%"
               },
               categories: ["classic", "modern"],
@@ -140,11 +143,12 @@ function Barberos() {
         <p className="barber-title">{barber.title}</p>
         <div className="barber-rating">
           <div className="stars">
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
+            {[...Array(5)].map((_, i) => {
+              const rating = parseFloat(barber.rating);
+              if (rating >= i + 1) return <i key={i} className="bi bi-star-fill"></i>;
+              if (rating >= i + 0.5) return <i key={i} className="bi bi-star-half"></i>;
+              return <i key={i} className="bi bi-star"></i>;
+            })}
             <span>{barber.rating}</span>
           </div>
         </div>
@@ -152,7 +156,7 @@ function Barberos() {
         <div className="barber-stats">
           <div className="stat">
             <strong>{barber.stats.clients}</strong>
-            <span>Clientes</span>
+            <span>Reseñas</span>
           </div>
           <div className="stat">
             <strong>{barber.stats.recommend}</strong>
@@ -161,7 +165,7 @@ function Barberos() {
         </div>
         <div className="barber-actions">
           <button className="btn-primary" onClick={() => handleOpenPortfolio(barber)}>Ver Portafolio</button>
-          <button className="btn-secondary">Reservar Cita</button>
+          <button className="btn-secondary" onClick={() => navigate('/Form_agenda', { state: { preselectedBarber: barber } })}>Reservar Cita</button>
         </div>
       </div>
     </AnimatedItem>
@@ -193,6 +197,7 @@ function Barberos() {
           barberImage={selectedBarber.image}
           barberTitle={selectedBarber.title}
           portfolioDataProp={selectedBarber.portfolioData}
+          fullBarberData={selectedBarber}
         />
       )}
     </AnimatedPage>

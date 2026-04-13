@@ -1,3 +1,4 @@
+import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
@@ -25,8 +26,8 @@ const AdminsTab = () => {
 
     const loadAdmins = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:3001/admin/administrators');
-            const data = await response.json();
+            const response = await api.get('/admin/administrators');
+            const data = response.data;
 
             if (data.success && data.data) {
                 setAdmins(data.data);
@@ -45,20 +46,27 @@ const AdminsTab = () => {
         e.preventDefault();
         try {
             const url = editingId
-                ? `http://127.0.0.1:3001/admin/administrators/${editingId}`
-                : 'http://127.0.0.1:3001/admin/administrators';
+                ? `/admin/administrators/${editingId}`
+                : '/admin/administrators';
 
-            const method = editingId ? 'PUT' : 'POST';
+            const method = editingId ? 'patch' : 'post';
+            
+            // Si estamos editando y no hay contraseña, la quitamos del objeto para no sobreescribirla
+            const payload = { ...formData };
+            if (editingId && !payload.password) {
+                delete payload.password;
+            }
 
-            const response = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
+            // Mapeamos password a password_hash si el backend lo requiere
+            if (payload.password) {
+                payload.password_hash = payload.password;
+                delete payload.password;
+            }
 
-            const data = await response.json();
+            const response = await api[method](url, payload);
+            const data = response.data;
 
-            if (data.success) {
+            if (data.success || data.id_usuario) { // NestJS a veces devuelve el objeto creado directamente
                 loadAdmins();
                 setShowModal(false);
                 resetForm();
@@ -67,30 +75,25 @@ const AdminsTab = () => {
             }
         } catch (error) {
             console.error('Error saving admin:', error);
-            alert('Error de conexión');
+            alert(error.response?.data?.message || 'Error de conexión');
         }
     };
 
     const handleToggleStatus = async (id, currentStatus) => {
-        const action = currentStatus === 1 ? 'desactivar' : 'activar';
-        if (!window.confirm(`¿${action.charAt(0).toUpperCase() + action.slice(1)} este administrador?`)) return;
+        const action = currentStatus ? 'desactivar' : 'activar';
+        if (!window.confirm(`¿Seguro que deseas ${action} este administrador?`)) return;
 
         try {
-            const response = await fetch(`http://127.0.0.1:3001/admin/administrators/${id}/toggle`, {
-                method: 'PUT'
-            });
-            const data = await response.json();
+            const response = await api.put(`/admin/administrators/${id}/toggle`);
+            const data = response.data;
 
-            if (data.success) {
-                setAdmins(admins.map(a =>
-                    a.id_usuario === id ? { ...a, estado: data.newStatus } : a
-                ));
-            } else {
-                alert(data.error || 'Error al cambiar estado');
+            // data es el objeto usuario actualizado
+            if (data) {
+                loadAdmins();
             }
         } catch (error) {
             console.error('Error toggling admin:', error);
-            alert('Error de conexión');
+            alert('Error al cambiar el estado');
         }
     };
 
@@ -98,7 +101,7 @@ const AdminsTab = () => {
         setEditingId(admin.id_usuario);
         setFormData({
             username: admin.username,
-            password: '', // Password not shown
+            password: '', 
             email: admin.email,
             prim_nombre: admin.prim_nombre,
             seg_nombre: admin.seg_nombre || '',
@@ -127,156 +130,119 @@ const AdminsTab = () => {
     if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
     return (
-        <div className="p-4">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>Gestión de Administradores</h2>
-                <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true); }}>
-                    <i className="bi bi-plus-lg me-2"></i>Nuevo Administrador
-                </button>
-            </div>
-
-            <AnimatePresence>
-                {showModal && (
-                    <motion.div
-                        className="modal d-block"
-                        style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                    >
-                        <motion.div
-                            className="modal-dialog modal-lg"
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        >
-                            <div className="modal-content border-0 shadow-lg">
-                                <div className="modal-header">
-                                    <h5 className="modal-title">{editingId ? 'Editar Administrador' : 'Nuevo Administrador'}</h5>
-                                    <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
-                                </div>
-                                <form onSubmit={handleSubmit}>
-                                    <div className="modal-body">
-                                        <div className="row g-3">
-                                            <div className="col-md-6">
-                                                <label className="form-label">Usuario *</label>
-                                                <input type="text" className="form-control" required
-                                                    value={formData.username}
-                                                    onChange={e => setFormData({ ...formData, username: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Contraseña {editingId && '(Dejar en blanco para mantener)'}</label>
-                                                <input type="password" className="form-control"
-                                                    required={!editingId}
-                                                    value={formData.password}
-                                                    onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Primer Nombre *</label>
-                                                <input type="text" className="form-control" required
-                                                    value={formData.prim_nombre}
-                                                    onChange={e => setFormData({ ...formData, prim_nombre: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Segundo Nombre</label>
-                                                <input type="text" className="form-control"
-                                                    value={formData.seg_nombre}
-                                                    onChange={e => setFormData({ ...formData, seg_nombre: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Primer Apellido *</label>
-                                                <input type="text" className="form-control" required
-                                                    value={formData.apellido1}
-                                                    onChange={e => setFormData({ ...formData, apellido1: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Segundo Apellido</label>
-                                                <input type="text" className="form-control"
-                                                    value={formData.apellido2}
-                                                    onChange={e => setFormData({ ...formData, apellido2: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Email *</label>
-                                                <input type="email" className="form-control" required
-                                                    value={formData.email}
-                                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Teléfono</label>
-                                                <input type="tel" className="form-control"
-                                                    value={formData.telefono}
-                                                    onChange={e => setFormData({ ...formData, telefono: e.target.value })}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="modal-footer">
-                                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-                                        <button type="submit" className="btn btn-primary">Guardar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <div className="card border-0 shadow-sm">
-                <div className="table-responsive">
-                    <table className="table table-hover mb-0">
-                        <thead className="table-light">
-                            <tr>
-                                <th>Administrador</th>
-                                <th>Contacto</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <AnimatedContainer component="tbody">
-                            {admins.map(admin => (
-                                <AnimatedItem tag="tr" key={admin.id_usuario}>
-                                    <td>
-                                        <div className="fw-bold">{admin.prim_nombre} {admin.apellido1}</div>
-                                        <div className="small text-muted">@{admin.username}</div>
-                                    </td>
-                                    <td>
-                                        <div><i className="bi bi-envelope me-1"></i> {admin.email}</div>
-                                        <div><i className="bi bi-telephone me-1"></i> {admin.telefono || 'N/A'}</div>
-                                    </td>
-                                    <td>
-                                        <span className={`badge ${admin.estado === 1 ? 'bg-success' : 'bg-secondary'}`}>
-                                            {admin.estado === 1 ? 'Activo' : 'Inactivo'}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div className="btn-group btn-group-sm">
-                                            <button className="btn btn-outline-primary" onClick={() => handleEdit(admin)}>
-                                                <i className="bi bi-pencil"></i>
-                                            </button>
-                                            <button
-                                                className={`btn ${admin.estado === 1 ? 'btn-outline-danger' : 'btn-outline-success'}`}
-                                                onClick={() => handleToggleStatus(admin.id_usuario, admin.estado)}
-                                                title={admin.estado === 1 ? "Desactivar" : "Activar"}
-                                            >
-                                                <i className={`bi ${admin.estado === 1 ? 'bi-person-slash' : 'bi-person-check'}`}></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </AnimatedItem>
-                            ))}
-                        </AnimatedContainer>
-                    </table>
-                </div>
-            </div>
+    <div className="admins-container">
+      <header className="tab-header">
+        <h2>Administradores</h2>
+        <div className="action-buttons">
+          <button className="btn-ios" onClick={() => { resetForm(); setShowModal(true); }}>
+            <i className="bi bi-person-plus me-1"></i> Nuevo Admin
+          </button>
         </div>
+      </header>
+
+      <AnimatePresence>
+        {showModal && (
+          <div className="admin-overlay d-flex align-items-center justify-content-center p-3">
+            <motion.div
+              className="ios-card w-100 shadow-lg"
+              style={{ maxWidth: '550px', borderRadius: '24px', overflow: 'hidden' }}
+              initial={{ opacity: 0, scale: 0.95, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 30 }}
+            >
+              <div className="p-4 border-bottom d-flex justify-content-between align-items-center bg-white sticky-top">
+                 <h3 className="ios-item-title fs-5 m-0">{editingId ? 'Editar Administrador' : 'Nuevo Administrador'}</h3>
+                 <button className="btn-close" onClick={() => setShowModal(false)}></button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="p-4 bg-white" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
+                <div className="row g-4">
+                  <div className="col-md-6">
+                    <label className="ios-label">Usuario</label>
+                    <input type="text" className="ios-input" required
+                      placeholder="Username..."
+                      value={formData.username}
+                      onChange={e => setFormData({ ...formData, username: e.target.value })}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="ios-label">Contraseña</label>
+                    <input type="password" className="ios-input"
+                      required={!editingId}
+                      placeholder={editingId ? 'Sin cambios...' : '••••••••'}
+                      value={formData.password}
+                      onChange={e => setFormData({ ...formData, password: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="ios-label">Nombre</label>
+                    <input type="text" className="ios-input" required
+                      placeholder="Nombre..."
+                      value={formData.prim_nombre}
+                      onChange={e => setFormData({ ...formData, prim_nombre: e.target.value })}
+                    />
+                  </div>
+                   <div className="col-md-6">
+                    <label className="ios-label">Apellido</label>
+                    <input type="text" className="ios-input" required
+                      placeholder="Apellido..."
+                      value={formData.apellido1}
+                      onChange={e => setFormData({ ...formData, apellido1: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="col-12">
+                     <label className="ios-label">Correo Electrónico</label>
+                     <input type="email" className="ios-input" required
+                        placeholder="email@ejemplo.com"
+                        value={formData.email}
+                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                     />
+                  </div>
+                </div>
+
+                <div className="mt-5 d-flex gap-2 justify-content-end">
+                   <button type="button" className="btn-ios-secondary px-4 py-2" onClick={() => setShowModal(false)}>Cancelar</button>
+                   <button type="submit" className="btn-ios px-4 py-2">Guardar</button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <div className="ios-section-header">Directorio de Staff</div>
+      <div className="ios-list-group">
+        <AnimatedContainer>
+          {admins.map(admin => (
+            <AnimatedItem key={admin.id_usuario} className="ios-list-item">
+              <div className="ios-item-content">
+                <span className="ios-item-title">{admin.prim_nombre} {admin.apellido1}</span>
+                <span className="ios-item-subtitle">@{admin.username} • {admin.email}</span>
+              </div>
+
+              <div className="ios-item-actions">
+                <span className={`ios-badge ${admin.estado ? 'success' : 'neutral'}`}>
+                  {admin.estado ? 'Activo' : 'Inactivo'}
+                </span>
+                
+                <button className="ios-icon-btn ms-2" onClick={() => handleEdit(admin)}>
+                  <i className="bi bi-pencil"></i>
+                </button>
+
+                <button 
+                  className={`ios-icon-btn ${admin.estado ? 'danger' : 'success'}`}
+                  onClick={() => handleToggleStatus(admin.id_usuario, admin.estado)}
+                >
+                   <i className={`bi ${admin.estado ? 'bi-person-x' : 'bi-person-check'}`}></i>
+                </button>
+              </div>
+            </AnimatedItem>
+          ))}
+        </AnimatedContainer>
+      </div>
+    </div>
     );
 };
 export default AdminsTab;

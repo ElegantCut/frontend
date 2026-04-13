@@ -10,7 +10,8 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
 
   const handleLogout = () => {
     AuthClient.logout();
-    navigate('/login');
+    // Usamos window.location para limpiar completamente el estado de la app y prevenir "volver atrás"
+    window.location.href = '/login';
   };
 
   const menuItems = [
@@ -76,8 +77,8 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
       </nav>
 
       <div className="sidebar-footer mt-auto p-3">
-        <button className="btn btn-outline-danger w-100" onClick={handleLogout}>
-          <i className="bi bi-box-arrow-right me-2"></i>
+        <button className="btn-ios-logout" onClick={handleLogout}>
+          <i className="bi bi-box-arrow-right"></i>
           Cerrar Sesión
         </button>
       </div>

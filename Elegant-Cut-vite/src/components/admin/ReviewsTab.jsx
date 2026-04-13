@@ -1,3 +1,4 @@
+import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,23 +28,17 @@ const ReviewsTab = () => {
         setLoading(true);
         setError(null);
         try {
-            const token = localStorage.getItem('jwt_token');
             const url = filter === 'all'
-                ? 'http://localhost:3001/api/reviews/admin/all'
-                : `http://localhost:3001/api/reviews/admin/all?status=${filter}`;
+                ? '/reviews/admin/all'
+                : `/reviews/admin/all?status=${filter}`;
 
-            const response = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await api.get(url);
 
-            if (response.ok) {
-                const data = await response.json();
-                setReviews(Array.isArray(data) ? data : []);
-            } else {
-                setError('No se pudieron cargar las reseñas.');
-            }
+            const data = response.data;
+            setReviews(Array.isArray(data) ? data : []);
         } catch (err) {
-            setError('Error de conexión con el servidor.');
+            setError('No se pudieron cargar las reseñas.');
+            console.error('Error loading reviews:', err);
         } finally {
             setLoading(false);
         }
@@ -51,16 +46,8 @@ const ReviewsTab = () => {
 
     const handleStatusChange = async (id, newStatus) => {
         try {
-            const token = localStorage.getItem('jwt_token');
-            const response = await fetch(`http://localhost:3001/api/reviews/admin/${id}/status`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ estado: newStatus })
-            });
-            if (response.ok) {
+            const response = await api.patch(`/reviews/admin/${id}/status`, { estado: newStatus });
+            if (response.status === 200) {
                 setReviews(prev => prev.map(r => r.id_resena === id ? { ...r, estado: newStatus } : r));
             }
         } catch (err) { alert('Error de conexión'); }
@@ -69,12 +56,8 @@ const ReviewsTab = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('¿Eliminar permanentemente?')) return;
         try {
-            const token = localStorage.getItem('jwt_token');
-            const response = await fetch(`http://localhost:3001/api/reviews/admin/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (response.ok) {
+            const response = await api.delete(`/reviews/admin/${id}`);
+            if (response.status === 200) {
                 setReviews(prev => prev.filter(r => r.id_resena !== id));
             }
         } catch (err) { alert('Error de conexión'); }
@@ -89,90 +72,106 @@ const ReviewsTab = () => {
     const filtered = reviews.filter(r => {
         if (!r) return false;
         const term = (searchTerm || '').toLowerCase();
-        return (r.nombre_cliente || '').toLowerCase().includes(term) ||
+        const clienteNom = `${r.usuarios_resenas_id_clienteTousuarios?.prim_nombre || ''} ${r.usuarios_resenas_id_clienteTousuarios?.apellido1 || ''}`.toLowerCase();
+        const clienteUser = (r.usuarios_resenas_id_clienteTousuarios?.username || '').toLowerCase();
+        const barberoNom = `${r.barbero?.prim_nombre || ''} ${r.barbero?.apellido1 || ''}`.toLowerCase();
+        return clienteNom.includes(term) ||
+            clienteUser.includes(term) ||
+            barberoNom.includes(term) ||
             (r.comentario || '').toLowerCase().includes(term);
     });
 
     return (
-        <div style={{ padding: '20px', background: 'transparent' }}>
-            {/* Header Manual Storing styles to avoid CSS issues */}
-            <div style={{
-                background: 'white', padding: '20px', borderRadius: '10px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)', marginBottom: '20px'
-            }}>
-                <h2 style={{ margin: 0, color: COLORS.negro, fontWeight: '600' }}>Gestión de Reseñas</h2>
-                <p style={{ margin: '5px 0 0 0', color: COLORS.gris }}>Modera los comentarios y calificaciones</p>
-            </div>
+    <div className="reviews-container">
+      <header className="tab-header">
+        <div>
+          <h2>Reseñas</h2>
+          <p className="ios-item-subtitle">Modera los comentarios y calificaciones</p>
+        </div>
+        <div className="action-buttons d-flex gap-2">
+          <button 
+            className={filter === 'all' ? 'btn-ios px-4' : 'btn-ios-secondary px-4'} 
+            onClick={() => setFilter('all')}
+          >Todas</button>
+          <button 
+            className={filter === 'approved' ? 'btn-ios px-4' : 'btn-ios-secondary px-4'} 
+            style={filter === 'approved' ? {backgroundColor: 'var(--ios-green)'} : {}}
+            onClick={() => setFilter('approved')}
+          >Aprobadas</button>
+        </div>
+      </header>
 
-            {/* Contenedor Principal */}
-            <div style={{
-                background: 'white', padding: '25px', borderRadius: '10px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-            }}>
-                {/* Search & Filters */}
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
-                    <div style={{ display: 'flex', gap: '5px' }}>
-                        <button onClick={() => setFilter('all')} style={{ padding: '8px 15px', borderRadius: '5px', border: `1px solid ${COLORS.borde}`, background: filter === 'all' ? COLORS.negro : 'white', color: filter === 'all' ? 'white' : COLORS.negro, cursor: 'pointer' }}>Todas</button>
-                        <button onClick={() => setFilter('approved')} style={{ padding: '8px 15px', borderRadius: '5px', border: `1px solid ${COLORS.borde}`, background: filter === 'approved' ? '#28a745' : 'white', color: filter === 'approved' ? 'white' : COLORS.negro, cursor: 'pointer' }}>Aprobadas</button>
-                        <button onClick={() => setFilter('spam')} style={{ padding: '8px 15px', borderRadius: '5px', border: `1px solid ${COLORS.borde}`, background: filter === 'spam' ? COLORS.rojo : 'white', color: filter === 'spam' ? 'white' : COLORS.negro, cursor: 'pointer' }}>Spam</button>
-                    </div>
-                    <input
-                        placeholder="Buscar cliente o comentario..."
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                        style={{ flex: 1, padding: '10px', borderRadius: '5px', border: `1px solid ${COLORS.borde}`, minWidth: '200px' }}
-                    />
+      <div className="ios-section-header">Moderación de Comentarios</div>
+      <div className="ios-card mb-4 p-2">
+        <div className="position-relative">
+          <i className="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+          <input
+            className="ios-search-bar ps-5"
+            placeholder="Buscar por cliente o mensaje..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="ios-list-group">
+        <AnimatedContainer>
+          {loading ? (
+            <div className="p-5 text-center text-muted">Cargando reseñas...</div>
+          ) : filtered.length === 0 ? (
+            <div className="p-5 text-center text-muted">No hay reseñas para mostrar</div>
+          ) : (
+            filtered.map(r => (
+              <AnimatedItem key={r.id_resena} className="ios-list-item">
+                <div className="ios-item-content">
+                  <div className="d-flex align-items-center gap-2 mb-1">
+                    <span className="ios-item-title">
+                        {r.usuarios_resenas_id_clienteTousuarios?.prim_nombre} {r.usuarios_resenas_id_clienteTousuarios?.apellido1 || 'Anónimo'} 
+                        {r.usuarios_resenas_id_clienteTousuarios?.username && (
+                            <small className="text-muted ms-1" style={{fontSize: '0.8rem', fontWeight: 'normal'}}>
+                                (@{r.usuarios_resenas_id_clienteTousuarios.username})
+                            </small>
+                        )}
+                    </span>
+                    <span style={{ color: '#ffc107', fontSize: '1rem' }}>{'★'.repeat(parseInt(r.calificacion))}{'☆'.repeat(5-parseInt(r.calificacion))}</span>
+                  </div>
+                  <span className="ios-item-subtitle mb-1 d-block">{r.usuarios_resenas_id_clienteTousuarios?.email}</span>
+                  {r.barbero && (
+                    <span className="text-muted extra-small d-block mb-2" style={{fontSize: '0.75rem'}}>
+                        Dirigido a: {r.barbero.prim_nombre} {r.barbero.apellido1}
+                    </span>
+                  )}
+                  <p className="mb-0 text-dark small" style={{lineHeight: '1.4'}}>{r.comentario}</p>
                 </div>
 
-                {error && <div style={{ color: COLORS.rojo, padding: '10px', background: '#fee', borderRadius: '5px', marginBottom: '15px' }}>{error}</div>}
-
-                {loading ? <div style={{ padding: '40px', textAlign: 'center' }}>Cargando...</div> : (
-                    <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                            <thead>
-                                <tr style={{ background: COLORS.bgTable }}>
-                                    <th style={{ padding: '12px', borderBottom: `2px solid ${COLORS.borde}` }}>Cliente</th>
-                                    <th style={{ padding: '12px', borderBottom: `2px solid ${COLORS.borde}` }}>Calificación</th>
-                                    <th style={{ padding: '12px', borderBottom: `2px solid ${COLORS.borde}` }}>Comentario</th>
-                                    <th style={{ padding: '12px', borderBottom: `2px solid ${COLORS.borde}` }}>Acciones</th>
-                                </tr>
-                            </thead>
-                            <AnimatedContainer tag="tbody">
-                                {filtered.map(r => (
-                                    <AnimatedItem tag="tr" key={r.id_resena} style={{ borderBottom: `1px solid ${COLORS.borde}` }}>
-                                        <td style={{ padding: '12px' }}>
-                                            <div style={{ fontWeight: '600' }}>{r.nombre_cliente || 'Anónimo'}</div>
-                                            <div style={{ fontSize: '0.8rem', color: COLORS.gris }}>{r.email_cliente}</div>
-                                        </td>
-                                        <td style={{ padding: '12px' }}>{renderStars(r.calificacion)}</td>
-                                        <td style={{ padding: '12px' }}>
-                                            <div style={{ maxWidth: '300px', fontSize: '0.9rem' }}>{r.comentario}</div>
-                                        </td>
-                                        <td style={{ padding: '12px' }}>
-                                            <div style={{ display: 'flex', gap: '5px' }}>
-                                                <button
-                                                    onClick={() => handleStatusChange(r.id_resena, r.estado === 1 ? 0 : 1)}
-                                                    style={{ border: 'none', background: r.estado === 1 ? '#f59e0b' : '#10b981', color: 'white', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
-                                                >
-                                                    {r.estado === 1 ? '🚫 Spam' : '✓ Aprobar'}
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(r.id_resena)}
-                                                    style={{ border: 'none', background: COLORS.rojo, color: 'white', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
-                                                >
-                                                    🗑️
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </AnimatedItem>
-                                ))}
-                            </AnimatedContainer>
-                        </table>
-                        {filtered.length === 0 && <div style={{ padding: '40px', textAlign: 'center', color: COLORS.gris }}>No hay reseñas que coincidan.</div>}
-                    </div>
-                )}
-            </div>
-        </div>
+                <div className="ios-item-actions align-self-start pt-1">
+                  <span className={`ios-badge ${r.estado === 1 ? 'success' : 'neutral'}`}>
+                    {r.estado === 1 ? 'Activa' : 'Oculta'}
+                  </span>
+                  
+                  <div className="d-flex gap-1">
+                    <button 
+                      className={`ios-icon-btn ${r.estado === 1 ? 'neutral' : 'success'}`}
+                      onClick={() => handleStatusChange(r.id_resena, r.estado === 1 ? 0 : 1)}
+                      title={r.estado === 1 ? 'Ocultar' : 'Aprobar'}
+                    >
+                      <i className={`bi ${r.estado === 1 ? 'bi-eye-slash' : 'bi-eye-fill'}`}></i>
+                    </button>
+                    <button 
+                      className="ios-icon-btn danger" 
+                      onClick={() => handleDelete(r.id_resena)}
+                      title="Eliminar"
+                    >
+                      <i className="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </AnimatedItem>
+            ))
+          )}
+        </AnimatedContainer>
+      </div>
+    </div>
     );
 };
 

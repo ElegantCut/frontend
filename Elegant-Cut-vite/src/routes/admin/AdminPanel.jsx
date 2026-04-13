@@ -36,14 +36,14 @@ const AdminPanel = () => {
 
       <div className="admin-content">
         <AdminHeader toggleSidebar={toggleSidebar} />
-        <main className="admin-main">
+        <main className="admin-main container-fluid py-4 px-md-5">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
             >
               <Outlet />
             </motion.div>

@@ -5,6 +5,7 @@ import AnimatedPage from '../../components/shared/AnimatedPage'
 import { AnimatedContainer, AnimatedItem } from '../../components/shared/AnimatedList'
 import { barberService } from '../../lib/barberService'
 import { getCloudinaryUrl, getCloudinaryHomeUrl } from '../../lib/utils/imageHelper'
+import api from '../../lib/axios'
 
 const fadeIn = {
     initial: { opacity: 0, y: 30 },
@@ -28,6 +29,7 @@ function Home() {
     // ESTADO PARA BARBEROS
     const [barbers, setBarbers] = useState([]);
     const [loadingBarbers, setLoadingBarbers] = useState(true);
+    const [reviews, setReviews] = useState([]);
 
     useEffect(() => {
         const fetchBarbers = async () => {
@@ -45,7 +47,19 @@ function Home() {
             }
         };
 
+        const fetchReviews = async () => {
+            try {
+                const response = await api.get('/reviews');
+                // Filtrar solo las que no tienen barbero asignado (para el establecimiento)
+                const establishmentReviews = response.data.filter(r => !r.id_barbero && !r.barbero);
+                setReviews(establishmentReviews.slice(0, 3));
+            } catch (err) {
+                console.error("Error al traer reseñas para el Home:", err);
+            }
+        };
+
         fetchBarbers();
+        fetchReviews();
     }, []);
 
     return (
@@ -128,23 +142,19 @@ function Home() {
                     </motion.div>
 
                     <AnimatedContainer className="testimonials-grid">
-                        <AnimatedItem className="testimonial-card">
-                            <p className="testimonial-text">Nunca me había sentido tan seguro después de un corte de pelo. El estilista de verdad entendió mi personalidad, entregando una apariencia que se adapta perfectamente a mi estilo de vida.</p>
-                            <div className="client-name">Jack J.</div>
-                            <div className="client-info">Cliente Regular</div>
-                        </AnimatedItem>
-
-                        <AnimatedItem className="testimonial-card">
-                            <p className="testimonial-text">Mi maquillaje inicial fue impecable. El artista prestó atención a cada detalle, asegurándome de lucir paciente y segura durante todo mi día especial.</p>
-                            <div className="client-name">Liza R.</div>
-                            <div className="client-info">Cliente Casual</div>
-                        </AnimatedItem>
-
-                        <AnimatedItem className="testimonial-card">
-                            <p className="testimonial-text">El ambiente del salón es relajante y acogedor. El personal es amable, Hábil, profesional, cada visita agradable, cómoda y realmente vale la pena repetirla.</p>
-                            <div className="client-name">Emma J.</div>
-                            <div className="client-info">Cliente Real</div>
-                        </AnimatedItem>
+                        {reviews.length > 0 ? (
+                            reviews.map((review) => (
+                                <AnimatedItem key={review.id_resena} className="testimonial-card">
+                                    <p className="testimonial-text">{review.comentario}</p>
+                                    <div className="client-name">
+                                        {review.usuarios_resenas_id_clienteTousuarios?.prim_nombre || 'Cliente Anónimo'}
+                                    </div>
+                                    <div className="client-info">Cliente Verificado</div>
+                                </AnimatedItem>
+                            ))
+                        ) : (
+                            <p className="text-center text-white w-100">Próximamente más testimonios.</p>
+                        )}
                     </AnimatedContainer>
                 </section>
 

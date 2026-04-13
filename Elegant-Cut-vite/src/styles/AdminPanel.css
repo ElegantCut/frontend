@@ -1,18 +1,27 @@
 :root {
-    --Negro: #111205;
-    --NegroMedio: #1f1f1e;
-    --Blanco: #f4f4f4;
-    --Rojo: #bc2041;
+    --ios-bg: #f2f2f7;
+    --ios-card: #ffffff;
+    --ios-text: #1c1c1e;
+    --ios-text-secondary: #8e8e93;
+    --ios-separator: #e5e5ea;
+    --ios-blue: #007aff;
+    --ios-red: #bc2041;    /* Accent Rojo original del cliente */
+    --ios-red-light: rgba(188, 32, 65, 0.1);
+    --ios-green: #34c759;
+    --ios-green-light: rgba(52, 199, 89, 0.15);
+    --ios-orange: #ff9500;
+    --ios-radius: 10px; /* Standard iOS radius for grouped lists */
 }
 
+body {
+    background-color: var(--ios-bg) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
 
 .admin-panel {
     display: flex;
     min-height: 100vh;
-    /* height: 100vh;  RELXAXED FOR DEBUG */
-    background-color: #f4f6f9;
-    /* overflow: hidden; RELAXED FOR DEBUG */
-    /* Prevent body scroll */
+    background-color: var(--ios-bg);
 }
 
 .admin-content {
@@ -23,176 +32,373 @@
     transition: margin-left 0.3s ease;
 }
 
-/*Contenedor principal*/
+@media (max-width: 992px) {
+    .admin-content {
+        margin-left: 0;
+    }
+}
+
 .admin-main {
     flex: 1;
     padding: 2rem;
     overflow-y: auto;
-    height: 100%;
-    /* Ensure it fills space */
 }
 
-/* Estilos Generales para Tabs */
-.tab-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    background: var(--Blanco);
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/*Titulo del tab*/
-.tab-header h2 {
-    margin: 0;
-    color: var(--Negro);
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-.tab-content {
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.dashboard-container {
-    width: 100%;
-}
-
-.crud-table {
-    width: 100%;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.crud-table th {
-    background: #f8f9fa;
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #555;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.crud-table td {
-    padding: 1rem;
-    border-bottom: 1px solid #e9ecef;
-    vertical-align: middle;
-}
-
-.crud-table tr:last-child td {
-    border-bottom: none;
-}
-
-.crud-table tr:hover {
-    background-color: #f8f9fa;
-}
-
-/* Botones de Acción */
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    border-radius: 4px;
-}
-
-/* Badges */
-.badge {
-    padding: 0.5em 0.8em;
-    border-radius: 20px;
-    font-weight: 500;
-    font-size: 0.85rem;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-    .admin-content {
-        margin-left: 0;
-        width: 100%;
-    }
-
     .admin-main {
         padding: 1rem;
     }
-
-    .tab-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-
-    .tab-header .action-buttons {
-        width: 100%;
-        justify-content: flex-end;
-    }
-
-    .crud-table {
-        min-width: 600px;
-        /* Force scroll */
-    }
-
-    .crud-table {
-        min-width: 600px;
-        /* Force scroll */
-    }
 }
 
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-top: 1rem;
+/* iOS Large Title styling */
+.tab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; /* Large titles are bottom-aligned in iOS */
+    margin-bottom: 2.5rem;
+    padding-bottom: 0.5rem;
 }
 
-/* Mobile Toggle Styles */
-.header-left {
+.tab-header h2 {
+    margin: 0;
+    color: var(--ios-text);
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* Section labels (Small caps gray text above lists) */
+.ios-section-header {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--ios-text-secondary);
+    text-transform: uppercase;
+    margin: 0 0 0.5rem 1rem;
+    letter-spacing: 0.3px;
+}
+
+/* Inset Grouped List */
+.ios-list-group {
+    background-color: var(--ios-card);
+    border-radius: var(--ios-radius);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    list-style: none;
+    padding: 0;
+    /* Hairline top/bottom borders for the container */
+    border-top: 0.5px solid var(--ios-separator);
+    border-bottom: 0.5px solid var(--ios-separator);
+}
+
+.ios-list-item {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.2rem;
+    min-height: 56px;
+    background-color: var(--ios-card);
+    transition: background-color 0.15s ease;
+    border: none !important; /* Force removal of any borders from old tables */
 }
 
-.btn-toggle-sidebar {
-    background: none;
+.ios-list-item:active {
+    background-color: #d1d1d6;
+}
+
+/* Internal hairline separator */
+.ios-list-item:not(:last-child) {
+    border-bottom: 0.5px solid var(--ios-separator) !important;
+}
+
+.ios-item-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.ios-item-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ios-text);
+    margin: 0;
+}
+
+.ios-item-subtitle {
+    font-size: 0.9rem;
+    color: var(--ios-text-secondary);
+    margin-top: 2px;
+}
+
+.ios-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-left: 1rem;
+}
+
+/* Pill buttons - more subtle in iOS */
+.btn-ios {
+    background-color: var(--ios-red);
+    color: #fff;
     border: none;
-    color: #2c3e50;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
     cursor: pointer;
-    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-ios-secondary {
+    background-color: #e5e5ea;
+    color: var(--ios-blue); /* Buttons in iOS often use blue text */
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ios-icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--ios-blue);
+    font-size: 1.2rem;
+    padding: 5px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Overlay */
+.ios-icon-btn.danger { color: #ff3b30; }
+.ios-icon-btn.success { color: var(--ios-green); }
+
+/* iOS Badges */
+.ios-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 10px;
+    text-transform: uppercase;
+}
+
+.ios-badge.success { background-color: var(--ios-green-light); color: var(--ios-green); }
+.ios-badge.neutral { background-color: #f2f2f7; color: var(--ios-text-secondary); }
+.ios-badge.danger { background-color: #ffe5e5; color: #ff3b30; }
+
+/* Modal and Overlays */
 .admin-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    background-color: rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+}
+
+.ios-search-bar {
+    background-color: #e3e3e8;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.ios-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ios-text-secondary);
+    margin-bottom: 6px;
+    margin-left: 4px;
+    display: block;
+}
+
+.ios-input {
+    background-color: #efeff4;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 12px 16px;
+    width: 100%;
+    font-size: 1rem;
+    color: var(--ios-text);
+    transition: all 0.2s ease;
+}
+
+.ios-input:focus {
+    outline: none;
+    background-color: #fff;
+    border-color: var(--ios-blue);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+.ios-input::placeholder {
+    color: #aeaeb2;
+}
+
+/* Dashboard Grid */
+.ios-widget-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+}
+
+@media (max-width: 576px) {
+    .ios-widget-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ios-widget {
+    background-color: var(--ios-card);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+}
+
+.ios-widget .value {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin: 5px 0;
+}
+
+/* Modal Premium iOS */
+.ios-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
     animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+.ios-modal {
+    background-color: #fff;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: slideUp 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
 
-    to {
-        opacity: 1;
+@media (max-width: 576px) {
+    .ios-modal {
+        width: 95%;
+        margin: 10px;
+        border-radius: 15px;
     }
 }
+
+.ios-modal-header {
+    padding: 1.5rem;
+    border-bottom: 0.5px solid var(--ios-separator);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ios-modal-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.ios-modal-header .close-btn {
+    background: #e5e5ea;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--ios-text-secondary);
+}
+
+.ios-modal-form {
+    padding: 1.5rem;
+}
+
+.ios-modal-form .form-group {
+    margin-bottom: 1.2rem;
+}
+
+.ios-modal-form .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ios-text-secondary);
+    margin-bottom: 6px;
+    margin-left: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ios-modal-form .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.ios-modal-form .form-group.half {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.ios-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ios-btn.primary {
+    background-color: var(--ios-red);
+    color: #fff;
+}
+
+.ios-btn.primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ios-btn.secondary {
+    background-color: #f2f2f7;
+    color: var(--ios-text);
+    margin-right: 10px;
+}
+
+.ios-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

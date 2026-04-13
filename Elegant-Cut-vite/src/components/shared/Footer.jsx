@@ -30,11 +30,11 @@ function Footer() {  // <- Cambiado a mayúscula
                     <div className="footer-links">
                         <h4>Nuestros Servicios</h4>
                         <ul>
-                            <li><a href="/">Cortes de Cabello</a></li>
-                            <li><a href="/">Coloración</a></li>
-                            <li><a href="/">Maquillaje</a></li>
-                            <li><a href="/">Cuidado Facial</a></li>
-                            <li><a href="/">Manicure & Pedicure</a></li>
+                            <li><a href="/servicios_dama?categoria=uñas">Uñas</a></li>
+                            <li><a href="/servicios_dama?categoria=mascarillas">Mascarillas</a></li>
+                            <li><a href="/servicios_dama?categoria=peinados">Peinados</a></li>
+                            <li><a href="/servicios_caballero?categoria=cortes de cabello">Cortes de Cabello</a></li>
+                            <li><a href="/servicios_caballero?categoria=barba y afeitado">Barba</a></li>
                         </ul>
                     </div>
 

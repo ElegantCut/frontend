@@ -41,16 +41,21 @@ export const AnimatedContainer = ({ children, className }) => (
     </motion.div>
 );
 
-export const AnimatedItem = ({ children, className }) => (
-    <motion.div
-        variants={itemVariants}
-        className={className}
-        whileHover={{
-            y: -5,
-            transition: { duration: 0.3, ease: "easeOut" }
-        }}
-        whileTap={{ scale: 0.98 }}
-    >
-        {children}
-    </motion.div>
-);
+export const AnimatedItem = ({ children, className, onClick, tag = 'div', ...props }) => {
+    const Component = motion[tag] || motion.div;
+    return (
+        <Component
+            variants={itemVariants}
+            className={className}
+            onClick={onClick}
+            whileHover={{
+                y: -5,
+                transition: { duration: 0.3, ease: "easeOut" }
+            }}
+            whileTap={{ scale: 0.98 }}
+            {...props}
+        >
+            {children}
+        </Component>
+    );
+};

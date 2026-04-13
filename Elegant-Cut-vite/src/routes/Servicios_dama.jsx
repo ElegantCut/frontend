@@ -8,8 +8,10 @@ import AnimatedPage from "../components/shared/AnimatedPage";
 import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedList";
 import { getCloudinaryBannerUrl, getCloudinaryServiceUrl } from '../lib/utils/imageHelper';
 import { servicesService } from '../lib/servicesService';
+import { useLocation } from 'react-router-dom';
 
 function Servicios_dama() {
+    const Location = useLocation();
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
     const [cartOpen, setCartOpen] = useState(false);
@@ -20,6 +22,24 @@ function Servicios_dama() {
     const [servicios, setServicios] = useState([]);
     const [cargando, setCargando] = useState(true);
 
+
+    // 🔗 DEEP LINKING: Lee el parámetro ?categoria= de la URL
+    // Se ejecuta cada vez que cambia la parte "?..." de la URL
+    useEffect(() => {
+        const queryParams = new URLSearchParams(Location.search);
+        // URLSearchParams convierte "?categoria=uñas" en un objeto consultable
+        // Location.search es "?categoria=uñas" (todo lo que hay después del ?)
+
+        const categoria = queryParams.get('categoria');
+        // .get('categoria') extrae el valor: "uñas", "mascarillas", "peinados", etc.
+        // Si no hay ?categoria= en la URL, devuelve null
+
+        if (categoria) {
+            setActiveCategory(categoria);
+            // Activa el filtro visual automáticamente al entrar desde el Footer
+        }
+    }, [Location.search]);
+    // [Location.search] → se vuelve a ejecutar si la URL cambia (ej: navegas a ?categoria=peinados)
 
     // --- CARRUSEL ESTILO XIAOMI ---
     const carouselSlidesDama = [
@@ -287,48 +307,67 @@ function Servicios_dama() {
 
                 <AnimatedContainer className="catalog-container" id="catalog">
                     <AnimatePresence mode="popLayout">
-                        {filteredProducts.map((product) => (
-                            <AnimatedItem
-                                key={product.name}
-                                className="product-card"
-                                data-category={product.category}
-                            >
-                                <div className="service-image">
-                                    {product.image && !product.image.includes('default.png') ? (
-                                        <img
-                                            src={getCloudinaryServiceUrl(product.image)}
-                                            alt={product.description}
-                                            className="w-full h-full object-cover"
-                                            onError={(e) => { e.target.style.display = 'none'; }}
-                                        />
-                                    ) : null}
-                                </div>
-                                <div className="category-indicator">{product.categoryLabel}</div>
+                        {filteredProducts.map((product) => {
+                            const isHaircut = (cat) => cat === 'cortes cabello largo' || cat === 'cortes cabello corto';
+
+                            const isSelected = cartItems.some(item => item.id === product.id);
+                            const isCategorySelected = cartItems.some(item =>
+                                (isHaircut(item.category) && isHaircut(product.category))
+                                || item.category === product.category
+                            );
+                            const isDisabled = isSelected || isCategorySelected;
+
+                            return (
+                                <AnimatedItem
+                                    key={product.name}
+                                    className="product-card"
+                                    data-category={product.category}
+                                >
+                                    <div className="service-image">
+                                        {product.image && !product.image.includes('default.png') ? (
+                                            <img
+                                                src={getCloudinaryServiceUrl(product.image)}
+                                                alt={product.description}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => { e.target.style.display = 'none'; }}
+                                            />
+                                        ) : null}
+                                    </div>
+                                    <div className="category-indicator">{product.categoryLabel}</div>
 
 
-                                <div className="service-content">
-                                    <h3>{product.name}</h3>
-                                    <div className="price-container">
-                                        <div className="price-new">${product.price.toLocaleString()}</div>
-                                        <div className="price-old">${product.oldPrice?.toLocaleString()}</div>
+                                    <div className="service-content">
+                                        <h3>{product.name}</h3>
+                                        <div className="price-container">
+                                            <div className="price-new">${product.price.toLocaleString()}</div>
+                                            <div className="price-old">${product.oldPrice?.toLocaleString()}</div>
+                                        </div>
+                                        <p className="service-description">{product.description}</p>
+                                        <div className="service-features">
+                                            {product.features && product.features.map((feature, idx) => (
+                                                <span key={idx} className="feature-tag">{feature}</span>
+                                            ))}
+                                        </div>
+                                        <motion.button
+                                            whileHover={!isDisabled ? { scale: 1.05 } : {}}
+                                            whileTap={!isDisabled ? { scale: 0.95 } : {}}
+                                            className="add-btn"
+                                            onClick={() => {
+                                                if (!isDisabled) addToCart(product);
+                                            }}
+                                            style={{
+                                                backgroundColor: isSelected ? '#198754' : (isCategorySelected ? '#6c757d' : ''),
+                                                cursor: isDisabled ? 'not-allowed' : 'pointer',
+                                                opacity: (isCategorySelected && !isSelected) ? 0.6 : 1,
+                                                border: isDisabled ? 'none' : ''
+                                            }}
+                                        >
+                                            {isSelected ? "Seleccionado" : (isCategorySelected ? "1 por categoría" : "Agregar al carrito")}
+                                        </motion.button>
                                     </div>
-                                    <p className="service-description">{product.description}</p>
-                                    <div className="service-features">
-                                        {product.features && product.features.map((feature, idx) => (
-                                            <span key={idx} className="feature-tag">{feature}</span>
-                                        ))}
-                                    </div>
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="add-btn"
-                                        onClick={() => addToCart(product)}
-                                    >
-                                        Agregar al carrito
-                                    </motion.button>
-                                </div>
-                            </AnimatedItem>
-                        ))}
+                                </AnimatedItem>
+                            )
+                        })}
                     </AnimatePresence>
                 </AnimatedContainer>
 
@@ -377,7 +416,7 @@ function Servicios_dama() {
                                             cartItems.map((item, index) => (
                                                 <AnimatedItem key={item.name || index} className="cart-item">
                                                     <div className="cart-item-info">
-                                                        {item.image && <img src={item.image} alt={item.name} className="cart-item-img" />}
+                                                        {item.image && <img src={getCloudinaryServiceUrl(item.image)} alt={item.name} className="cart-item-img" />}
                                                         <div>
                                                             <h4 style={{ margin: '0 0 5px 0', fontSize: '1rem' }}>{item.name}</h4>
                                                             <p style={{ margin: 0, color: '#bc2041', fontWeight: 'bold' }}>
@@ -419,7 +458,7 @@ function Servicios_dama() {
                                                 setTimeout(() => setLoginAlertVisible(false), 5000);
                                             } else {
                                                 setCartOpen(false);
-                                                navigate('/Form_agenda');
+                                                navigate('/Form_agenda', { state: { cart: cartItems } });
                                             }
                                         }}
                                     >

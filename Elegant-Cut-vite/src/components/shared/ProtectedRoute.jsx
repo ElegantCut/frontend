@@ -23,15 +23,19 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
   // Verificar rol si se requiere uno específico
   if (requiredRole) {
     let hasRole = false;
-    // Map required strings to id_rol numbers
-    if (requiredRole === 'admin' && user.id_rol === 1) hasRole = true;
-    if (requiredRole === 'barber' && user.id_rol === 3) hasRole = true;
-    if (requiredRole === 'client' && user.id_rol === 2) hasRole = true;
+    const userRole = user.role?.toLowerCase();
+    const userIdRol = Number(user.id_rol);
 
-    // Por si acaso el de base de datos envía rol
-    if (user.role === requiredRole) hasRole = true;
+    // Verificación por nombre de rol (role)
+    if (userRole === requiredRole.toLowerCase()) hasRole = true;
+    
+    // Verificación por ID de rol (id_rol)
+    if (requiredRole === 'admin' && userIdRol === 1) hasRole = true;
+    if (requiredRole === 'barber' && userIdRol === 3) hasRole = true;
+    if (requiredRole === 'client' && userIdRol === 2) hasRole = true;
 
     if (!hasRole) {
+      console.warn(`⛔ Acceso denegado: se requiere rol "${requiredRole}", pero el usuario tiene rol "${userRole}" (ID: ${userIdRol})`);
       return <Navigate to="/unauthorized" replace />;
     }
   }

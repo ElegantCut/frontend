@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedContainer, AnimatedItem } from '../../components/shared/AnimatedList';
 import { Calendar, Clock, User, Phone, Mail, CheckCircle, XCircle, Edit } from 'lucide-react';
 import { appointmentService } from '../../lib/appointmentService';
+import api from '../../lib/axios';
 import { useAuth } from '../../auth/UseAuth.jsx';
 
 const BarberAppointments = () => {
@@ -42,18 +43,40 @@ const BarberAppointments = () => {
             // Garantizar que sea un arreglo (si Nest retorna { data: [...] } lo extraemos)
             const aptList = Array.isArray(rawData) ? rawData : (rawData.data || []);
 
-            // Mapeo seguro para que el Frontend detecte las propiedades prisma
-            const mappedAppointments = aptList.map(apt => ({
-                id_reservas: apt.id_reservas || apt.id,
-                fecha: apt.fecha,
-                hora_inicio_formatted: apt.hora_inicio_formatted || apt.hora_inicio?.substring(0, 5) || "00:00",
-                id_estado_cita: apt.id_estado_cita || apt.estado || 1,
-                cliente_nombre: apt.cliente_nombre || (apt.usuario ? `${apt.usuario.prim_nombre} ${apt.usuario.apellido1}` : 'Cliente Sin Nombre'),
-                cliente_telefono: apt.cliente_telefono || (apt.usuario ? apt.usuario.telefono : 'N/A'),
-                cliente_email: apt.cliente_email || (apt.usuario ? apt.usuario.email : ''),
-                servicios: apt.servicios || (apt.servicio ? apt.servicio.nombre_servicio : 'Servicio general'),
-                observaciones: apt.observaciones || apt.notas || ''
-            }));
+            const mappedAppointments = aptList.map(apt => {
+                // Formato de Hora (extraído de apt.horarios.hora_inicio que viene como int ej. 900 -> "09:00")
+                let formattedTime = "00:00";
+                if (apt.horarios?.hora_inicio) {
+                    let hFormat = apt.horarios.hora_inicio.toString().padStart(4, '0');
+                    formattedTime = `${hFormat.slice(0, 2)}:${hFormat.slice(2, 4)}`;
+                } else if (apt.hora_inicio_formatted) {
+                    formattedTime = apt.hora_inicio_formatted;
+                }
+
+                // Formato de Servicio(s)
+                let serviceNames = 'Servicio Barbería';
+                if (apt.detalle_cita_servicio && apt.detalle_cita_servicio.length > 0) {
+                    serviceNames = apt.detalle_cita_servicio
+                        .map(d => d.servicios?.nombre)
+                        .filter(Boolean)
+                        .join(', ');
+                }
+
+                // Usuario
+                const userObj = apt.usuarios || apt.usuario;
+
+                return {
+                    id_reservas: apt.id_reservas || apt.id,
+                    fecha: apt.fecha,
+                    hora_inicio_formatted: formattedTime,
+                    id_estado_cita: apt.id_estado_cita || apt.estado || 1,
+                    cliente_nombre: apt.cliente_nombre || (userObj ? `${userObj.prim_nombre || ''} ${userObj.apellido1 || ''}`.trim() : 'Cliente Sin Nombre'),
+                    cliente_telefono: apt.cliente_telefono || (userObj ? userObj.telefono : 'N/A'),
+                    cliente_email: apt.cliente_email || (userObj ? userObj.email : ''),
+                    servicios: serviceNames,
+                    observaciones: apt.observaciones || apt.notas || ''
+                };
+            });
 
             setAppointments(mappedAppointments);
         } catch (error) {
@@ -67,11 +90,8 @@ const BarberAppointments = () => {
         setLoadingSlots(true);
         try {
             const barberId = user?.userId || user?.id;
-            const response = await fetch(`http://localhost:3001/api/appointments/availability?date=${newDate}&barberId=${barberId}`);
-            if (response.ok) {
-                const slots = await response.json();
-                setAvailableSlots(slots);
-            }
+            const response = await api.get(`/appointments/availability?date=${newDate}&barberId=${barberId}`);
+            setAvailableSlots(response.data);
         } catch (error) {
             console.error('Error fetching slots:', error);
         } finally {
@@ -81,16 +101,9 @@ const BarberAppointments = () => {
 
     const handleStatusUpdate = async (appointmentId, newStatus) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/appointments/${appointmentId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id_estado_cita: newStatus })
-            });
+            const response = await api.patch(`/appointments/${appointmentId}`, { id_estado_cita: newStatus });
 
-            if (response.ok) {
+            if (response.status === 200) {
                 alert('Estado actualizado correctamente');
                 fetchAppointments(); // Recargar lista
             } else {
@@ -107,16 +120,9 @@ const BarberAppointments = () => {
         if (!newDate || !newTime) return alert('Selecciona fecha y hora');
 
         try {
-            const response = await fetch(`http://localhost:3001/api/appointments/${selectedApt.id_reservas}`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ fecha: newDate, id_horarios: parseInt(newTime) })
-            });
+            const response = await api.patch(`/appointments/${selectedApt.id_reservas}`, { fecha: newDate, id_horarios: parseInt(newTime) });
 
-            if (response.ok) {
+            if (response.status === 200) {
                 alert('Cita reprogramada exitosamente');
                 setShowModal(false);
                 fetchAppointments();
@@ -160,9 +166,11 @@ const BarberAppointments = () => {
     };
 
     const filteredAppointments = appointments.filter(apt => {
+        // Excluimos definitivamente las citas completadas según el requerimiento ("eliminarlas")
+        if (apt.id_estado_cita === 2) return false;
+        
         if (filter === 'all') return true;
         if (filter === 'pending') return apt.id_estado_cita === 1;
-        if (filter === 'completed') return apt.id_estado_cita === 2;
         if (filter === 'cancelled') return apt.id_estado_cita === 3;
         return true;
     });
@@ -194,7 +202,6 @@ const BarberAppointments = () => {
                 {[
                     { value: 'all', label: 'Todas' },
                     { value: 'pending', label: 'Pendientes' },
-                    { value: 'completed', label: 'Completadas' },
                     { value: 'cancelled', label: 'Canceladas' }
                 ].map(f => (
                     <button

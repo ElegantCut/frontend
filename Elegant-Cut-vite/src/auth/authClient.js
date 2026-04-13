@@ -1,4 +1,4 @@
-// src/utils/authClient.js
+import api from '../lib/axios';
 
 export class AuthClient {
 
@@ -7,22 +7,14 @@ export class AuthClient {
     try {
       console.log('Enviando registro al servidor...');
 
-      const response = await fetch('http://localhost:3001/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registerData),
-      });
-
-      const data = await response.json();
+      const response = await api.post('/auth/register', registerData);
+      const data = response.data;
 
       console.log(' Respuesta del servidor (registro):', data);
 
-      if (data.success && data.token) {
-        // Guardar token y datos del usuario automáticamente
-        localStorage.setItem('jwt_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
+      if (data.success) {
+        // Guardar datos del usuario (el token ya está en la cookie HttpOnly)
+        localStorage.setItem('user', JSON.stringify(data.user));
 
         console.log(' Registro exitoso!');
         return { success: true, user: data.user };
@@ -39,25 +31,16 @@ export class AuthClient {
   // Subir foto de perfil
   static async uploadProfilePhoto(formData) {
     try {
-      const token = this.getToken();
-      if (!token) return { success: false, error: 'No autenticado' };
+      const response = await api.post('/users/profile-photo', formData);
 
-      const response = await fetch('http://localhost:3001/api/users/profile-photo', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
-
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         // Actualizar datos locales del usuario con la nueva foto
         const userData = this.getUser();
         if (userData) {
           userData.photoUrl = data.photoUrl;
-          localStorage.setItem('user_data', JSON.stringify(userData));
+          localStorage.setItem('user', JSON.stringify(userData));
         }
         return { success: true, photoUrl: data.photoUrl };
       } else {
@@ -74,22 +57,14 @@ export class AuthClient {
     try {
       console.log('📞 Enviando login al servidor...');
 
-      const response = await fetch('http://localhost:3001/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
+      const response = await api.post('/auth/login', { username, password });
+      const data = response.data;
 
       console.log('📨 Respuesta del servidor:', data);
 
-      if (data.success && data.token) {
-        // Guardar token y datos del usuario
-        localStorage.setItem('jwt_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
+      if (data.success) {
+        // Guardar solo los datos del usuario (el token está en la cookie)
+        localStorage.setItem('user', JSON.stringify(data.user));
 
         console.log('✅ Login exitoso!');
         return { success: true, user: data.user };
@@ -108,32 +83,19 @@ export class AuthClient {
     try {
       console.log('📧 Solicitando código de recuperación para:', email);
 
-      const response = await fetch('http://localhost:3001/auth/solicitar-recuperacion', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
+      // Usar el endpoint real del backend: /auth/forgot-password
+      const response = await api.post('/auth/forgot-password', { email });
+      const data = response.data;
 
-      const data = await response.json();
+      console.log('📨 Respuesta del servidor (forgot-password):', data);
 
-      console.log('📨 Respuesta del servidor (solicitar-recuperacion):', data);
-
-      if (data.success) {
-        console.log('✅ Código solicitado!');
-        return {
-          success: true,
-          message: data.mensaje,
-          username: data.username
-        };
-      } else {
-        console.log('❌ Error solicitando código:', data.error);
-        return { success: false, error: data.error };
-      }
+      return {
+        success: true,
+        message: data.message || 'Se ha enviado un código a tu correo.'
+      };
     } catch (error) {
       console.log('🚨 Error de conexión:', error);
-      return { success: false, error: 'No se pudo conectar al servidor' };
+      return { success: false, error: error.response?.data?.message || 'No se pudo conectar al servidor' };
     }
   }
 
@@ -142,17 +104,15 @@ export class AuthClient {
     try {
       console.log('🔐 Verificando código para:', email);
 
-      const response = await fetch('http://localhost:3001/auth/restablecer-contrasena', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, codigo, newPassword: nuevaContrasena }),
+      // Usar el endpoint real del backend: /auth/reset-password (PUT)
+      const response = await api.put('/auth/reset-password', { 
+        email, 
+        codigo, 
+        newPassword: nuevaContrasena 
       });
+      const data = response.data;
 
-      const data = await response.json();
-
-      console.log('📨 Respuesta del servidor (verificar-codigo-recuperacion):', data);
+      console.log('📨 Respuesta del servidor (reset-password):', data);
 
       if (data.success) {
         console.log('✅ Contraseña cambiada exitosamente!');
@@ -163,7 +123,7 @@ export class AuthClient {
       }
     } catch (error) {
       console.log('🚨 Error de conexión:', error);
-      return { success: false, error: 'No se pudo conectar al servidor' };
+      return { success: false, error: error.response?.data?.message || 'Error al cambiar contraseña' };
     }
   }
 
@@ -172,15 +132,8 @@ export class AuthClient {
     try {
       console.log('📞 Recuperando contraseña para:', username);
 
-      const response = await fetch('http://localhost:3001/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, newPassword }),
-      });
-
-      const data = await response.json();
+      const response = await api.post('/auth/forgot-password', { username, newPassword });
+      const data = response.data;
 
       console.log('📨 Respuesta del servidor (forgot-password):', data);
 
@@ -202,15 +155,8 @@ export class AuthClient {
     try {
       console.log('📞 Actualizando contraseña para:', username);
 
-      const response = await fetch('http://localhost:3001/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, newPassword }),
-      });
-
-      const data = await response.json();
+      const response = await api.post('/auth/forgot-password', { username, newPassword });
+      const data = response.data;
 
       console.log('📨 Respuesta del servidor (update-password):', data);
 
@@ -228,40 +174,33 @@ export class AuthClient {
   }
 
   // Función para cerrar sesión
-  static logout() {
-    localStorage.removeItem('jwt_token');
-    localStorage.removeItem('user_data');
+  static async logout() {
+    try {
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Error al cerrar sesión en el servidor:', error);
+    }
+    localStorage.removeItem('user');
     console.log('👋 Sesión cerrada');
   }
 
-  // Obtener token
+  // Obtener token (Ya no es posible con HttpOnly)
   static getToken() {
-    return localStorage.getItem('jwt_token');
+    return null; 
   }
 
   // Obtener datos del usuario
   static getUser() {
-    const userData = localStorage.getItem('user_data');
+    const userData = localStorage.getItem('user');
     if (userData && userData !== 'undefined' && userData !== 'null') {
       try { return JSON.parse(userData); } catch(e) {}
-    }
-    
-    // Fallback: decode from token
-    const token = this.getToken();
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload;
-      } catch (error) {
-        return null;
-      }
     }
     return null;
   }
 
-  // Verificar si está logueado
+  // Verificar si está logueado (Aproximación basada en datos de usuario locales)
   static isLoggedIn() {
-    return this.getToken() !== null;
+    return this.getUser() !== null;
   }
 
   // Verificar si es admin
@@ -282,14 +221,11 @@ export class AuthClient {
     return user && user.role === 'cliente';
   }
 
-  // Verificar si el token es válido
-  static isTokenValid() {
-    const token = this.getToken();
-    if (!token) return false;
-
+  // Verificar si el token es válido (Se verifica contra el backend vía cookies)
+  static async isTokenValid() {
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp * 1000 > Date.now();
+      const response = await api.post('/auth/check-token');
+      return response.data.success || response.data.id !== undefined;
     } catch (error) {
       return false;
     }

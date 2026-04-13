@@ -1,3 +1,4 @@
+import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
 
@@ -12,8 +13,8 @@ const ClientsTab = () => {
 
   const loadClients = async () => {
     try {
-      const response = await fetch('http://localhost:3001/admin/clients');
-      const data = await response.json();
+      const response = await api.get('/clients');
+      const data = response.data;
 
       if (data.success && data.data) {
         setClients(data.data);
@@ -31,8 +32,8 @@ const ClientsTab = () => {
   const handleDeactivate = async (id) => {
     if (!window.confirm('¿Desactivar este cliente?')) return;
     try {
-      const response = await fetch(`http://localhost:3001/admin/clients/${id}`, { method: 'DELETE' });
-      const data = await response.json();
+      const response = await api.delete(`/clients/${id}`);
+      const data = response.data;
       if (data.success) {
         loadClients();
       } else {
@@ -41,58 +42,74 @@ const ClientsTab = () => {
     } catch (error) { console.error(error); }
   };
 
+  const handleActivate = async (id) => {
+    try {
+      const response = await api.patch(`/clients/${id}/activate`);
+      const data = response.data;
+      if (data.success) {
+        loadClients();
+      } else {
+        alert('No se pudo activar el cliente');
+      }
+    } catch (error) { console.error(error); }
+  };
+
   if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
   if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
   return (
-    <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Directorio de Clientes</h2>
-      </div>
-
-      <div className="card border-0 shadow-sm">
-        <div className="table-responsive">
-          <table className="table table-hover mb-0">
-            <thead className="table-light">
-              <tr>
-                <th>Cliente</th>
-                <th>Contacto</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <AnimatedContainer component="tbody">
-              {clients.length === 0 ? (
-                <AnimatedItem tag="tr">
-                  <td colSpan="4" className="text-center py-4">No hay clientes registrados</td>
-                </AnimatedItem>
-              ) : (
-                clients.map(client => (
-                  <AnimatedItem tag="tr" key={client.id_usuario}>
-                    <td>
-                      <div className="fw-bold">{client.prim_nombre} {client.apellido1}</div>
-                      <div className="small text-muted">ID: {client.id_usuario}</div>
-                    </td>
-                    <td>
-                      <div><i className="bi bi-envelope me-1"></i> {client.email}</div>
-                      <div><i className="bi bi-telephone me-1"></i> {client.telefono || 'N/A'}</div>
-                    </td>
-                    <td>
-                      <span className={`badge ${client.estado === 1 ? 'bg-success' : 'bg-secondary'}`}>
-                        {client.estado === 1 ? 'Activo' : 'Inactivo'}
-                      </span>
-                    </td>
-                    <td>
-                      <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeactivate(client.id_usuario)}>
-                        <i className="bi bi-trash"></i>
-                      </button>
-                    </td>
-                  </AnimatedItem>
-                ))
-              )}
-            </AnimatedContainer>
-          </table>
+    <div className="clients-container">
+      <header className="tab-header">
+        <h2>Clientes</h2>
+        <div className="action-buttons">
+          <button className="btn-ios-secondary" onClick={loadClients}>
+             <i className="bi bi-arrow-clockwise me-1"></i> Actualizar
+          </button>
         </div>
+      </header>
+
+      <div className="ios-section-header">Directorio de Clientes</div>
+      <div className="ios-list-group">
+        <AnimatedContainer>
+          {clients.length === 0 ? (
+            <div className="p-5 text-center text-muted">No hay clientes registrados</div>
+          ) : (
+            clients.map(client => (
+              <AnimatedItem key={client.id_usuario} className="ios-list-item">
+                <div className="ios-item-content">
+                  <span className="ios-item-title">{client.prim_nombre} {client.apellido1}</span>
+                  <span className="ios-item-subtitle d-flex gap-2">
+                    <span>{client.email}</span>
+                    {client.telefono && <span>• {client.telefono}</span>}
+                  </span>
+                </div>
+
+                <div className="ios-item-actions">
+                  <span className={`ios-badge ${client.estado ? 'success' : 'neutral'}`}>
+                    {client.estado ? 'Activo' : 'Inactivo'}
+                  </span>
+                  {!client.estado ? (
+                    <button 
+                      className="ios-icon-btn success" 
+                      onClick={() => handleActivate(client.id_usuario)}
+                      title="Activar"
+                    >
+                      <i className="bi bi-check-circle"></i>
+                    </button>
+                  ) : (
+                    <button 
+                      className="ios-icon-btn danger" 
+                      onClick={() => handleDeactivate(client.id_usuario)}
+                      title="Desactivar"
+                    >
+                      <i className="bi bi-trash"></i>
+                    </button>
+                  )}
+                </div>
+              </AnimatedItem>
+            ))
+          )}
+        </AnimatedContainer>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import api from '../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform } from 'framer-motion';
@@ -70,8 +71,8 @@ export default function Pqrs() {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/pqrs/status/${radicadoSearch}`);
-      const result = await response.json();
+      const response = await api.get(`/pqrs/status/${radicadoSearch}`);
+      const result = response.data;
 
       if (result.success) {
         setTrackResult(result.data);
@@ -106,13 +107,28 @@ export default function Pqrs() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/api/pqrs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      const mapRequestType = {
+        'peticion': 'Peticion',
+        'queja': 'Queja',
+        'reclamo': 'Reclamo',
+        'sugerencia': 'Sugerencia'
+      };
 
-      const result = await response.json();
+      const payload = {
+        id_usuario: Number(currentUser?.id || currentUser?.userId || currentUser?.id_usuario || 0),
+        tipo_solicitud: mapRequestType[formData.requestType] || 'Peticion',
+        nombre_completo: formData.userName,
+        identificacion: formData.userId,
+        email: formData.userEmail,
+        telefono: formData.userPhone,
+        asunto: formData.subject,
+        descripcion: formData.description,
+        medio_respuesta: formData.responseMedium
+      };
+
+      const response = await api.post('/pqrs', payload);
+
+      const result = response.data;
 
       if (result.success) {
         setSuccessMessage(`PQRS enviada con éxito. Su radicado es: ${result.radicado}`);
@@ -132,7 +148,7 @@ export default function Pqrs() {
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error de conexión al enviar la PQRS');
+      alert('Error de conexión o servidor: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }
@@ -356,11 +372,10 @@ export default function Pqrs() {
                       <p><strong>Radicado:</strong> {radicadoSearch}</p>
                       <p><strong>Fecha:</strong> {new Date(trackResult.fecha_creacion).toLocaleDateString()}</p>
                       <p><strong>Estado:</strong> <span className={`status-badge status-${trackResult.estado}`}>{trackResult.estado.replace('_', ' ')}</span></p>
-                      {trackResult.respuesta && (
+                      {trackResult.respuesta_admin && (
                         <div style={{ marginTop: '15px', padding: '10px', background: '#e9ecef', borderRadius: '5px' }}>
                           <strong>Respuesta:</strong>
-                          <p>{trackResult.respuesta}</p>
-                          <small className="text-muted">Fecha respuesta: {new Date(trackResult.fecha_respuesta).toLocaleDateString()}</small>
+                          <p>{trackResult.respuesta_admin}</p>
                         </div>
                       )}
                     </div>

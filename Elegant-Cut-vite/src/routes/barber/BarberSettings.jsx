@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthClient } from "../../auth/authClient";
+import api, { UPLOADS_BASE_URL } from '../../lib/axios';
 import { Camera, Save, AlertCircle, CheckCircle } from 'lucide-react';
 
 const BarberSettings = () => {
@@ -27,10 +28,8 @@ const BarberSettings = () => {
             
             if (!targetUserId) return;
             try {
-                const response = await fetch(`http://localhost:3001/api/barbers/${targetUserId}`, {
-                    headers: { 'Authorization': `Bearer ${AuthClient.getToken()}` }
-                });
-                const data = await response.json();
+                const response = await api.get(`/barbers/${targetUserId}`);
+                const data = response.data;
                 if (data && data.portafolios && data.portafolios.length > 0) {
                     const port = data.portafolios[0];
                     let specs = port.especialidades || '';
@@ -78,16 +77,9 @@ const BarberSettings = () => {
                 especialidades: JSON.stringify(espArray)
             };
 
-            const response = await fetch(`http://localhost:3001/api/barbers/${targetUserId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${AuthClient.getToken()}`
-                },
-                body: JSON.stringify(payload)
-            });
+            const response = await api.patch(`/barbers/${targetUserId}`, payload);
 
-            const data = await response.json();
+            const data = response.data;
             if (response.ok) {
                 setPortfolioMessage({ type: 'success', text: 'Portafolio actualizado exitosamente.' });
             } else {
@@ -162,7 +154,7 @@ const BarberSettings = () => {
                             key={preview || user?.photoUrl}
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            src={preview || (user?.photoUrl ? `http://localhost:3001/uploads/${user.photoUrl}` : 'https://via.placeholder.com/150')}
+                            src={preview || (user?.photoUrl ? `${UPLOADS_BASE_URL}/${user.photoUrl}` : 'https://via.placeholder.com/150')}
                             alt="Profile Preview"
                             style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: '4px solid #f8f9fa' }}
                         />

@@ -206,6 +206,80 @@
     min-height: 120px;
 }
 
+/* Star Rating Input */
+.star-input-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    min-height: 60px;
+}
+
+.star-input-container:focus-within {
+    border-color: #bc2041;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(188, 32, 65, 0.1);
+}
+
+.star-input-container.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #f1f3f5;
+}
+
+.star-btn {
+    background: none;
+    border: none;
+    padding: 2px;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.star-btn svg {
+    width: 28px;
+    height: 28px;
+}
+
+.star-path {
+    fill: white;
+    stroke: #adb5bd;
+    stroke-width: 1.2;
+    transition: all 0.3s ease;
+}
+
+.star-btn.active .star-path {
+    fill: #ffc107;
+    stroke: #e0ac08;
+}
+
+.star-btn:hover {
+    transform: scale(1.2);
+}
+
+.star-input-container.disabled .star-btn {
+    cursor: not-allowed;
+}
+
+.rating-label {
+    margin-left: auto;
+    font-size: 0.85rem;
+    color: #495057;
+    font-weight: 700;
+    min-width: 90px;
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-left: 10px;
+}
+
 .review-submit-btn {
     background: #bc2041;
     color: white;
@@ -357,4 +431,23 @@
     .form-section {
         padding: 20px;
     }
+}
+
+.reviewed-barber-tag {
+    background: #f1f3f5;
+    color: #495057;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    margin-left: auto;
+    border: 1px solid #dee2e6;
+}
+
+.bg-rojo {
+    background-color: #bc2041 !important;
+    color: white !important;
 }

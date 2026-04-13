@@ -1,3 +1,4 @@
+import api from '../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../auth/UseAuth';
 import AnimatedPage from '../components/shared/AnimatedPage';
@@ -7,46 +8,58 @@ import './Reseñas.css';
 const Reseñas = () => {
   const { isAuthenticated, user } = useAuth();
   const [reviews, setReviews] = useState([]);
+  const [barbers, setBarbers] = useState([]);
   const [formData, setFormData] = useState({
-    nombre_cliente: '',
-    email_cliente: '',
+    id_cliente: '',
     calificacion: '5',
-    comentario: ''
+    comentario: '',
+    dirigido_a: 'establecimiento',
+    id_barbero: ''
   });
   const [status, setStatus] = useState({ type: '', message: '' });
   const [loading, setLoading] = useState(true);
+  const [hoverRating, setHoverRating] = useState(0);
 
-  // Fetch reviews
+  // Fetch reviews and barbers
   useEffect(() => {
     fetchReviews();
+    fetchBarbers();
   }, []);
+
+  const fetchBarbers = async () => {
+    try {
+      const response = await api.get('/barbers/public'); // Usamos public para las reseñas
+      const data = response.data?.data || response.data || [];
+      if (Array.isArray(data)) {
+        setBarbers(data);
+      }
+    } catch (error) {
+      console.error('Error fetching barbers:', error);
+    }
+  };
 
   // Pre-fill form if user is logged in
   useEffect(() => {
     if (isAuthenticated && user) {
       setFormData(prev => ({
         ...prev,
-        nombre_cliente: user.name || '',
-        email_cliente: user.email || ''
+        id_cliente: user.userId || user.id_usuario || user.id || ''
       }));
     }
   }, [isAuthenticated, user]);
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/reviews');
-      if (response.ok) {
-        const data = await response.json();
-        setReviews(data);
-      } else {
-        console.error('Error fetching reviews');
-      }
+      const response = await api.get('/reviews');
+      setReviews(response.data);
     } catch (error) {
       console.error('Network error:', error);
     } finally {
       setLoading(false);
     }
   };
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,36 +71,29 @@ const Reseñas = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Enviando reseña con datos:', formData);
     setStatus({ type: 'loading', message: '' });
 
     try {
-      const response = await fetch('http://localhost:3001/api/reviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      const response = await api.post('/reviews', formData);
+
+      setStatus({ type: 'success', message: '¡Gracias por tu reseña!' });
+      setFormData({
+        id_cliente: (isAuthenticated && (user?.userId || user?.id_usuario || user?.id)) || '',
+        calificacion: '5',
+        comentario: '',
+        dirigido_a: 'establecimiento',
+        id_barbero: ''
       });
+      fetchReviews();
 
-      if (response.ok) {
-        setStatus({ type: 'success', message: '¡Gracias por tu reseña!' });
-        setFormData({
-          nombre_cliente: (isAuthenticated && user?.name) || '',
-          email_cliente: (isAuthenticated && user?.email) || '',
-          calificacion: '5',
-          comentario: ''
-        });
-        fetchReviews();
-
-        setTimeout(() => {
-          setStatus({ type: '', message: '' });
-        }, 3000);
-      } else {
-        setStatus({ type: 'error', message: 'Error al enviar la reseña' });
-      }
+      setTimeout(() => {
+        setStatus({ type: '', message: '' });
+      }, 3000);
     } catch (error) {
       console.error('Error:', error);
-      setStatus({ type: 'error', message: 'Error de conexión' });
+      alert('Error de conexión o servidor: ' + (error.response?.data?.message || error.message));
+      setStatus({ type: 'error', message: 'Error al enviar la reseña' });
     }
   };
 
@@ -130,7 +136,12 @@ const Reseñas = () => {
         <div className="reviews-main-container">
           {/* LEFT SIDE - REVIEWS LIST */}
           <section className="reviews-section">
-            <h2>Todas las Reseñas</h2>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h2 className="m-0">Todas las Reseñas</h2>
+              <span className="badge bg-rojo px-3 py-2 rounded-pill shadow-sm">
+                {reviews.length} Comentarios
+              </span>
+            </div>
 
             {loading ? (
               <div className="loading-spinner">Cargando reseñas...</div>
@@ -140,7 +151,8 @@ const Reseñas = () => {
                   reviews.map((review) => {
                     try {
                       if (!review || !review.id_resena) return null;
-                      const nombre = review.nombre_cliente || 'Cliente Anónimo';
+                      const nombre = review.usuarios_resenas_id_clienteTousuarios?.prim_nombre || review.nombre_cliente || 'Cliente Anónimo';
+                      const barbero = review.barbero;
 
                       return (
                         <AnimatedItem key={review.id_resena} className="review-card">
@@ -153,7 +165,18 @@ const Reseñas = () => {
                               <span className="review-date">
                                 {formatDate(review.fecha_resena)}
                               </span>
+                              {review.barbero && (
+                                <span className="review-target" style={{display: 'block', fontSize: '0.85rem', color: '#888', marginTop: '2px'}}>
+                                  Dirigido a: {review.barbero.prim_nombre} {review.barbero.apellido1}
+                                </span>
+                              )}
                             </div>
+                            {barbero && (
+                               <div className="reviewed-barber-tag">
+                                 <i className="bi bi-scissors me-1"></i>
+                                 {barbero.prim_nombre}
+                               </div>
+                            )}
                           </div>
                           <div className="review-rating">
                             {renderStars(review.calificacion)}
@@ -199,52 +222,92 @@ const Reseñas = () => {
             )}
 
             <form onSubmit={handleSubmit} className={`review-form ${!isAuthenticated ? 'form-disabled' : ''}`}>
-              <div className="form-group">
-                <label htmlFor="nombre_cliente">Nombre Completo</label>
-                <input
-                  type="text"
-                  id="nombre_cliente"
-                  name="nombre_cliente"
-                  value={formData.nombre_cliente}
-                  onChange={handleChange}
-                  required
-                  readOnly={!isAuthenticated || !!user?.name}
-                  disabled={!isAuthenticated}
-                  placeholder="Tu nombre"
-                />
-              </div>
+
 
               <div className="form-group">
-                <label htmlFor="email_cliente">Correo Electrónico</label>
-                <input
-                  type="email"
-                  id="email_cliente"
-                  name="email_cliente"
-                  value={formData.email_cliente}
-                  onChange={handleChange}
-                  required
-                  readOnly={!isAuthenticated || !!user?.email}
-                  disabled={!isAuthenticated}
-                  placeholder="tu@email.com"
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="calificacion">Calificación</label>
-                <select
-                  id="calificacion"
-                  name="calificacion"
-                  value={formData.calificacion}
-                  onChange={handleChange}
-                  disabled={!isAuthenticated}
+                <label>Calificación</label>
+                <div 
+                  className={`star-input-container ${!isAuthenticated ? 'disabled' : ''}`}
+                  onMouseLeave={() => setHoverRating(0)}
                 >
-                  <option value="5">★★★★★ Excelente</option>
-                  <option value="4">★★★★☆ Muy Bueno</option>
-                  <option value="3">★★★☆☆ Bueno</option>
-                  <option value="2">★★☆☆☆ Regular</option>
-                  <option value="1">★☆☆☆☆ Malo</option>
-                </select>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      className={`star-btn ${star <= (hoverRating || Number(formData.calificacion)) ? 'active' : ''}`}
+                      onClick={() => !isAuthenticated ? null : setFormData(prev => ({ ...prev, calificacion: star.toString() }))}
+                      onMouseEnter={() => !isAuthenticated ? null : setHoverRating(star)}
+                      disabled={!isAuthenticated}
+                      aria-label={`Calificar con ${star} estrellas`}
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path 
+                          d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
+                          className="star-path"
+                        />
+                      </svg>
+                    </button>
+                  ))}
+                  <span className="rating-label">
+                    {Number(hoverRating || formData.calificacion) === 5 && '¡Excelente!'}
+                    {Number(hoverRating || formData.calificacion) === 4 && 'Muy Bueno'}
+                    {Number(hoverRating || formData.calificacion) === 3 && 'Bueno'}
+                    {Number(hoverRating || formData.calificacion) === 2 && 'Regular'}
+                    {Number(hoverRating || formData.calificacion) === 1 && 'Malo'}
+                  </span>
+                </div>
               </div>
+
+              <div className="form-group">
+                <label>Hacia quién va dirigida</label>
+                <div style={{ display: 'flex', gap: '15px', marginTop: '5px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'normal', gap: '5px', cursor: 'pointer' }}>
+                    <input
+                      type="radio"
+                      name="dirigido_a"
+                      value="establecimiento"
+                      checked={formData.dirigido_a === 'establecimiento'}
+                      onChange={handleChange}
+                      disabled={!isAuthenticated}
+                      style={{ margin: 0 }}
+                    />
+                    Al Establecimiento
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'normal', gap: '5px', cursor: 'pointer' }}>
+                    <input
+                      type="radio"
+                      name="dirigido_a"
+                      value="barbero"
+                      checked={formData.dirigido_a === 'barbero'}
+                      onChange={handleChange}
+                      disabled={!isAuthenticated}
+                      style={{ margin: 0 }}
+                    />
+                    A un Barbero
+                  </label>
+                </div>
+              </div>
+
+              {formData.dirigido_a === 'barbero' && (
+                <div className="form-group">
+                  <label htmlFor="id_barbero">Selecciona el Barbero</label>
+                  <select
+                    id="id_barbero"
+                    name="id_barbero"
+                    value={formData.id_barbero}
+                    onChange={handleChange}
+                    disabled={!isAuthenticated}
+                    required={formData.dirigido_a === 'barbero'}
+                  >
+                    <option value="">-- Elige un barbero --</option>
+                    {barbers.filter(b => b.estado).map(barbero => (
+                      <option key={barbero.id_usuario} value={barbero.id_usuario}>
+                        {barbero.prim_nombre} {barbero.apellido1}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="form-group">
                 <label htmlFor="comentario">Tu Reseña</label>
