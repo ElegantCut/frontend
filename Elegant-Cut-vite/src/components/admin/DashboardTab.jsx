@@ -14,6 +14,7 @@ const DashboardTab = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   useEffect(() => {
     loadStats();
@@ -34,6 +35,38 @@ const DashboardTab = () => {
       setError('Error de conexión');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    setDownloadingPdf(true);
+    try {
+      const response = await api.get('/dashboard/stats/pdf', {
+        responseType: 'blob',
+      });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+
+      const fecha = new Date().toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).replace(/\//g, '-');
+
+      link.setAttribute('download', `Reporte_Estadisticas_${fecha}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading PDF:', err);
+      alert('No se pudo descargar el reporte en PDF');
+    } finally {
+      setDownloadingPdf(false);
     }
   };
 
@@ -62,7 +95,21 @@ const DashboardTab = () => {
     <div className="dashboard-container">
       <header className="tab-header">
         <h2>Panel de Control</h2>
-        <div className="action-buttons">
+        <div className="action-buttons" style={{ display: 'flex', gap: '8px' }}>
+          <button
+            className="btn-ios-secondary"
+            onClick={handleDownloadPDF}
+            disabled={downloadingPdf}
+            title="Exportar Reporte a PDF"
+            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+          >
+            {downloadingPdf ? (
+              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            ) : (
+              <i className="bi bi-file-earmark-pdf"></i>
+            )}
+            <span>Exportar PDF</span>
+          </button>
           <button className="btn-ios-secondary" onClick={loadStats}>
             <i className="bi bi-arrow-clockwise"></i>
           </button>
