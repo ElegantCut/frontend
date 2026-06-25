@@ -21,14 +21,12 @@ export const authService = {
         }
     },
 
-    // 2. Método para el Login (¡Aquí manejamos el Token!)
+    // 2. Método para el Login (¡Aquí manejamos el Token mediante cookies!)
     login: async (credentials) => {
         try {
             const response = await api.post('/auth/login', credentials);
 
-            // Si el backend responde con éxito (el token ya está en la cookie HttpOnly)
             if (response.data.user) {
-                // Guardamos solo los datos del usuario localmente (el token se maneja por cookies)
                 localStorage.setItem('user', JSON.stringify(response.data.user));
             }
 
@@ -38,7 +36,7 @@ export const authService = {
         }
     },
 
-    // 3. Método para salir (Limpia la cookie en el backend y datos locales)
+    // 3. Método para salir
     logout: async () => {
         try {
             await api.post('/auth/logout');

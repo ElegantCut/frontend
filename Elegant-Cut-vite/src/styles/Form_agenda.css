@@ -10,31 +10,31 @@
     /* ── Acento principal (Servicios Dama/Caballeros) ── */
     --rojo: #bc2041;
     --rojo-dark: #951832;
-    --rojo-glow: rgba(188, 32, 65, 0.12);
-    --rojo-border: rgba(188, 32, 65, 0.3);
+    --rojo-glow: rgba(188, 32, 65, 0.2);
+    --rojo-border: rgba(188, 32, 65, 0.4);
 
-    /* Fondos — paneles blancos sobre gris muy suave */
-    --bg: #efefef;
-    --surface: #ffffff;
-    --surface-2: #f7f7f7;
+    /* Fondos — paneles de cristal oscuro */
+    --bg: #060606;
+    --surface: rgba(15, 15, 15, 0.6);
+    --surface-2: rgba(255, 255, 255, 0.05);
 
-    /* Texto oscuro (legible sobre blanco) */
-    --text: #1a1a1a;
-    --text-muted: #555555;
-    --text-dim: #999999;
+    /* Texto claro */
+    --text: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --text-dim: rgba(255, 255, 255, 0.4);
 
-    /* Bordes sutiles sobre blanco */
-    --border: rgba(0, 0, 0, 0.1);
-    --border-red: rgba(188, 32, 65, 0.3);
+    /* Bordes sutiles sobre oscuro */
+    --border: rgba(255, 255, 255, 0.1);
+    --border-red: rgba(188, 32, 65, 0.4);
 
     /* Sombras */
-    --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.08);
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.5);
     --shadow-red: 0 4px 18px rgba(188, 32, 65, 0.3);
 
     /* Radios */
     --radius-sm: 8px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
 }
 
 /* ── RESET BASE ── */
@@ -47,10 +47,11 @@
 /* ── WRAPPER ── */
 .fa-page {
     min-height: 100vh;
-    background: #ffffff;
+    background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inter', sans-serif;
     padding-bottom: 60px;
+    padding-top: 100px; /* Para evitar colisión con el navbar global */
 }
 
 /* ══════════════════════════════
@@ -124,7 +125,7 @@
 .fa-step-line {
     flex: 1;
     height: 2px;
-    background: #d0d0d0;
+    background: rgba(255, 255, 255, 0.1);
     transition: background 0.5s ease;
     margin-top: -20px;
 }
@@ -137,8 +138,8 @@
     width: clamp(32px, 5vw, 40px);
     height: clamp(32px, 5vw, 40px);
     border-radius: 50%;
-    border: 2px solid #ccc;
-    background: #e8e8e8;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -157,7 +158,7 @@
 }
 
 .fa-step.active .fa-step-circle {
-    background: var(--surface-2);
+    background: rgba(188, 32, 65, 0.1);
     border-color: var(--rojo);
     color: var(--rojo);
     box-shadow: 0 0 0 4px var(--rojo-glow);
@@ -197,6 +198,8 @@
 ══════════════════════════════ */
 .fa-panel {
     background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: clamp(18px, 3vw, 28px);
@@ -746,13 +749,15 @@
     flex-direction: column;
     gap: 14px;
     position: sticky;
-    top: 16px;
+    top: 100px;
     align-self: start;
 }
 
 .fa-summary-card,
 .fa-info-card {
-    background: #f4f4f4;
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: clamp(16px, 3vw, 22px);

@@ -150,12 +150,12 @@ const AdminsTab = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 30 }}
             >
-              <div className="p-4 border-bottom d-flex justify-content-between align-items-center bg-white sticky-top">
+              <div className="p-4 border-bottom d-flex justify-content-between align-items-center sticky-top" style={{ backgroundColor: 'var(--ios-card)' }}>
                  <h3 className="ios-item-title fs-5 m-0">{editingId ? 'Editar Administrador' : 'Nuevo Administrador'}</h3>
-                 <button className="btn-close" onClick={() => setShowModal(false)}></button>
+                 <button className="btn-close" style={{ filter: 'invert(1) grayscale(100%) brightness(200%)' }} onClick={() => setShowModal(false)}></button>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-4 bg-white" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
+              <form onSubmit={handleSubmit} className="p-4" style={{ maxHeight: '75vh', overflowY: 'auto', backgroundColor: 'var(--ios-card)' }}>
                 <div className="row g-4">
                   <div className="col-md-6">
                     <label className="ios-label">Usuario</label>

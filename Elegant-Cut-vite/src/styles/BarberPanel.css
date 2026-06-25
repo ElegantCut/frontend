@@ -1,0 +1,313 @@
+/* ═══════════════════════════════════════════════════════
+   ELEGANT CUT — BARBER PANEL  •  Premium Dark UI
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+    --barber-bg: #09090b;
+    --barber-card: #18181b;
+    --barber-card-hover: #1e1e22;
+    --barber-border: #27272a;
+    --barber-text: #f4f4f4;
+    --barber-text-muted: #a1a1aa;
+    --barber-red: #bc2041;
+    --barber-red-light: rgba(188, 32, 65, 0.15);
+    --barber-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ════════════════════════
+   LAYOUT
+   ════════════════════════ */
+.barber-panel-container {
+    display: flex;
+    min-height: 100vh;
+    background: var(--barber-bg) !important;
+    color: var(--barber-text) !important;
+    background-image: 
+        radial-gradient(ellipse at 20% 50%, rgba(188, 32, 65, 0.03) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.02) 0%, transparent 50%);
+}
+
+.barber-content {
+    flex: 1;
+    background-color: transparent !important;
+    padding: 2rem;
+    margin-left: 260px;
+    overflow-x: hidden;
+    transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 992px) {
+    .barber-content {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .barber-content {
+        padding: 1rem;
+    }
+}
+
+/* ════════════════════════
+   HEADINGS
+   ════════════════════════ */
+.barber-content h1, 
+.barber-content h2, 
+.barber-content h3 {
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+/* ════════════════════════
+   CARDS — Premium Dark
+   ════════════════════════ */
+.barber-content .ios-card,
+.barber-content .ios-widget {
+    background-color: var(--barber-card) !important;
+    border: 1px solid var(--barber-border) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+    color: var(--barber-text) !important;
+    border-radius: 20px !important;
+    transition: all var(--barber-transition) !important;
+}
+
+.barber-content .ios-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35) !important;
+    border-color: #3f3f46 !important;
+}
+
+/* ════════════════════════
+   INPUTS, TEXTAREAS, SELECTS — Force Dark
+   ════════════════════════ */
+.barber-content input, 
+.barber-content textarea, 
+.barber-content select {
+    background-color: #27272a !important;
+    border: 1px solid #3f3f46 !important;
+    color: #ffffff !important;
+    border-radius: 12px !important;
+    padding: 0.75rem 1rem !important;
+    outline: none !important;
+    transition: all var(--barber-transition) !important;
+    font-size: 1rem !important;
+}
+
+.barber-content input:focus, 
+.barber-content textarea:focus, 
+.barber-content select:focus {
+    background-color: #1f1f23 !important;
+    border-color: var(--barber-red) !important;
+    box-shadow: 0 0 0 3px rgba(188, 32, 65, 0.2) !important;
+}
+
+.barber-content input::placeholder,
+.barber-content textarea::placeholder {
+    color: #71717a !important;
+}
+
+/* ════════════════════════
+   LABELS — Force Dark
+   ════════════════════════ */
+.barber-content label {
+    color: var(--barber-text-muted) !important;
+    font-weight: 500;
+}
+
+.barber-content small {
+    color: #71717a !important;
+}
+
+/* ════════════════════════
+   BORDER OVERRIDES
+   ════════════════════════ */
+.barber-content .border-top,
+.barber-content div[style*="borderTop:"],
+.barber-content div[style*="border-top:"] {
+    border-top-color: var(--barber-border) !important;
+}
+
+.barber-content .border-bottom {
+    border-bottom-color: var(--barber-border) !important;
+}
+
+/* ════════════════════════
+   BADGES
+   ════════════════════════ */
+.barber-badge-pending {
+    background-color: rgba(255, 149, 0, 0.15) !important;
+    color: #ff9500 !important;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.barber-badge-completed {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+    color: #10b981 !important;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.barber-badge-cancelled {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* ════════════════════════
+   BUTTONS
+   ════════════════════════ */
+.barber-btn-primary {
+    background: linear-gradient(135deg, var(--barber-red), #d1264e) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all var(--barber-transition) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 10px rgba(188, 32, 65, 0.3);
+}
+
+.barber-btn-primary:hover:not(:disabled) {
+    box-shadow: 0 4px 18px rgba(188, 32, 65, 0.45) !important;
+    transform: translateY(-1px);
+}
+
+.barber-btn-primary:disabled {
+    background: #3f3f46 !important;
+    color: #71717a !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+}
+
+.barber-btn-secondary {
+    background-color: #27272a !important;
+    color: #ffffff !important;
+    border: 1px solid var(--barber-border) !important;
+    border-radius: 12px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all var(--barber-transition) !important;
+}
+
+.barber-btn-secondary:hover {
+    background-color: #3f3f46 !important;
+    border-color: #52525b !important;
+}
+
+/* ════════════════════════
+   SETTINGS CARD OVERRIDES — Force Dark on inline-styled cards
+   ════════════════════════ */
+.barber-content div[style*="backgroundColor: 'white'"],
+.barber-content div[style*="backgroundColor: white"],
+.barber-content div[style*="background-color: white"],
+.barber-content div[style*="backgroundColor:'white'"] {
+    background-color: var(--barber-card) !important;
+    border: 1px solid var(--barber-border) !important;
+    color: var(--barber-text) !important;
+}
+
+/* Override settings button colors */
+.barber-content button[style*="backgroundColor: '#2c3e50'"],
+.barber-content button[style*="backgroundColor:'#2c3e50'"],
+.barber-content button[style*="background-color: #2c3e50"] {
+    background: linear-gradient(135deg, var(--barber-red), #d1264e) !important;
+}
+
+/* ════════════════════════
+   PHOTO UPLOAD AREA
+   ════════════════════════ */
+.barber-content img[style*="border: '4px solid #f8f9fa'"],
+.barber-content img[style*="border: 4px solid #f8f9fa"] {
+    border-color: var(--barber-border) !important;
+}
+
+/* ════════════════════════
+   BOOTSTRAP DARK OVERRIDES
+   ════════════════════════ */
+.barber-panel-container .bg-white,
+.barber-panel-container .bg-light {
+    background-color: var(--barber-card) !important;
+    color: var(--barber-text) !important;
+}
+
+.barber-panel-container .text-dark {
+    color: var(--barber-text) !important;
+}
+
+.barber-panel-container .text-muted {
+    color: var(--barber-text-muted) !important;
+}
+
+/* Force dark on btn-close */
+.barber-panel-container .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* ════════════════════════
+   BARBER OVERLAY (mobile sidebar)
+   ════════════════════════ */
+.barber-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 999;
+}
+
+/* ════════════════════════
+   BARBER MOBILE HEADER
+   ════════════════════════ */
+.barber-mobile-header {
+    display: none;
+    background-color: var(--barber-card);
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid var(--barber-border);
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.barber-mobile-header h1 {
+    font-size: 1.3rem !important;
+    margin: 0 !important;
+}
+
+.barber-mobile-header .btn-toggle-sidebar {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 4px;
+}
+
+@media (max-width: 992px) {
+    .barber-mobile-header {
+        display: flex;
+    }
+}

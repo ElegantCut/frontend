@@ -140,26 +140,17 @@ const BarberAppointments = () => {
         setNewDate(new Date(apt.fecha).toISOString().split('T')[0]);
         setNewTime(apt.hora_inicio_formatted);
         setShowModal(true);
-    };
-
-    const getStatusBadge = (statusId) => {
+    };    const getStatusBadge = (statusId) => {
         const statuses = {
-            1: { label: 'Pendiente', color: '#f39c12', bgColor: '#fef5e7' },
-            2: { label: 'Completada', color: '#27ae60', bgColor: '#eafaf1' },
-            3: { label: 'Cancelada', color: '#e74c3c', bgColor: '#fadbd8' }
+            1: { label: 'Pendiente', className: 'barber-badge-pending' },
+            2: { label: 'Completada', className: 'barber-badge-completed' },
+            3: { label: 'Cancelada', className: 'barber-badge-cancelled' }
         };
 
-        const status = statuses[statusId] || { label: 'Desconocido', color: '#95a5a6', bgColor: '#ecf0f1' };
+        const status = statuses[statusId] || { label: 'Desconocido', className: 'barber-badge-pending' };
 
         return (
-            <span style={{
-                padding: '0.25rem 0.75rem',
-                borderRadius: '12px',
-                fontSize: '0.875rem',
-                fontWeight: 'bold',
-                color: status.color,
-                backgroundColor: status.bgColor
-            }}>
+            <span className={status.className}>
                 {status.label}
             </span>
         );
@@ -181,24 +172,24 @@ const BarberAppointments = () => {
                 <div className="spinner-border text-primary" role="status">
                     <span className="visually-hidden">Cargando...</span>
                 </div>
-                <p className="mt-2">Cargando citas...</p>
+                <p className="mt-2 text-white">Cargando citas...</p>
             </div>
         );
     }
 
     return (
         <div>
-            <div style={{ marginBottom: '2rem' }}>
-                <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                    Mis Citas
-                </h1>
-                <p style={{ color: '#666' }}>
-                    Gestiona tus citas asignadas
-                </p>
-            </div>
+            <header className="tab-header">
+                <div>
+                    <h2>Mis Citas</h2>
+                    <p className="ios-item-subtitle" style={{ marginTop: '0.25rem' }}>
+                        Gestiona tus citas asignadas
+                    </p>
+                </div>
+            </header>
 
             {/* Filtros */}
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+            <div className="d-flex gap-2 mb-4">
                 {[
                     { value: 'all', label: 'Todas' },
                     { value: 'pending', label: 'Pendientes' },
@@ -207,15 +198,7 @@ const BarberAppointments = () => {
                     <button
                         key={f.value}
                         onClick={() => setFilter(f.value)}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            borderRadius: '8px',
-                            border: filter === f.value ? '2px solid #3498db' : '1px solid #ddd',
-                            backgroundColor: filter === f.value ? '#ebf5fb' : 'white',
-                            color: filter === f.value ? '#3498db' : '#666',
-                            cursor: 'pointer',
-                            fontWeight: filter === f.value ? 'bold' : 'normal'
-                        }}
+                        className={`ios-btn ${filter === f.value ? 'primary' : 'secondary'}`}
                     >
                         {f.label}
                     </button>
@@ -225,168 +208,139 @@ const BarberAppointments = () => {
             {/* Lista de citas */}
             {filteredAppointments.length === 0 ? (
                 <AnimatedItem>
-                    <div style={{
-                        textAlign: 'center',
-                        padding: '3rem',
-                        backgroundColor: 'white',
-                        borderRadius: '12px',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                    }}>
-                        <Calendar size={48} style={{ color: '#bdc3c7', marginBottom: '1rem' }} />
-                        <p style={{ color: '#7f8c8d', fontSize: '1.125rem' }}>
+                    <div className="ios-card text-center p-5">
+                        <Calendar size={48} className="text-muted mb-3" />
+                        <p className="text-muted mb-0" style={{ fontSize: '1.125rem' }}>
                             No tienes citas {filter !== 'all' ? 'en esta categoría' : 'asignadas'}
                         </p>
                     </div>
                 </AnimatedItem>
             ) : (
-                <AnimatedContainer style={{ display: 'grid', gap: '1.5rem' }}>
+                <AnimatedContainer className="row g-4">
                     {filteredAppointments.map(apt => (
                         <AnimatedItem
                             key={apt.id_reservas}
-                            style={{
-                                backgroundColor: 'white',
-                                borderRadius: '12px',
-                                padding: '1.5rem',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                border: '1px solid #ecf0f1'
-                            }}
+                            className="col-md-6 col-lg-4"
                         >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                            <div className="ios-card h-100 d-flex flex-column justify-content-between">
                                 <div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                                        <Calendar size={18} style={{ color: '#3498db' }} />
-                                        <span style={{ fontWeight: 'bold', fontSize: '1.125rem' }}>
-                                            {new Date(apt.fecha).toLocaleDateString('es-CO', {
-                                                weekday: 'long',
-                                                year: 'numeric',
-                                                month: 'long',
-                                                day: 'numeric'
-                                            })}
-                                        </span>
+                                    <div className="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <div className="d-flex align-items-center gap-2 mb-2">
+                                                <Calendar size={18} style={{ color: 'var(--barber-red)' }} />
+                                                <span className="fw-bold text-white">
+                                                    {new Date(apt.fecha).toLocaleDateString('es-CO', {
+                                                        weekday: 'long',
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric'
+                                                    })}
+                                                </span>
+                                            </div>
+                                            <div className="d-flex align-items-center gap-2">
+                                                <Clock size={18} className="text-muted" />
+                                                <span className="text-muted">
+                                                    {apt.hora_inicio_formatted}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        {getStatusBadge(apt.id_estado_cita)}
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <Clock size={18} style={{ color: '#9b59b6' }} />
-                                        <span style={{ fontSize: '1rem', color: '#666' }}>
-                                            {apt.hora_inicio_formatted}
-                                        </span>
+
+                                    <div className="border-top pt-3 mt-3">
+                                        <div className="d-flex align-items-center gap-2 mb-2">
+                                            <User size={18} className="text-muted" />
+                                            <span><strong>Cliente:</strong> {apt.cliente_nombre}</span>
+                                        </div>
+
+                                        <div className="d-flex align-items-center gap-2 mb-2">
+                                            <Phone size={18} className="text-muted" />
+                                            <span><strong>Teléfono:</strong> {apt.cliente_telefono}</span>
+                                        </div>
+
+                                        {apt.cliente_email && (
+                                            <div className="d-flex align-items-center gap-2 mb-2">
+                                                <Mail size={18} className="text-muted" />
+                                                <span><strong>Email:</strong> {apt.cliente_email}</span>
+                                            </div>
+                                        )}
+
+                                        <div className="mt-3">
+                                            <strong className="d-block mb-1 text-muted small text-uppercase" style={{ letterSpacing: '0.5px' }}>Servicios:</strong>
+                                            <span className="badge bg-rojo text-white p-2" style={{ fontSize: '0.85rem' }}>{apt.servicios}</span>
+                                        </div>
+
+                                        {apt.observaciones && (
+                                            <div className="mt-3 p-2 rounded" style={{ fontSize: '0.9rem', backgroundColor: 'rgba(255,255,255,0.05)', borderLeft: '3px solid var(--barber-red)' }}>
+                                                <strong>Notas:</strong> {apt.observaciones}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                                {getStatusBadge(apt.id_estado_cita)}
-                            </div>
 
-                            <div style={{
-                                borderTop: '1px solid #ecf0f1',
-                                paddingTop: '1rem',
-                                display: 'grid',
-                                gap: '0.75rem'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <User size={18} style={{ color: '#34495e' }} />
-                                    <span><strong>Cliente:</strong> {apt.cliente_nombre}</span>
-                                </div>
+                                {/* Botones de acción */}
+                                {apt.id_estado_cita === 1 && (
+                                    <div className="d-flex gap-2 mt-4 pt-3 border-top">
+                                        <motion.button
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => handleStatusUpdate(apt.id_reservas, 2)}
+                                            className="ios-btn primary p-2"
+                                            style={{
+                                                flex: 2,
+                                                fontSize: '0.85rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '0.25rem',
+                                                backgroundColor: 'var(--ios-green)'
+                                            }}
+                                        >
+                                            <CheckCircle size={16} />
+                                            Completar
+                                        </motion.button>
 
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <Phone size={18} style={{ color: '#16a085' }} />
-                                    <span><strong>Teléfono:</strong> {apt.cliente_telefono}</span>
-                                </div>
+                                        <motion.button
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => openRescheduleModal(apt)}
+                                            className="btn-ios-secondary p-2"
+                                            style={{
+                                                flex: 1.2,
+                                                fontSize: '0.85rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '0.25rem'
+                                            }}
+                                        >
+                                            <Edit size={16} />
+                                            Aplazar
+                                        </motion.button>
 
-                                {apt.cliente_email && (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <Mail size={18} style={{ color: '#e67e22' }} />
-                                        <span><strong>Email:</strong> {apt.cliente_email}</span>
+                                        <motion.button
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => handleStatusUpdate(apt.id_reservas, 3)}
+                                            className="ios-btn secondary p-2"
+                                            style={{
+                                                flex: 1.2,
+                                                fontSize: '0.85rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '0.25rem',
+                                                backgroundColor: 'rgba(255, 69, 58, 0.15)',
+                                                color: '#ff453a',
+                                                border: 'none'
+                                            }}
+                                        >
+                                            <XCircle size={16} />
+                                            Cancelar
+                                        </motion.button>
                                     </div>
                                 )}
-
-                                <div>
-                                    <strong>Servicios:</strong> {apt.servicios || 'N/A'}
-                                </div>
-
-                                {apt.observaciones && (
-                                    <div style={{ fontStyle: 'italic', backgroundColor: '#f9f9f9', padding: '0.5rem', borderRadius: '4px' }}>
-                                        <strong>Obs:</strong> {apt.observaciones}
-                                    </div>
-                                )}
                             </div>
-
-                            {/* Botones de acción */}
-                            {apt.id_estado_cita === 1 && (
-                                <div style={{
-                                    display: 'flex',
-                                    gap: '0.75rem',
-                                    marginTop: '1.5rem',
-                                    paddingTop: '1rem',
-                                    borderTop: '1px solid #ecf0f1'
-                                }}>
-                                    <motion.button
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        onClick={() => handleStatusUpdate(apt.id_reservas, 2)}
-                                        style={{
-                                            flex: 2,
-                                            padding: '0.75rem',
-                                            borderRadius: '8px',
-                                            border: 'none',
-                                            backgroundColor: '#27ae60',
-                                            color: 'white',
-                                            cursor: 'pointer',
-                                            fontWeight: 'bold',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: '0.5rem'
-                                        }}
-                                    >
-                                        <CheckCircle size={18} />
-                                        Completar
-                                    </motion.button>
-
-                                    <motion.button
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        onClick={() => openRescheduleModal(apt)}
-                                        style={{
-                                            flex: 1,
-                                            padding: '0.75rem',
-                                            borderRadius: '8px',
-                                            border: '1px solid #3498db',
-                                            backgroundColor: 'white',
-                                            color: '#3498db',
-                                            cursor: 'pointer',
-                                            fontWeight: 'bold',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: '0.5rem'
-                                        }}
-                                    >
-                                        <Edit size={18} />
-                                        Aplazar
-                                    </motion.button>
-
-                                    <motion.button
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        onClick={() => handleStatusUpdate(apt.id_reservas, 3)}
-                                        style={{
-                                            flex: 1,
-                                            padding: '0.75rem',
-                                            borderRadius: '8px',
-                                            border: 'none',
-                                            backgroundColor: '#fadbd8',
-                                            color: '#e74c3c',
-                                            cursor: 'pointer',
-                                            fontWeight: 'bold',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: '0.5rem'
-                                        }}
-                                    >
-                                        <XCircle size={18} />
-                                        Cancelar
-                                    </motion.button>
-                                </div>
-                            )}
                         </AnimatedItem>
                     ))}
                 </AnimatedContainer>
@@ -396,73 +350,44 @@ const BarberAppointments = () => {
             <AnimatePresence>
                 {showModal && (
                     <motion.div
+                        className="ios-modal-overlay"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        style={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            backgroundColor: 'rgba(0,0,0,0.5)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            zIndex: 1000
-                        }}
                     >
                         <motion.div
+                            className="ios-modal"
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
                             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                            style={{
-                                backgroundColor: 'white',
-                                padding: '2rem',
-                                borderRadius: '12px',
-                                width: '90%',
-                                maxWidth: '400px',
-                                boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
-                            }}
                         >
-                            <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: 'bold' }}>
-                                Aplazar Cita
-                            </h2>
+                            <div className="ios-modal-header">
+                                <h3>Aplazar Cita</h3>
+                                <button className="close-btn" onClick={() => setShowModal(false)}>
+                                    <i className="bi bi-x-lg"></i>
+                                </button>
+                            </div>
 
-                            <form onSubmit={handleReschedule}>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-                                        Nueva Fecha
-                                    </label>
+                            <form onSubmit={handleReschedule} className="ios-modal-form">
+                                <div className="form-group">
+                                    <label className="ios-label">Nueva Fecha</label>
                                     <input
                                         type="date"
+                                        className="ios-input"
                                         value={newDate}
                                         onChange={(e) => setNewDate(e.target.value)}
                                         min={new Date().toISOString().split('T')[0]}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            borderRadius: '8px',
-                                            border: '1px solid #ddd'
-                                        }}
                                         required
                                     />
                                 </div>
 
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-                                        Nuevo Horario
-                                    </label>
+                                <div className="form-group">
+                                    <label className="ios-label">Nuevo Horario</label>
                                     <select
+                                        className="ios-input"
                                         value={newTime}
                                         onChange={(e) => setNewTime(e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            borderRadius: '8px',
-                                            border: '1px solid #ddd'
-                                        }}
                                         disabled={loadingSlots || !newDate}
                                         required
                                     >
@@ -471,21 +396,14 @@ const BarberAppointments = () => {
                                             <option key={slot.id} value={slot.id}>{slot.time}</option>
                                         ))}
                                     </select>
-                                    {loadingSlots && <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.25rem' }}>Cargando disponibilidad...</p>}
+                                    {loadingSlots && <p className="text-muted extra-small mt-1">Cargando disponibilidad...</p>}
                                 </div>
 
-                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                <div className="ios-modal-footer">
                                     <button
                                         type="button"
+                                        className="ios-btn secondary"
                                         onClick={() => setShowModal(false)}
-                                        style={{
-                                            flex: 1,
-                                            padding: '0.75rem',
-                                            borderRadius: '8px',
-                                            border: '1px solid #ddd',
-                                            backgroundColor: '#f8f9fa',
-                                            cursor: 'pointer'
-                                        }}
                                     >
                                         Cerrar
                                     </button>
@@ -493,16 +411,7 @@ const BarberAppointments = () => {
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         type="submit"
-                                        style={{
-                                            flex: 1,
-                                            padding: '0.75rem',
-                                            borderRadius: '8px',
-                                            border: 'none',
-                                            backgroundColor: '#3498db',
-                                            color: 'white',
-                                            fontWeight: 'bold',
-                                            cursor: 'pointer'
-                                        }}
+                                        className="ios-btn primary"
                                     >
                                         Confirmar
                                     </motion.button>

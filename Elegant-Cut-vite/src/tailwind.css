@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  /* Match the reference design exactly */
+  --color-primary: oklch(0.92 0 0);           /* Light gray/white — for the "Log in" button */
+  --color-primary-foreground: oklch(0.09 0 0); /* Dark text on primary */
+
+  --color-background: oklch(0.07 0.004 286);   /* #09090b - almost black */
+  --color-foreground: oklch(0.985 0.002 247);  /* White text */
+
+  --color-muted-foreground: oklch(0.55 0.006 261); /* Dimmed gray text */
+
+  --color-border: oklch(0.22 0.004 286);       /* Subtle dark border for inputs */
+  --color-input: oklch(0.22 0.004 286);        /* Same as border */
+  --color-ring: oklch(0.65 0 0);               /* Neutral gray focus ring, not blue */
+
+  --color-card: oklch(0.11 0.004 286);
+  --color-accent: oklch(0.17 0.004 286);
+  --color-accent-foreground: oklch(0.985 0.002 247);
+
+  --color-destructive: oklch(0.396 0.141 25);
+  --color-destructive-foreground: oklch(0.985 0.002 247);
+
+  --color-secondary: oklch(0.17 0.004 286);
+  --color-secondary-foreground: oklch(0.985 0.002 247);
+
+  --color-muted: oklch(0.17 0.004 286);
+
+  --radius: 0.5rem;
+}
+
+@layer base {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px #09090b inset !important;
+      -webkit-text-fill-color: white !important;
+      transition: background-color 5000s ease-in-out 0s;
+  }
+}

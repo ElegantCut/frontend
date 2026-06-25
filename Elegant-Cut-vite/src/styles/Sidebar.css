@@ -1,8 +1,18 @@
+/* ═══════════════════════════════════════════════════════
+   ELEGANT CUT — SIDEBAR  •  Premium Dark Navigation
+   ═══════════════════════════════════════════════════════ */
+
 :root {
     --Negro: #111205;
     --NegroMedio: #1f1f1e;
     --Blanco: #f4f4f4;
     --Rojo: #bc2041;
+    --dark-bg: #09090b;
+    --dark-card: #18181b;
+    --dark-card-elevated: #1e1e22;
+    --dark-border: #27272a;
+    --text-muted: #a1a1aa;
+    --sidebar-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .text-rojo {
@@ -17,21 +27,32 @@
     color: var(--Negro) !important;
 }
 
-/*Es el menú hamburguesa*/
-/*Barra lateral*/
+/* ════════════════════════
+   SIDEBAR — Main Container
+   ════════════════════════ */
 .sidebar {
     width: 260px;
     height: 100vh;
-    background-color: #ffffff !important;
+    background: linear-gradient(180deg, var(--dark-card) 0%, #141416 100%) !important;
     position: fixed;
     left: 0;
     top: 0;
     display: flex;
     flex-direction: column;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05); /* Sombra sutil oscura, NO roja */
+    border-right: 1px solid var(--dark-border);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     padding: 1.5rem 0;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* ════════════════════════
+   SIDEBAR HEADER
+   ════════════════════════ */
+.sidebar-header {
+    padding: 0 1.5rem 1.2rem;
+    border-bottom: 1px solid var(--dark-border);
+    margin-bottom: 1rem;
 }
 
 .logo-container {
@@ -39,52 +60,125 @@
     align-items: center;
 }
 
+.sidebar .logo-container h3 {
+    color: #ffffff !important;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.sidebar .logo-container i {
+    transition: transform var(--sidebar-transition);
+}
+
+.sidebar .logo-container:hover i {
+    transform: rotate(15deg);
+}
+
+.sidebar .sidebar-header p.text-muted {
+    color: var(--text-muted) !important;
+    font-size: 0.8rem;
+}
+
+/* ════════════════════════
+   USER PROFILE
+   ════════════════════════ */
+.sidebar .user-profile .bg-light {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid var(--dark-border);
+    border-radius: 14px !important;
+    transition: all var(--sidebar-transition);
+}
+
+.sidebar .user-profile .bg-light:hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    border-color: #3f3f46;
+}
+
+.sidebar .user-profile h6 {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.sidebar .user-profile small.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.sidebar .user-profile .avatar {
+    box-shadow: 0 2px 8px rgba(188, 32, 65, 0.3);
+}
+
+/* ════════════════════════
+   NAVIGATION
+   ════════════════════════ */
 .sidebar-nav {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding: 0 1rem;
+    gap: 0.35rem;
+    padding: 0 0.8rem;
     overflow-y: auto;
 }
 
-/*items de la barra lateral*/
 .nav-item {
     display: flex;
     align-items: center;
     padding: 0.8rem 1rem;
     border: none;
     background: transparent;
-    color: #4a5568 !important; /* Gris oscuro elegante */
-    border-radius: 8px;
+    color: var(--text-muted) !important;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--sidebar-transition);
     text-align: left;
     font-weight: 500;
     font-size: 0.95rem;
     text-decoration: none;
+    position: relative;
 }
 
 .nav-item:hover {
-    background-color: #f7fafc !important;
-    color: var(--Rojo) !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+    transform: translateX(3px);
 }
 
-/*items*/
 .nav-item.active {
-    background-color: var(--Rojo) !important; 
+    background: linear-gradient(135deg, var(--Rojo), #d1264e) !important;
     color: #ffffff !important;
     font-weight: 600;
+    box-shadow: 0 4px 15px rgba(188, 32, 65, 0.35);
+}
+
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: -0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 24px;
+    background-color: var(--Rojo);
+    border-radius: 0 3px 3px 0;
 }
 
 .nav-item i {
     font-size: 1.1rem;
+    width: 24px;
+    text-align: center;
 }
 
+/* ════════════════════════
+   SIDEBAR FOOTER
+   ════════════════════════ */
+.sidebar-footer {
+    border-top: 1px solid var(--dark-border);
+    padding-top: 1rem;
+}
 
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
+/* ════════════════════════
+   MOBILE RESPONSIVE
+   ════════════════════════ */
+@media (max-width: 992px) {
     .sidebar {
         transform: translateX(-100%);
         box-shadow: none;
@@ -92,33 +186,37 @@
 
     .sidebar.open {
         transform: translateX(0);
-        box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+        box-shadow: 10px 0 40px rgba(0, 0, 0, 0.6);
     }
 
-    .btn-close-sidebar {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        color: var(--Negro);
-        padding: 0;
-        cursor: pointer;
-        transform: scale(1.2);
-        transition: transform 0.2s ease-in-out;
-
+    .nav-item.active::before {
+        display: none;
     }
-
-    .btn-close-sidebar:hover {
-        transform: scale(1.3);
-        color: var(--Rojo);
-    }
-
 }
 
-/* Logout Button Premium Style */
+.btn-close-sidebar {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #ffffff;
+    padding: 0;
+    cursor: pointer;
+    transform: scale(1.2);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-close-sidebar:hover {
+    transform: scale(1.3);
+    color: var(--Rojo);
+}
+
+/* ════════════════════════
+   LOGOUT BUTTON — Premium
+   ════════════════════════ */
 .btn-ios-logout {
-    background-color: #fff1f2; /* Color muy suave de fondo */
-    color: #e11d48; /* Rojo brillante */
-    border: 1.5px solid #fda4af;
+    background-color: rgba(225, 29, 72, 0.08);
+    color: #fda4af;
+    border: 1.5px solid rgba(253, 164, 175, 0.2);
     border-radius: 14px;
     padding: 12px 20px;
     font-weight: 600;
@@ -128,18 +226,20 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     cursor: pointer;
 }
 
 .btn-ios-logout:hover {
-    background-color: #ffe4e6;
+    background-color: rgba(225, 29, 72, 0.15);
     border-color: #f43f5e;
-    transform: translateY(-1px);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2);
 }
 
 .btn-ios-logout:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
 .btn-ios-logout i {

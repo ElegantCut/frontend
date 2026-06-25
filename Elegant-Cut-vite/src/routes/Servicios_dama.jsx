@@ -9,6 +9,7 @@ import { AnimatedContainer, AnimatedItem } from "../components/shared/AnimatedLi
 import { getCloudinaryBannerUrl, getCloudinaryServiceUrl } from '../lib/utils/imageHelper';
 import { servicesService } from '../lib/servicesService';
 import { useLocation } from 'react-router-dom';
+import '../assets/styles/servicios_caballero/caballero.css';
 
 function Servicios_dama() {
     const Location = useLocation();
@@ -329,40 +330,52 @@ function Servicios_dama() {
                                                 src={getCloudinaryServiceUrl(product.image)}
                                                 alt={product.description}
                                                 className="w-full h-full object-cover"
-                                                onError={(e) => { e.target.style.display = 'none'; }}
+                                                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
                                             />
                                         ) : null}
+                                        <div className="service-image-fallback" style={{ display: (!product.image || product.image.includes('default.png')) ? 'flex' : 'none' }}>
+                                            <i className="bi bi-stars"></i>
+                                        </div>
                                     </div>
                                     <div className="category-indicator">{product.categoryLabel}</div>
-
 
                                     <div className="service-content">
                                         <h3>{product.name}</h3>
                                         <div className="price-container">
                                             <div className="price-new">${product.price.toLocaleString()}</div>
-                                            <div className="price-old">${product.oldPrice?.toLocaleString()}</div>
+                                            {product.oldPrice && <div className="price-old">${product.oldPrice.toLocaleString()}</div>}
                                         </div>
                                         <p className="service-description">{product.description}</p>
                                         <div className="service-features">
                                             {product.features && product.features.map((feature, idx) => (
-                                                <span key={idx} className="feature-tag">{feature}</span>
+                                                <span key={idx} className="feature-tag">
+                                                    {idx === 1 ? <i className="bi bi-clock-history me-1"></i> : <i className="bi bi-check2-circle me-1"></i>}
+                                                    {feature}
+                                                </span>
                                             ))}
                                         </div>
                                         <motion.button
-                                            whileHover={!isDisabled ? { scale: 1.05 } : {}}
+                                            whileHover={!isDisabled ? { scale: 1.02 } : {}}
                                             whileTap={!isDisabled ? { scale: 0.95 } : {}}
                                             className="add-btn"
                                             onClick={() => {
                                                 if (!isDisabled) addToCart(product);
                                             }}
                                             style={{
-                                                backgroundColor: isSelected ? '#198754' : (isCategorySelected ? '#6c757d' : ''),
+                                                backgroundColor: isSelected ? 'rgba(46, 204, 113, 0.1)' : (isCategorySelected ? 'rgba(255,255,255,0.05)' : ''),
+                                                color: isSelected ? '#2ecc71' : '',
+                                                borderColor: isSelected ? 'rgba(46, 204, 113, 0.3)' : '',
                                                 cursor: isDisabled ? 'not-allowed' : 'pointer',
                                                 opacity: (isCategorySelected && !isSelected) ? 0.6 : 1,
-                                                border: isDisabled ? 'none' : ''
                                             }}
                                         >
-                                            {isSelected ? "Seleccionado" : (isCategorySelected ? "1 por categoría" : "Agregar al carrito")}
+                                            {isSelected ? (
+                                                <><i className="bi bi-check2-all me-2"></i>Seleccionado</>
+                                            ) : (isCategorySelected ? (
+                                                <><i className="bi bi-lock-fill me-2"></i>1 por categoría</>
+                                            ) : (
+                                                <><i className="bi bi-cart-plus me-2"></i>Agregar al carrito</>
+                                            ))}
                                         </motion.button>
                                     </div>
                                 </AnimatedItem>

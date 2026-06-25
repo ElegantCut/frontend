@@ -1,478 +1,545 @@
-/* CAMBIAR COLORES PENDIENTE*/
+/* ================================================
+   servicios.css — ElegantCut Barbería
+   UI/UX Pro Max: Dark OLED + Glassmorphism
+   Aplica para Servicios Caballero y Dama
+   ================================================ */
+
 :root {
-  --Negro: #111205;
-  --NegroMedio: #1f1f1e;
-  --Blanco: #f4f4f4;
-  --Rojo: #bc2041;
+  --DarkBase: #060606;
+  --DarkCard: rgba(255, 255, 255, 0.03);
+  --DarkBorder: rgba(255, 255, 255, 0.08);
+  --TextPrimary: #f4f4f4;
+  --TextSecondary: rgba(244, 244, 244, 0.6);
+  --AccentRed: #bc2041;
+  --AccentGold: #c9a84c;
 }
 
+main {
+  background-color: var(--DarkBase);
+  color: var(--TextPrimary);
+  min-height: 100vh;
+  padding: 0 !important;
+  max-width: none !important;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+  overflow-x: hidden;
+}
 
 /* --------------------------------------------------
-   CARRUSEL
+   CARRUSEL (ESTILO XIAOMI / HERO)
 -------------------------------------------------- */
-.carousel-container {
-  margin-top: 70px;
+.xmi-carousel {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  min-height: 400px;
+  max-height: 600px;
+  overflow: hidden;
+}
+
+.xmi-carousel__track {
+  width: 100%;
+  height: 100%;
   position: relative;
 }
 
-.carousel-item img {
-  height: 400px;
-  object-fit: cover;
-  filter: brightness(0.8);
+.xmi-carousel__slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  z-index: 1;
 }
 
-.carousel-caption {
-  bottom: 30%;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 20px;
-  border-radius: 10px;
+.xmi-carousel__slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.xmi-carousel__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6);
+}
+
+.xmi-carousel__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to top, rgba(6,6,6,1) 0%, rgba(6,6,6,0.3) 50%, rgba(6,6,6,0.8) 100%);
+  text-align: center;
+  padding: 0 5%;
+}
+
+.xmi-carousel__title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--TextPrimary);
+  margin: 0 0 1rem 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.xmi-carousel__subtitle {
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  color: var(--TextSecondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.xmi-carousel__btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--DarkBorder);
+  color: white;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  line-height: 0;
+}
+
+.xmi-carousel__btn:hover {
+  background: var(--AccentRed);
+  border-color: var(--AccentRed);
+}
+
+.xmi-carousel__btn--prev { left: 2rem; }
+.xmi-carousel__btn--next { right: 2rem; }
+
+.xmi-carousel__indicators {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.75rem;
+  z-index: 10;
+}
+
+.xmi-carousel__indicator {
+  width: 3rem;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 2px;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.xmi-carousel__indicator-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--AccentGold);
+  width: 0%;
+  animation: fillProgress linear forwards;
+}
+
+@keyframes fillProgress {
+  0% { width: 0%; }
+  100% { width: 100%; }
 }
 
 /* --------------------------------------------------
-   Esto es para todo el filtro de caballeros/dama
+   FILTRO DE DAMA Y CABALLERO
 -------------------------------------------------- */
 .seleccion-genero {
-  /*Esto es el div general*/
   text-align: center;
-  margin: 80px 0;
+  padding: 4rem 20px 2rem;
+}
+
+.seleccion-genero h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  margin-bottom: 2rem;
 }
 
 .botones-genero {
-  /*Este es el contenedor de los botones*/
-
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  /*Este se usa para el espacio entre los dos botones*/
-  margin-top: 20px;
-  /*cuando hay un flex*/
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3rem;
+  padding: 0.5rem;
+  border: 1px solid var(--DarkBorder);
 }
 
-.btn-dama {
-  /*Esta es la clase de cada botonsito*/
-  background-color: #f4f4f4;
-  /*FONDO*/
-  color: #000;
-  /*Letra*/
-  padding: 12px 24px;
-  /*Alto-ancho*/
-  border-radius: 12px;
+.btn-dama, .btn-caballero {
+  padding: 0.75rem 2.5rem;
+  border-radius: 2.5rem;
+  color: var(--TextSecondary);
   text-decoration: none;
-  /*Esto quita la línea de enlace*/
-  font-size: 1.1rem;
-  /*Tamaño de letra*/
-  font-weight: 1000;
-  transition: all 0.5s ease;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-.btn-dama:hover {
-  background-color: var(--Rojo);
-  transform: scale(1.05);
-  /*para que aumente el tamaño del boton*/
-  color: var(--Blanco);
+.btn-dama:hover, .btn-caballero:hover {
+  color: var(--TextPrimary);
 }
 
-.btn-caballero {
-  /*AHORA PARA EL BOTON CABALLERO*/
-  background-color: var(--Blanco);
-  color: var(--Negro);
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 1000;
-  /*NO se mide con px*/
-  text-decoration: none;
-  transition: all 0.5s ease;
-  /*All = todo los que tengan la misma clase*/
-  /*0.3s el tiempo a tardar, y ease = suave*/
-}
-
-.btn-caballero:hover {
-  background-color: var(--Negro);
-  color: var(--Blanco);
-  transform: scale(1.05);
+/* Efecto visual de estar activo simulado por la ruta (ajustar en JS si es necesario, pero así funciona con focus/active visualmente) */
+.btn-caballero[href="/Servicios_caballero"]:active,
+.btn-dama[href="/Servicios_dama"]:active {
+  background: var(--DarkCard);
 }
 
 /* --------------------------------------------------
-FILTROS DE LOS SERVICIOS
+   FILTROS DE CATEGORÍAS
 -------------------------------------------------- */
 .category-menu {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 15px;
-  padding: 30px 20px;
-  background: transparent;
-  /* Changed from var(--NegroMedio) */
+  gap: 1rem;
+  padding: 0 20px 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .category-btn {
-  background: white;
-  border: 2px solid #e2e8f0;
-  color: #4a5568;
-  padding: 0.8rem 1.7rem;
+  background: transparent;
+  border: 1px solid var(--DarkBorder);
+  color: var(--TextSecondary);
+  padding: 0.6rem 1.5rem;
   border-radius: 2rem;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: all 0.3s ease;
   cursor: pointer;
-  white-space: nowrap;
+  text-transform: capitalize;
 }
 
 .category-btn:hover {
-  border-color: var(--Rojo);
-  color: var(--Rojo);
-  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--TextPrimary);
 }
 
 .category-btn.active {
-  background: var(--Rojo);
-  color: var(--Blanco);
-  border-color: var(--Rojo);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(188, 32, 65, 0.2);
-}
-
-/* --------------------------------------------------
-   TITULO DE LAS SECCIONES
--------------------------------------------------- */
-.section-title {
-  text-align: center;
-  margin: 50px 0 30px;
-  position: relative;
-  padding-bottom: 15px;
-}
-
-.section-title:after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  height: 3px;
-  background: var(--secondary);
+  background: rgba(201, 168, 76, 0.1);
+  border-color: var(--AccentGold);
+  color: var(--AccentGold);
 }
 
 /* --------------------------------------------------
    TARJETAS DE LOS SERVICIOS
 -------------------------------------------------- */
-.services-grid {
+.catalog-container, .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
-  padding: 0 20px 50px;
-  max-width: 1200px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 0 5%;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
-/* Tarjetas de servicio */
-.service-card {
-  background: var(--Blanco);
-  border-radius: 10px;
+.service-card, .product-card {
+  background: var(--DarkCard);
+  border: 1px solid var(--DarkBorder);
+  border-radius: 1.25rem;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-.service-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+.service-card:hover, .product-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
 }
 
 .service-image {
-  height: 300px;
+  height: 240px;
   width: 100%;
+  position: relative;
+}
+
+.service-image img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
-.service-content {
-  padding: 20px;
-}
-
-.service-title {
-  font-size: 1.3rem;
-  margin-bottom: 10px;
-  color: var(--NegroMedio);
+/* Etiqueta flotante de categoría */
+.category-indicator {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--TextPrimary);
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.05em;
+  z-index: 2;
 }
 
-.service-price {
-  font-size: 1.5rem;
+.service-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.service-content h3, .service-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  color: var(--TextPrimary);
+  margin: 0 0 0.5rem;
+}
+
+.price-container, .service-price {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: var(--secondary);
-  margin-bottom: 15px;
+  color: var(--AccentGold);
+  margin-bottom: 1rem;
 }
 
 .service-description {
-  color: var(--gray);
-  margin-bottom: 20px;
+  color: var(--TextSecondary);
+  font-size: 0.9rem;
   line-height: 1.5;
+  margin-bottom: 1.5rem;
+  flex: 1;
 }
 
 .service-features {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
-/*Para los items de "maquina, tijera"*/
 .feature-tag {
-  background: var(--Rojo);
-  padding: 7px 12px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  color: var(--Blanco);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.4rem 0.8rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  color: var(--TextSecondary);
 }
 
-/*Boton de agregar*/
-.service-button {
-  background: var(--Blanco);
-  color: var(--Negro);
-  display: block;
-  align-items: center;
+.service-button, .add-btn {
+  width: 100%;
+  background: var(--AccentRed);
+  color: #fff;
   border: none;
-  padding: 12px 24px;
-  /*Alto-ancho*/
-  border-radius: 20px;
-  width: 70%;
-  margin: 0 auto;
+  padding: 1rem;
+  border-radius: 0.75rem;
   font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.service-button:hover {
-  background: var(--Rojo);
-  color: var(--Blanco);
-}
-
-/* --------------------------------------------------
-   INDICADOR DE LA CATEGORIA
--------------------------------------------------- */
-.category-indicator {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: var(--Rojo);
-  color: var(--Blanco);
-  padding: 7px 12px;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
+.service-button:hover:not(:disabled), .add-btn:hover:not(:disabled) {
+  background: #a11a36;
 }
 
 /* --------------------------------------------------
-   CARRITO
--------------------------------------------------- */
-/* --------------------------------------------------
-   CARRITO - MODAL / VISTA APARTE
+   CARRITO - MODAL LATERAL (GLASSMORPHISM)
 -------------------------------------------------- */
 #cart {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  bottom: auto !important;
-  right: auto !important;
-  width: 100% !important;
-  height: 100% !important;
-  background: rgba(0, 0, 0, 0.85) !important;
-  /* Fondo oscuro con transparencia */
-  z-index: 2000 !important;
-  /* Por encima de todo */
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  /* No clickable cuando está oculto */
-  transition: opacity 0.3s ease !important;
-  transform: none !important;
-  /* Anular el translateX de servicios.css */
-  border-radius: 0 !important;
-  /* Anular bordes de servicios.css */
-  padding: 0 !important;
-  /* Anular padding de servicios.css */
-  box-shadow: none !important;
-  /* Anular sombra de servicios.css */
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
 #cart.active {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  /* Clickable al estar activo */
-  transform: none !important;
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* Contenedor interno del carrito (la tarjeta) */
 .cart-content {
-  background: var(--Blanco);
-  width: 90%;
-  max-width: 400px;
-  max-height: 80vh;
-  border-radius: 15px;
+  background: #0a0a0a;
+  border-left: 1px solid var(--DarkBorder);
+  width: 100%;
+  max-width: 450px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.4s ease forwards;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
 }
 
 .cart-header {
-  padding: 20px 30px;
-  background: var(--NegroMedio);
-  color: var(--Blanco);
+  padding: 2rem;
+  border-bottom: 1px solid var(--DarkBorder);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-family: 'Playfair Display', serif;
   font-size: 1.5rem;
-  font-weight: bold;
+  color: var(--TextPrimary);
 }
 
 .close-cart {
   cursor: pointer;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
+  color: var(--TextSecondary);
   transition: color 0.3s;
 }
 
 .close-cart:hover {
-  color: var(--Rojo);
+  color: var(--AccentRed);
 }
 
 .cart-items {
   flex: 1;
-  padding: 30px;
+  padding: 2rem;
   overflow-y: auto;
-  background: #f9f9f9;
 }
 
 .cart-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  background: white;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s;
-}
-
-.cart-item:hover {
-  transform: translateX(5px);
+  padding: 1rem;
+  background: var(--DarkCard);
+  border: 1px solid var(--DarkBorder);
+  border-radius: 1rem;
+  margin-bottom: 1rem;
 }
 
 .cart-item-info {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 1rem;
 }
 
 .cart-item-img {
   width: 60px;
   height: 60px;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   object-fit: cover;
-  border: 1px solid #ddd;
+}
+
+.cart-item h4 {
+  font-size: 0.95rem;
+  color: var(--TextPrimary);
+  margin: 0 0 0.25rem 0;
+}
+
+.cart-item p {
+  font-size: 0.9rem;
+  color: var(--AccentGold);
+  margin: 0;
+  font-weight: 600;
 }
 
 .cart-total {
-  padding: 25px 30px;
-  background: white;
-  border-top: 2px solid #eee;
-  font-weight: 800;
-  font-size: 1.4rem;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--DarkBorder);
   display: flex;
   justify-content: space-between;
-  text-transform: uppercase;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--TextPrimary);
 }
 
 #agendarBtn {
-  background: var(--Rojo);
+  background: var(--AccentRed);
   color: white;
   border: none;
-  padding: 18px;
-  font-weight: 700;
-  font-size: 1.1rem;
+  padding: 1.2rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s ease;
   width: 100%;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  transition: background 0.3s ease;
+  margin-bottom: 1rem;
 }
 
 #agendarBtn:hover {
-  background: #a01b37;
+  background: #a11a36;
 }
 
 #cartToggle {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #111205;
-  /* var(--Negro) fallback */
-  color: white;
-  width: 60px;
-  height: 60px;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--AccentGold);
+  color: #000;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   z-index: 1000;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(201, 168, 76, 0.4);
 }
 
 .cart-count {
   position: absolute;
   top: -5px;
   right: -5px;
-  background: #bc2041;
-  /* var(--Rojo) fallback */
-  color: white;
-  width: 25px;
-  height: 25px;
+  background: var(--DarkBase);
+  color: var(--AccentGold);
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
+  border: 2px solid var(--AccentGold);
 }
 
-/* --------------------------------------------------
-   RESPONSIVE
--------------------------------------------------- */
 @media (max-width: 768px) {
-  .services-grid {
+  .xmi-carousel__btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.5rem;
+  }
+  .xmi-carousel__btn--prev { left: 1rem; }
+  .xmi-carousel__btn--next { right: 1rem; }
+  .catalog-container, .services-grid {
     grid-template-columns: 1fr;
-    padding: 0 15px 30px;
   }
-
-  .category-menu {
-    padding: 20px 15px;
-  }
-
-  .category-btn {
-    padding: 8px 15px;
-    font-size: 0.9rem;
-  }
-
-
 }
