@@ -17,30 +17,22 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     // Ya no buscamos el token en localStorage porque ahora se maneja por cookies HttpOnly.
-    // Solo verificamos si existen los datos del usuario localmente como primera instancia.
-    const userDataStr = localStorage.getItem('user');
     setLoading(true);
 
-    if (userDataStr) {
-      try {
-        // Verificamos si la cookie sigue siendo válida contra el backend
-        const result = await authService.checkToken(); 
+    try {
+      // Verificamos si la cookie sigue siendo válida contra el backend
+      const result = await authService.checkToken(); 
 
-        if (result.user) {
-          localStorage.setItem('user', JSON.stringify(result.user));
-          setIsAuthenticated(true);
-          setUser(result.user);
-        }
-      } catch (error) {
-        // Si hay un error de red pero tenemos datos locales, podrías elegir no desloguear
-        // Pero para seguridad estricta con HttpOnly, lo ideal es limpiar si el token no sirve
-        if (error !== "No se pudo conectar al servidor") {
-           logoutLocal(); 
-        }
+      if (result.user) {
+        setIsAuthenticated(true);
+        setUser(result.user);
       }
-    } else {
-      setIsAuthenticated(false);
-      setUser(null);
+    } catch (error) {
+      // Si hay un error de red pero tenemos datos locales, podrías elegir no desloguear
+      // Pero para seguridad estricta con HttpOnly, lo ideal es limpiar si el token no sirve
+      if (error !== "No se pudo conectar al servidor") {
+          logoutLocal(); 
+      }
     }
     setLoading(false);
   };
@@ -50,7 +42,6 @@ export const AuthProvider = ({ children }) => {
       const result = await authService.login(credentials);
       
       if (result.user) {
-        localStorage.setItem('user', JSON.stringify(result.user));
         setUser(result.user);
         setIsAuthenticated(true);
       }

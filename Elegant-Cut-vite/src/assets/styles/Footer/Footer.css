@@ -1,121 +1,188 @@
-/* FOOTER  */
-.footer-full {
-    background: linear-gradient(135deg, #1a1a1a 0%, #111111 100%);
-    color: white;
-    padding: 4rem 2rem 2rem;
-    margin-top: 4rem;
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+/* ================================================
+   Footer.css — ElegantCut Barbería
+   UI/UX Pro Max: Dark OLED + Luxury Brand
+   ================================================ */
+
+.footer-root {
+  background-color: #060606;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 5rem 0 3rem;
+  font-family: 'Inter', sans-serif;
+  color: #f4f4f4;
 }
 
-.footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 3rem;
+.footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 5%;
 }
 
-.footer-brand h3 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #BC2041, #ff6b8b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+/* ── Top Section: Brand & Social ── */
+.footer-top {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  text-align: center;
 }
 
-.footer-brand p {
-    color: #cccccc;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-}
-
-.social-links {
-    display: flex;
-    gap: 1rem;
-}
-
-.social-link {
-    width: 40px;
-    height: 40px;
-    background: #2a2a2a;
-    border-radius: 50%;
-    display: flex;
+@media (min-width: 768px) {
+  .footer-top {
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    color: white;
-    text-decoration: none;
-    transition: all 0.3s ease;
+    justify-content: space-between;
+    text-align: left;
+  }
 }
 
-.social-link:hover {
-    background: #BC2041;
-    transform: translateY(-3px);
+.footer-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #f4f4f4;
 }
 
-.footer-links h4 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: #ffffff;
+.footer-brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #f4f4f4;
 }
 
-.footer-links ul {
-    list-style: none;
+.footer-social {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.footer-links li {
-    margin-bottom: 0.8rem;
+.footer-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(244, 244, 244, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
-.footer-links a {
-    color: #cccccc;
-    text-decoration: none;
-    transition: color 0.3s ease;
+.footer-social-btn:hover {
+  background: #bc2041;
+  color: #fff;
+  border-color: #bc2041;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(188, 32, 65, 0.4);
 }
 
-.footer-links a:hover {
-    color: #BC2041;
+.footer-social-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
-.footer-contact h4 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: #ffffff;
-}
-
-.contact-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.contact-item {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    color: #cccccc;
-}
-
-.contact-item i {
-    color: #BC2041;
-    font-size: 1.1rem;
-}
-
+/* ── Bottom Section: 3 Columns Layout ── */
 .footer-bottom {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-top: 2rem;
-    margin-top: 3rem;
-    border-top: 1px solid #2a2a2a;
-    text-align: center;
-    color: #888888;
-    font-size: 0.9rem;
+  margin-top: 3.5rem;
+  padding-top: 3.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .footer-bottom {
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+/* Columna 1: Info & Contact */
+.footer-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.footer-copyright {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(244, 244, 244, 0.45);
+  max-width: 380px;
+}
+
+.footer-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contact-line {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: rgba(244, 244, 244, 0.7);
+}
+
+.contact-line svg {
+  color: #c9a84c;
+}
+
+/* Columnas 2 y 3: Links */
+.footer-links-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.footer-col-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f4f4f4;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.footer-nav-list, 
+.footer-legal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-nav-link {
+  color: #c9a84c;
+  font-size: 0.95rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.footer-nav-link:hover {
+  color: #dfbf65;
+  transform: translateX(4px);
+}
+
+.footer-legal-link {
+  color: rgba(244, 244, 244, 0.5);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.footer-legal-link:hover {
+  color: rgba(244, 244, 244, 0.9);
+  transform: translateX(4px);
 }

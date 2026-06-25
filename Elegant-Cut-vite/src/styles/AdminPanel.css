@@ -1,27 +1,46 @@
+/* ═══════════════════════════════════════════════════════
+   ELEGANT CUT — ADMIN PANEL  •  Premium Dark UI System
+   ═══════════════════════════════════════════════════════ */
+
 :root {
-    --ios-bg: #f2f2f7;
-    --ios-card: #ffffff;
-    --ios-text: #1c1c1e;
-    --ios-text-secondary: #8e8e93;
-    --ios-separator: #e5e5ea;
-    --ios-blue: #007aff;
+    --ios-bg: #09090b;
+    --ios-card: #18181b;
+    --ios-card-hover: #1e1e22;
+    --ios-text: #f4f4f4;
+    --ios-text-secondary: #a1a1aa;
+    --ios-separator: #27272a;
+    --ios-blue: #3b82f6;
     --ios-red: #bc2041;    /* Accent Rojo original del cliente */
-    --ios-red-light: rgba(188, 32, 65, 0.1);
-    --ios-green: #34c759;
-    --ios-green-light: rgba(52, 199, 89, 0.15);
-    --ios-orange: #ff9500;
-    --ios-radius: 10px; /* Standard iOS radius for grouped lists */
+    --ios-red-light: rgba(188, 32, 65, 0.15);
+    --ios-red-glow: rgba(188, 32, 65, 0.35);
+    --ios-green: #10b981;
+    --ios-green-light: rgba(16, 185, 129, 0.15);
+    --ios-orange: #f59e0b;
+    --ios-radius: 16px;
+    --ios-radius-sm: 10px;
+    --ios-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --ios-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --ios-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.35);
+    --ios-glow-red: 0 0 20px rgba(188, 32, 65, 0.2);
 }
 
 body {
     background-color: var(--ios-bg) !important;
+    color: var(--ios-text) !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
 }
 
+/* ════════════════════════
+   LAYOUT
+   ════════════════════════ */
 .admin-panel {
     display: flex;
     min-height: 100vh;
-    background-color: var(--ios-bg);
+    background: var(--ios-bg);
+    /* Subtle noise texture via radial gradient */
+    background-image: 
+        radial-gradient(ellipse at 20% 50%, rgba(188, 32, 65, 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
 }
 
 .admin-content {
@@ -50,13 +69,28 @@ body {
     }
 }
 
-/* iOS Large Title styling */
+/* ════════════════════════
+   TAB HEADER — Premium Title
+   ════════════════════════ */
 .tab-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end; /* Large titles are bottom-aligned in iOS */
+    align-items: flex-end;
     margin-bottom: 2.5rem;
-    padding-bottom: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--ios-separator);
+    position: relative;
+}
+
+.tab-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ios-red), transparent);
+    border-radius: 2px;
 }
 
 .tab-header h2 {
@@ -67,17 +101,21 @@ body {
     letter-spacing: -0.5px;
 }
 
-/* Section labels (Small caps gray text above lists) */
+/* ════════════════════════
+   SECTION HEADERS
+   ════════════════════════ */
 .ios-section-header {
     font-size: 0.8rem;
-    font-weight: 400;
+    font-weight: 500;
     color: var(--ios-text-secondary);
     text-transform: uppercase;
-    margin: 0 0 0.5rem 1rem;
-    letter-spacing: 0.3px;
+    margin: 0 0 0.6rem 1rem;
+    letter-spacing: 0.5px;
 }
 
-/* Inset Grouped List */
+/* ════════════════════════
+   INSET GROUPED LIST
+   ════════════════════════ */
 .ios-list-group {
     background-color: var(--ios-card);
     border-radius: var(--ios-radius);
@@ -85,35 +123,40 @@ body {
     overflow: hidden;
     list-style: none;
     padding: 0;
-    /* Hairline top/bottom borders for the container */
-    border-top: 0.5px solid var(--ios-separator);
-    border-bottom: 0.5px solid var(--ios-separator);
+    border: 1px solid var(--ios-separator);
+    box-shadow: var(--ios-shadow);
 }
 
 .ios-list-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.8rem 1.2rem;
-    min-height: 56px;
+    padding: 0.9rem 1.2rem;
+    min-height: 58px;
     background-color: var(--ios-card);
-    transition: background-color 0.15s ease;
-    border: none !important; /* Force removal of any borders from old tables */
+    transition: background-color var(--ios-transition), transform var(--ios-transition);
+    border: none !important;
+    cursor: default;
+}
+
+.ios-list-item:hover {
+    background-color: var(--ios-card-hover);
 }
 
 .ios-list-item:active {
-    background-color: #d1d1d6;
+    background-color: #27272a;
 }
 
 /* Internal hairline separator */
 .ios-list-item:not(:last-child) {
-    border-bottom: 0.5px solid var(--ios-separator) !important;
+    border-bottom: 1px solid var(--ios-separator) !important;
 }
 
 .ios-item-content {
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-width: 0; /* prevent text overflow */
 }
 
 .ios-item-title {
@@ -121,6 +164,9 @@ body {
     font-size: 1.05rem;
     color: var(--ios-text);
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ios-item-subtitle {
@@ -132,13 +178,16 @@ body {
 .ios-item-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.8rem;
     padding-left: 1rem;
+    flex-shrink: 0;
 }
 
-/* Pill buttons - more subtle in iOS */
+/* ════════════════════════
+   PILL BUTTONS
+   ════════════════════════ */
 .btn-ios {
-    background-color: var(--ios-red);
+    background: linear-gradient(135deg, var(--ios-red), #d1264e);
     color: #fff;
     border: none;
     padding: 0.6rem 1.2rem;
@@ -149,18 +198,37 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    transition: all var(--ios-transition);
+    box-shadow: 0 2px 10px rgba(188, 32, 65, 0.3);
+}
+
+.btn-ios:hover {
+    background: linear-gradient(135deg, #d1264e, var(--ios-red));
+    box-shadow: 0 4px 18px rgba(188, 32, 65, 0.45);
+    transform: translateY(-1px);
+}
+
+.btn-ios:active {
+    transform: scale(0.97);
 }
 
 .btn-ios-secondary {
-    background-color: #e5e5ea;
-    color: var(--ios-blue); /* Buttons in iOS often use blue text */
-    border: none;
+    background-color: #27272a;
+    color: #ffffff;
+    border: 1px solid var(--ios-separator);
     padding: 0.5rem 1rem;
     border-radius: 20px;
-    font-weight: 400;
+    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    transition: all var(--ios-transition);
+}
+
+.btn-ios-secondary:hover {
+    background-color: #3f3f46;
+    border-color: #52525b;
+    transform: translateY(-1px);
 }
 
 .ios-icon-btn {
@@ -168,50 +236,86 @@ body {
     border: none;
     color: var(--ios-blue);
     font-size: 1.2rem;
-    padding: 5px;
+    padding: 6px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 8px;
+    transition: all var(--ios-transition);
 }
 
-.ios-icon-btn.danger { color: #ff3b30; }
-.ios-icon-btn.success { color: var(--ios-green); }
+.ios-icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: scale(1.1);
+}
 
-/* iOS Badges */
+.ios-icon-btn.danger { color: #ff453a; }
+.ios-icon-btn.danger:hover { background-color: rgba(255, 69, 58, 0.1); }
+.ios-icon-btn.success { color: var(--ios-green); }
+.ios-icon-btn.success:hover { background-color: rgba(16, 185, 129, 0.1); }
+.ios-icon-btn.neutral { color: var(--ios-text-secondary); }
+
+/* ════════════════════════
+   BADGES
+   ════════════════════════ */
 .ios-badge {
     font-size: 0.75rem;
     font-weight: 600;
     padding: 4px 10px;
     border-radius: 10px;
     text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
 }
 
 .ios-badge.success { background-color: var(--ios-green-light); color: var(--ios-green); }
-.ios-badge.neutral { background-color: #f2f2f7; color: var(--ios-text-secondary); }
-.ios-badge.danger { background-color: #ffe5e5; color: #ff3b30; }
+.ios-badge.neutral { background-color: #27272a; color: var(--ios-text-secondary); }
+.ios-badge.danger { background-color: rgba(255, 69, 58, 0.15); color: #ff453a; }
 
-/* Modal and Overlays */
+/* ════════════════════════
+   OVERLAY
+   ════════════════════════ */
 .admin-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.4);
-    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     z-index: 1000;
 }
 
+/* ════════════════════════
+   SEARCH BAR
+   ════════════════════════ */
 .ios-search-bar {
-    background-color: #e3e3e8;
-    border: none;
-    border-radius: 10px;
+    background-color: #27272a;
+    border: 1px solid #3f3f46;
+    color: #ffffff;
+    border-radius: var(--ios-radius-sm);
     padding: 10px 15px;
     width: 100%;
     font-size: 1rem;
+    transition: all var(--ios-transition);
 }
 
+.ios-search-bar:focus {
+    outline: none;
+    border-color: var(--ios-red);
+    box-shadow: 0 0 0 3px rgba(188, 32, 65, 0.2);
+    background-color: #1f1f23;
+}
+
+.ios-search-bar::placeholder {
+    color: #71717a;
+}
+
+/* ════════════════════════
+   LABELS & INPUTS
+   ════════════════════════ */
 .ios-label {
     font-size: 0.85rem;
     font-weight: 500;
@@ -219,38 +323,50 @@ body {
     margin-bottom: 6px;
     margin-left: 4px;
     display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 .ios-input {
-    background-color: #efeff4;
-    border: 1px solid transparent;
+    background-color: #27272a;
+    border: 1px solid #3f3f46;
     border-radius: 12px;
     padding: 12px 16px;
     width: 100%;
     font-size: 1rem;
     color: var(--ios-text);
-    transition: all 0.2s ease;
+    transition: all var(--ios-transition);
 }
 
 .ios-input:focus {
     outline: none;
-    background-color: #fff;
-    border-color: var(--ios-blue);
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+    background-color: #1f1f23;
+    border-color: var(--ios-red);
+    box-shadow: 0 0 0 4px rgba(188, 32, 65, 0.2);
 }
 
 .ios-input::placeholder {
-    color: #aeaeb2;
+    color: #71717a;
 }
 
-/* Dashboard Grid */
+/* ════════════════════════
+   DASHBOARD WIDGET GRID
+   ════════════════════════ */
 .ios-widget-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.2rem;
+    margin-bottom: 2rem;
 }
 
 @media (max-width: 576px) {
+    .ios-widget-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+    }
+}
+
+@media (max-width: 400px) {
     .ios-widget-grid {
         grid-template-columns: 1fr;
     }
@@ -260,55 +376,132 @@ body {
     background-color: var(--ios-card);
     border-radius: 20px;
     padding: 1.5rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    border: 1px solid var(--ios-separator);
+    box-shadow: var(--ios-shadow);
+    transition: all var(--ios-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.ios-widget::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--ios-red), transparent);
+    opacity: 0;
+    transition: opacity var(--ios-transition);
+}
+
+.ios-widget:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--ios-shadow-hover);
+    border-color: #3f3f46;
+}
+
+.ios-widget:hover::before {
+    opacity: 1;
 }
 
 .ios-widget .value {
     font-size: 2.4rem;
     font-weight: 700;
     margin: 5px 0;
+    color: #ffffff;
+    letter-spacing: -1px;
 }
 
-/* Modal Premium iOS */
+.ios-widget h4 {
+    color: var(--ios-text-secondary);
+    font-size: 0.9rem;
+    margin-top: 8px;
+    margin-bottom: 0;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Widget Icon Container */
+.ios-widget-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    transition: transform var(--ios-transition);
+}
+
+.ios-widget:hover .ios-widget-icon {
+    transform: scale(1.1);
+}
+
+/* ════════════════════════
+   CARDS
+   ════════════════════════ */
+.ios-card {
+    background-color: var(--ios-card);
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 1px solid var(--ios-separator);
+    box-shadow: var(--ios-shadow);
+    transition: all var(--ios-transition);
+}
+
+.ios-card:hover {
+    box-shadow: var(--ios-shadow-hover);
+}
+
+/* ════════════════════════
+   PREMIUM MODAL
+   ════════════════════════ */
 .ios-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 2000;
-    animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.25s ease;
 }
 
 .ios-modal {
-    background-color: #fff;
+    background-color: var(--ios-card);
+    border: 1px solid var(--ios-separator);
     width: 100%;
     max-width: 500px;
-    border-radius: 20px;
+    border-radius: 24px;
     overflow: hidden;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    animation: slideUp 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    animation: slideUp 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 @media (max-width: 576px) {
     .ios-modal {
         width: 95%;
         margin: 10px;
-        border-radius: 15px;
+        border-radius: 20px;
     }
 }
 
 .ios-modal-header {
     padding: 1.5rem;
-    border-bottom: 0.5px solid var(--ios-separator);
+    border-bottom: 1px solid var(--ios-separator);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: var(--ios-card);
+    color: #ffffff;
 }
 
 .ios-modal-header h3 {
@@ -318,21 +511,29 @@ body {
 }
 
 .ios-modal-header .close-btn {
-    background: #e5e5ea;
+    background: #27272a;
     border: none;
     border-radius: 50%;
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
     cursor: pointer;
     color: var(--ios-text-secondary);
+    transition: all var(--ios-transition);
+}
+
+.ios-modal-header .close-btn:hover {
+    background: #3f3f46;
+    color: #ffffff;
+    transform: rotate(90deg);
 }
 
 .ios-modal-form {
     padding: 1.5rem;
+    background-color: var(--ios-card);
 }
 
 .ios-modal-form .form-group {
@@ -341,7 +542,7 @@ body {
 
 .ios-modal-form .form-group label {
     display: block;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--ios-text-secondary);
     margin-bottom: 6px;
@@ -361,30 +562,50 @@ body {
     margin-bottom: 0;
 }
 
+/* ════════════════════════
+   IOS BUTTONS (Modal)
+   ════════════════════════ */
 .ios-btn {
     padding: 12px 24px;
-    border-radius: 12px;
+    border-radius: 14px;
     font-weight: 600;
     font-size: 1rem;
     border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--ios-transition);
 }
 
 .ios-btn.primary {
-    background-color: var(--ios-red);
+    background: linear-gradient(135deg, var(--ios-red), #d1264e);
     color: #fff;
+    box-shadow: 0 2px 10px rgba(188, 32, 65, 0.3);
+}
+
+.ios-btn.primary:hover {
+    box-shadow: 0 4px 20px rgba(188, 32, 65, 0.5);
+    transform: translateY(-1px);
+}
+
+.ios-btn.primary:active {
+    transform: scale(0.97);
 }
 
 .ios-btn.primary:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .ios-btn.secondary {
-    background-color: #f2f2f7;
+    background-color: #27272a;
     color: var(--ios-text);
     margin-right: 10px;
+    border: 1px solid var(--ios-separator);
+}
+
+.ios-btn.secondary:hover {
+    background-color: #3f3f46;
 }
 
 .ios-modal-footer {
@@ -393,6 +614,159 @@ body {
     padding-top: 0.5rem;
 }
 
+/* ════════════════════════
+   SEGMENTED CONTROL (SettingsTab) — Dark
+   ════════════════════════ */
+.ios-segmented-control {
+    display: inline-flex;
+    background-color: #27272a;
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid var(--ios-separator);
+}
+
+.ios-segmented-btn {
+    flex: 1;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all var(--ios-transition);
+    background: transparent;
+    color: var(--ios-text-secondary);
+}
+
+.ios-segmented-btn.active {
+    background-color: var(--ios-card);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.ios-segmented-btn:hover:not(.active) {
+    color: #ffffff;
+}
+
+/* ════════════════════════
+   INLINE INPUTS (SettingsTab profile fields) — Dark
+   ════════════════════════ */
+.ios-list-item .ios-inline-input {
+    border: none !important;
+    width: 100%;
+    padding: 0;
+    font-weight: 600;
+    font-size: 1.05rem;
+    outline: none;
+    background: transparent;
+    color: var(--ios-text) !important;
+}
+
+.ios-list-item .ios-inline-input::placeholder {
+    color: #52525b;
+}
+
+/* ════════════════════════
+   EMPTY STATE
+   ════════════════════════ */
+.ios-empty-state {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--ios-text-secondary);
+}
+
+.ios-empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.4;
+}
+
+.ios-empty-state p {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* ════════════════════════
+   PREMIUM SPINNER
+   ════════════════════════ */
+.ios-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--ios-separator);
+    border-top-color: var(--ios-red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ════════════════════════
+   BOOTSTRAP DARK OVERRIDES
+   ════════════════════════ */
+.admin-panel .bg-white,
+.admin-panel .bg-light,
+.admin-panel .modal-content,
+.admin-panel .modal-header,
+.admin-panel .modal-body,
+.admin-panel .modal-footer {
+    background-color: var(--ios-card) !important;
+    color: var(--ios-text) !important;
+}
+
+.admin-panel .text-dark {
+    color: var(--ios-text) !important;
+}
+
+.admin-panel .text-muted {
+    color: var(--ios-text-secondary) !important;
+}
+
+.admin-panel .border,
+.admin-panel .border-bottom,
+.admin-panel .border-top,
+.admin-panel .border-start,
+.admin-panel .border-end {
+    border-color: var(--ios-separator) !important;
+}
+
+.admin-panel .modal-content {
+    border: 1px solid var(--ios-separator) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+.admin-panel .table {
+    color: var(--ios-text) !important;
+}
+
+.admin-panel .table th {
+    border-bottom: 2px solid var(--ios-separator) !important;
+    color: var(--ios-text-secondary) !important;
+}
+
+.admin-panel .table td {
+    border-bottom: 1px solid var(--ios-separator) !important;
+}
+
+.admin-panel .list-group-item {
+    background-color: var(--ios-card) !important;
+    color: var(--ios-text) !important;
+    border-color: var(--ios-separator) !important;
+}
+
+/* Force dark on btn-close inside admin panel */
+.admin-panel .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* ════════════════════════
+   KEYFRAMES
+   ════════════════════════ */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -401,4 +775,4 @@ body {
 @keyframes slideUp {
     from { transform: translateY(30px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
-}
+}

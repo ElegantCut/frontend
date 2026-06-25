@@ -117,8 +117,6 @@ const BarberSettings = () => {
             const result = await AuthClient.uploadProfilePhoto(formData);
             if (result.success) {
                 setMessage({ type: 'success', text: 'Foto actualizada correctamente.' });
-                // Actualizar datos del usuario en local storage si es necesario
-                // AuthClient.refreshUserData(); // Idealmente debería existir esto
             } else {
                 setMessage({ type: 'error', text: result.error || 'Error al subir la imagen.' });
             }
@@ -130,33 +128,35 @@ const BarberSettings = () => {
     };
 
     return (
-        <div style={{ padding: '2rem' }}>
-            <motion.h1
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem', color: '#2c3e50' }}
-            >
-                Configuración de Perfil
-            </motion.h1>
+        <div>
+            {/* Header consistente con el admin panel */}
+            <header className="tab-header">
+                <h2>Configuración de Perfil</h2>
+            </header>
 
+            {/* ═══ Foto de Perfil ═══ */}
+            <div className="ios-section-header">Foto de Perfil</div>
             <motion.div
+                className="ios-card"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', maxWidth: '600px' }}
+                style={{ maxWidth: '600px' }}
             >
-                <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1.5rem' }}>Cambiar Foto de Perfil</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}>
-
-                    <div style={{ position: 'relative', width: '150px', height: '150px' }}>
+                    <div style={{ position: 'relative', width: '130px', height: '130px' }}>
                         <motion.img
                             key={preview || user?.photoUrl}
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             src={preview || (user?.photoUrl ? `${UPLOADS_BASE_URL}/${user.photoUrl}` : 'https://via.placeholder.com/150')}
                             alt="Profile Preview"
-                            style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: '4px solid #f8f9fa' }}
+                            style={{
+                                width: '100%', height: '100%', borderRadius: '50%',
+                                objectFit: 'cover', border: '3px solid var(--barber-border)',
+                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)'
+                            }}
                         />
                         <motion.label
                             whileHover={{ scale: 1.1 }}
@@ -164,12 +164,12 @@ const BarberSettings = () => {
                             htmlFor="photo-upload"
                             style={{
                                 position: 'absolute', bottom: '5px', right: '5px',
-                                backgroundColor: '#3498db', color: 'white',
+                                backgroundColor: 'var(--barber-red)', color: 'white',
                                 padding: '8px', borderRadius: '50%', cursor: 'pointer',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                                boxShadow: '0 2px 8px rgba(188,32,65,0.4)'
                             }}
                         >
-                            <Camera size={20} />
+                            <Camera size={18} />
                         </motion.label>
                         <input
                             id="photo-upload"
@@ -187,15 +187,10 @@ const BarberSettings = () => {
                                     initial={{ opacity: 0, height: 0 }}
                                     animate={{ opacity: 1, height: 'auto' }}
                                     exit={{ opacity: 0, height: 0 }}
-                                    style={{
-                                        padding: '1rem', borderRadius: '8px', marginBottom: '1rem',
-                                        backgroundColor: message.type === 'error' ? '#fee2e2' : '#dcfce7',
-                                        color: message.type === 'error' ? '#ef4444' : '#22c55e',
-                                        display: 'flex', alignItems: 'center', gap: '0.5rem',
-                                        overflow: 'hidden'
-                                    }}
+                                    className={`ios-badge w-100 text-center d-flex align-items-center justify-content-center gap-2 ${message.type === 'error' ? 'danger' : 'success'}`}
+                                    style={{ padding: '12px', marginBottom: '1rem', fontSize: '0.9rem' }}
                                 >
-                                    {message.type === 'error' ? <AlertCircle size={20} /> : <CheckCircle size={20} />}
+                                    {message.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle size={18} />}
                                     {message.text}
                                 </motion.div>
                             )}
@@ -206,72 +201,65 @@ const BarberSettings = () => {
                             whileTap={{ scale: selectedFile && !loading ? 0.98 : 1 }}
                             onClick={handleUpload}
                             disabled={!selectedFile || loading}
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                backgroundColor: !selectedFile || loading ? '#94a3b8' : '#2c3e50',
-                                color: 'white',
-                                borderRadius: '8px',
-                                border: 'none',
-                                fontSize: '1rem',
-                                fontWeight: '600',
-                                cursor: !selectedFile || loading ? 'not-allowed' : 'pointer',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                                transition: 'background 0.2s'
-                            }}
+                            className={`ios-btn ${!selectedFile || loading ? 'secondary' : 'primary'}`}
+                            style={{ width: '100%', justifyContent: 'center' }}
                         >
-                            <Save size={20} />
-                            {loading ? 'Subiendo...' : 'Guardar Cambios'}
+                            <Save size={18} />
+                            {loading ? 'Subiendo...' : 'Guardar Foto'}
                         </motion.button>
                     </div>
                 </div>
             </motion.div>
 
-            {/* Nueva Tarjeta para el Portafolio */}
+            {/* ═══ Información del Portafolio ═══ */}
+            <div className="ios-section-header" style={{ marginTop: '2rem' }}>Información del Portafolio</div>
             <motion.div
+                className="ios-card"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', maxWidth: '600px', marginTop: '2rem' }}
+                style={{ maxWidth: '600px' }}
             >
-                <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1.5rem' }}>Información del Portafolio</h2>
-                <form onSubmit={handleUpdatePortfolio} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <form onSubmit={handleUpdatePortfolio} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                     
                     <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#475569' }}>Biografía (Sobre mí)</label>
+                        <label className="ios-label">Biografía (Sobre mí)</label>
                         <textarea 
                             name="biografia"
                             value={portfolioData.biografia}
                             onChange={handlePortfolioChange}
                             rows="4"
-                            style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
+                            className="ios-input"
                             placeholder="Cuéntale a tus clientes acerca de ti..."
+                            style={{ resize: 'vertical' }}
                         />
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#475569' }}>Experiencia</label>
+                        <label className="ios-label">Experiencia</label>
                         <input 
                             type="text"
                             name="experiencia"
                             value={portfolioData.experiencia}
                             onChange={handlePortfolioChange}
-                            style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem' }}
+                            className="ios-input"
                             placeholder="Ej. Barber Senior, 5 años de experiencia"
                         />
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#475569' }}>Especialidades</label>
+                        <label className="ios-label">Especialidades</label>
                         <input 
                             type="text"
                             name="especialidades"
                             value={portfolioData.especialidades}
                             onChange={handlePortfolioChange}
-                            style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem' }}
+                            className="ios-input"
                             placeholder="Ej. Corte Clásico, Fade, Diseño"
                         />
-                        <small style={{ color: '#64748b', marginTop: '0.25rem', display: 'block' }}>Separa las especialidades con comas.</small>
+                        <small className="ios-item-subtitle" style={{ marginTop: '0.25rem', display: 'block', fontSize: '0.8rem' }}>
+                            Separa las especialidades con comas.
+                        </small>
                     </div>
 
                     <AnimatePresence mode="wait">
@@ -280,15 +268,10 @@ const BarberSettings = () => {
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                style={{
-                                    padding: '1rem', borderRadius: '8px',
-                                    backgroundColor: portfolioMessage.type === 'error' ? '#fee2e2' : '#dcfce7',
-                                    color: portfolioMessage.type === 'error' ? '#ef4444' : '#22c55e',
-                                    display: 'flex', alignItems: 'center', gap: '0.5rem',
-                                    overflow: 'hidden'
-                                }}
+                                className={`ios-badge w-100 text-center d-flex align-items-center justify-content-center gap-2 ${portfolioMessage.type === 'error' ? 'danger' : 'success'}`}
+                                style={{ padding: '12px', fontSize: '0.9rem' }}
                             >
-                                {portfolioMessage.type === 'error' ? <AlertCircle size={20} /> : <CheckCircle size={20} />}
+                                {portfolioMessage.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle size={18} />}
                                 {portfolioMessage.text}
                             </motion.div>
                         )}
@@ -299,16 +282,10 @@ const BarberSettings = () => {
                         whileHover={{ scale: !portfolioLoading ? 1.02 : 1 }}
                         whileTap={{ scale: !portfolioLoading ? 0.98 : 1 }}
                         disabled={portfolioLoading}
-                        style={{
-                            width: '100%', padding: '0.75rem',
-                            backgroundColor: portfolioLoading ? '#94a3b8' : '#2c3e50', color: 'white',
-                            borderRadius: '8px', border: 'none', fontSize: '1rem', fontWeight: '600',
-                            cursor: portfolioLoading ? 'not-allowed' : 'pointer',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                            transition: 'background 0.2s', marginTop: '0.5rem'
-                        }}
+                        className={`ios-btn ${portfolioLoading ? 'secondary' : 'primary'}`}
+                        style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}
                     >
-                        <Save size={20} />
+                        <Save size={18} />
                         {portfolioLoading ? 'Guardando...' : 'Guardar Portafolio'}
                     </motion.button>
 

@@ -1,277 +1,283 @@
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { useScroll } from '../../lib/hooks/useScroll'
+import React, { useState, useEffect, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import { Calendar, ChevronDown, MoveRight, Scissors, Star } from 'lucide-react'
 import AnimatedPage from '../../components/shared/AnimatedPage'
-import { AnimatedContainer, AnimatedItem } from '../../components/shared/AnimatedList'
 import { barberService } from '../../lib/barberService'
 import { getCloudinaryUrl, getCloudinaryHomeUrl } from '../../lib/utils/imageHelper'
+import { FramerCarousel } from '../../components/ui/FramerCarousel'
+import { InfiniteTestimonials } from '../../components/ui/InfiniteTestimonials'
 import api from '../../lib/axios'
+import './Home.css'
 
-const fadeIn = {
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
-};
+/* ── Palabras rotantes barbería ── */
+const WORDS = ['Clásico', 'Preciso', 'Moderno', 'Elegante', 'Único']
 
-const slideInLeft = {
-    initial: { opacity: 0, x: -50 },
-    animate: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
-};
-
-const slideInRight = {
-    initial: { opacity: 0, x: 50 },
-    animate: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
-};
+/* ── Stats del establecimiento ── */
+const STATS = [
+    { num: '+500', label: 'Clientes satisfechos' },
+    { num: '12+',  label: 'Años de experiencia' },
+    { num: '4.9★', label: 'Calificación promedio' },
+]
 
 function Home() {
-    // LLAMAR EL HOOK - Esto activa el efecto de scroll
-    useScroll();
+    const navigate = useNavigate()
+    const [wordIdx, setWordIdx]           = useState(0)
+    const [barbers, setBarbers]           = useState([])
+    const [loadingBarbers, setLoading]    = useState(true)
+    const [reviews, setReviews]           = useState([])
 
-    // ESTADO PARA BARBEROS
-    const [barbers, setBarbers] = useState([]);
-    const [loadingBarbers, setLoadingBarbers] = useState(true);
-    const [reviews, setReviews] = useState([]);
-
+    /* ── Rotación de palabras ── */
     useEffect(() => {
-        const fetchBarbers = async () => {
-            try {
-                // LLAMA AL NUEVO ENDPOINT OPTIMIZADO
-                const data = await barberService.getPublicBarbers();
-                // Limitar a los primeros 4 barberos para el inicio (para no saturar la vista)
-                if (data && data.length > 0) {
-                    setBarbers(data.slice(0, 4));
-                }
-            } catch (err) {
-                console.error("Error al traer barberos para el Home:", err);
-            } finally {
-                setLoadingBarbers(false);
-            }
-        };
+        const id = setTimeout(() =>
+            setWordIdx(p => (p + 1) % WORDS.length), 2400)
+        return () => clearTimeout(id)
+    }, [wordIdx])
 
-        const fetchReviews = async () => {
-            try {
-                const response = await api.get('/reviews');
-                // Filtrar solo las que no tienen barbero asignado (para el establecimiento)
-                const establishmentReviews = response.data.filter(r => !r.id_barbero && !r.barbero);
-                setReviews(establishmentReviews.slice(0, 3));
-            } catch (err) {
-                console.error("Error al traer reseñas para el Home:", err);
-            }
-        };
+    /* ── Fetch data ── */
+    useEffect(() => {
+        barberService.getPublicBarbers()
+            .then(d => d?.length && setBarbers(d.slice(0, 4)))
+            .catch(e => console.error(e))
+            .finally(() => setLoading(false))
 
-        fetchBarbers();
-        fetchReviews();
-    }, []);
+        api.get('/reviews').then(res => {
+            const est = res.data.filter(r => !r.id_barbero && !r.barbero)
+            setReviews(est.slice(0, 3))
+        }).catch(() => {})
+    }, [])
+
+    /* ── Mapeo para CircularBarbers ── */
+    const mappedBarbers = useMemo(() => barbers.map(b => ({
+        id: b.id_usuario,
+        name: `${b.prim_nombre || ''} ${b.apellido1 || ''}`.trim(),
+        title: 'Barbero Profesional',
+        rating: b.calificacion_promedio ?? 5,
+        bio: b.portafolios?.[0]?.biografia
+            ?? (Array.isArray(b.portafolios) ? null : b.portafolios?.biografia)
+            ?? 'Barbero profesional del equipo Elegant Cut.',
+        experience: b.portafolios?.[0]?.experiencia
+            ?? (Array.isArray(b.portafolios) ? null : b.portafolios?.experiencia)
+            ?? 'Experto',
+        specialties: (() => {
+            try {
+                const raw = b.portafolios?.[0]?.especialidades
+                    ?? (Array.isArray(b.portafolios) ? null : b.portafolios?.especialidades)
+                const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
+                return Array.isArray(parsed) && parsed.length > 0 ? parsed : ['Corte Clásico', 'Barba']
+            } catch { return ['Corte Clásico', 'Barba'] }
+        })(),
+        image: b.foto_perfil || null,
+        stats: { clients: String(b.total_resenas ?? 0), recommend: '100%' },
+    })), [barbers])
+
+    /* ── Mapeo para AnimatedTestimonials ── */
+    const mappedTestimonials = useMemo(() => reviews.map((r, i) => {
+        const nombre = r.usuarios_resenas_id_clienteTousuarios?.prim_nombre || 'Cliente'
+        return {
+            id: r.id_resena || i,
+            name: nombre,
+            role: "Cliente",
+            company: "Verificado",
+            content: r.comentario,
+            rating: 5,
+            avatar: "" // Fallback to initial
+        }
+    }), [reviews])
+
+    /* ── Variantes Framer Motion ── */
+    const stagger = {
+        hidden:  {},
+        visible: { transition: { staggerChildren: 0.12 } },
+    }
+    const fadeUp = {
+        hidden:  { opacity: 0, y: 28 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+    }
+    const fadeLeft = {
+        hidden:  { opacity: 0, x: -48 },
+        visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+    }
+    const fadeRight = {
+        hidden:  { opacity: 0, x: 48, scale: 0.97 },
+        visible: { opacity: 1, x: 0, scale: 1, transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } },
+    }
 
     return (
         <AnimatedPage>
-            <main>
+            <div className="home-root">
 
-                {/* SECCIÓN 1 - MANTENIDA INTACTA */}
-                <div className="content-grid">  {/* class → className */}
-                    {/* Zona izquierda - Contenedor para imagen */}
+                {/* ════════════════════════════════
+                    SECCIÓN 1 — HERO SPLIT
+                    ════════════════════════════════ */}
+                <section className="home-hero" aria-label="Inicio">
+
+                    {/* ── Lado izquierdo: imagen ── */}
+                    <div className="home-hero__img-side">
+                        <img
+                            src={getCloudinaryHomeUrl('sec-2_xgshzs.png')}
+                            alt="Barbería ElegantCut — ambiente profesional"
+                            className="home-hero__img"
+                        />
+                        <div className="home-hero__img-overlay" />
+                        <div className="home-hero__divider" />
+                    </div>
+
+                    {/* ── Lado derecho: contenido ── */}
                     <motion.div
-                        className="image-container"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                        className="home-hero__text-side"
+                        variants={stagger}
+                        initial="hidden"
+                        animate="visible"
                     >
-                        <img src={getCloudinaryHomeUrl('sec-2_xgshzs.png')} alt="Barbería Elegantcut" className="hero-image" />  {/* class → className */}
-                    </motion.div>
-
-                    {/* Zona derecha - Mensaje con tipografía moderna */}
-                    <motion.div
-                        className="message-container"
-                        variants={fadeIn}
-                        initial="initial"
-                        animate="animate"
-                        transition={{ delay: 0.2 }}
-                    >
-                        <h1>Donde Tu Estilo Cobra Vida</h1>
-                        <p>En ELEGANTCUT combinamos tradición barbera con las últimas tendencias. Nuestros expertos crean looks
-                            personalizados que reflejan tu personalidad y elevan tu confianza. Más que un corte, es una
-                            experiencia que renueva tu estilo de vida.</p>
-
-                        {/* BOTÓN CORREGIDO: ID diferente */}
+                        {/* Badge */}
                         <motion.button
-                            className="cta-button"
-                            id="descubre-mas-btn"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            variants={fadeUp}
+                            className="home-hero__badge"
+                            onClick={() => navigate('/Barberos')}
+                            aria-label="Ver barberos"
                         >
-                            Descubre Más
-                        </motion.button>  {/* class → className */}
-                    </motion.div>
-                </div>
+                            <Scissors size={11} />
+                            Barbería desde 2012 &nbsp;<MoveRight size={11} />
+                        </motion.button>
 
-                {/* SECCIÓN 2 - NUESTRA HISTORIA */}
-                <motion.section
-                    className="about-section"
-                    id="about-section"
-                    initial="initial"
-                    whileInView="animate"
-                    viewport={{ once: true, amount: 0.3 }}
-                >
-                    <motion.div className="about-header" variants={fadeIn}>
-                        <span className="subtitle">Nuestra Esencia</span>  {/* class → className */}
-                        <h2>La Historia de ElegantCut</h2>
-                        <p className="section-description"> creando sonrisas y estilos únicos</p>  {/* class → className */}
-                    </motion.div>
+                        {/* Heading estático */}
+                        <motion.h1 variants={fadeUp} className="home-hero__heading">
+                            Donde tu Estilo
+                        </motion.h1>
 
-                    <div className="about-content">  {/* class → className */}
-                        <motion.div className="about-text" variants={slideInLeft}>  {/* class → className */}
-                            <h3>Donde la Tradición se Encuentra con la Innovación</h3>
-                            <p>Desde 2012, ElegantCut ha sido el santuario para hombres que buscan más que un simple corte. Inspirados por las barberías clásicas europeas, creamos un espacio donde cada detalle cuenta. Combinamos técnicas ancestrales con las últimas tendencias para ofrecerte una experiencia que transforma no solo tu look, sino tu confianza.</p>
+                        {/* Palabra rotante */}
+                        <motion.div variants={fadeUp} className="home-hero__rotating-wrap">
+                            <AnimatePresence mode="wait">
+                                <motion.span
+                                    key={wordIdx}
+                                    className="home-hero__rotating-word"
+                                    initial={{ y: '100%', opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    exit={{ y: '-100%', opacity: 0 }}
+                                    transition={{ type: 'spring', stiffness: 60, damping: 14 }}
+                                >
+                                    Cobra {WORDS[wordIdx]}
+                                </motion.span>
+                            </AnimatePresence>
                         </motion.div>
 
-                        <motion.div className="about-image" variants={slideInRight}>  {/* class → className */}
-                            <img src={getCloudinaryHomeUrl('imagen-sec-1_dueyls')} alt="Historia de ElegantCut" className="about-hero-image" />  {/* class → className */}
-                        </motion.div>|
+                        {/* Gold line */}
+                        <motion.div variants={fadeUp} className="home-hero__gold-line" />
+
+                        {/* Descripción */}
+                        <motion.p variants={fadeUp} className="home-hero__desc">
+                            En <strong>ELEGANTCUT</strong> fusionamos la tradición barbera clásica
+                            con las técnicas más modernas. Más que un corte — es una experiencia
+                            que eleva tu confianza y transforma tu imagen.
+                        </motion.p>
+
+                        {/* CTAs */}
+                        <motion.div variants={fadeUp} className="home-hero__ctas">
+                            <motion.button
+                                className="hb-btn-primary"
+                                whileHover={{ scale: 1.04 }}
+                                whileTap={{ scale: 0.97 }}
+                                onClick={() => navigate('/Form_agenda')}
+                                id="hero-cta-reservar"
+                            >
+                                Reservar Cita <Calendar size={16} />
+                            </motion.button>
+                            <motion.button
+                                className="hb-btn-ghost"
+                                whileHover={{ scale: 1.04 }}
+                                whileTap={{ scale: 0.97 }}
+                                onClick={() => navigate('/Barberos')}
+                                id="hero-cta-barberos"
+                            >
+                                Ver Barberos <MoveRight size={16} />
+                            </motion.button>
+                        </motion.div>
+
+                        {/* Stats */}
+                        <motion.div variants={fadeUp} className="home-hero__stats">
+                            {STATS.map(s => (
+                                <div key={s.label}>
+                                    <span className="home-hero__stat-num">{s.num}</span>
+                                    <span className="home-hero__stat-label">{s.label}</span>
+                                </div>
+                            ))}
+                        </motion.div>
+                    </motion.div>
+
+                    {/* Scroll cue */}
+                    <div className="home-hero__scroll" aria-hidden="true">
+                        <span>scroll</span>
+                        <ChevronDown size={13} />
                     </div>
-                </motion.section>
-
-                {/* SECCIÓN 3 - TESTIMONIOS */}
-                <section className="testimonials-section">
-                    <motion.div
-                        className="testimonials-header"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        <span className="subtitle">Testimonios</span>
-                        <h2>Nuestros clientes</h2>
-                    </motion.div>
-
-                    <AnimatedContainer className="testimonials-grid">
-                        {reviews.length > 0 ? (
-                            reviews.map((review) => (
-                                <AnimatedItem key={review.id_resena} className="testimonial-card">
-                                    <p className="testimonial-text">{review.comentario}</p>
-                                    <div className="client-name">
-                                        {review.usuarios_resenas_id_clienteTousuarios?.prim_nombre || 'Cliente Anónimo'}
-                                    </div>
-                                    <div className="client-info">Cliente Verificado</div>
-                                </AnimatedItem>
-                            ))
-                        ) : (
-                            <p className="text-center text-white w-100">Próximamente más testimonios.</p>
-                        )}
-                    </AnimatedContainer>
                 </section>
 
-                {/* SECCIÓN 4 - NUESTROS EXPERTOS */}
-                <section className="experts-section">
+                {/* ════════════════════════════════
+                    SECCIÓN 2 — NUESTRA HISTORIA
+                    ════════════════════════════════ */}
+                <section className="home-about" id="about">
                     <motion.div
-                        className="experts-header"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
+                        className="home-about__grid"
+                        variants={stagger}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.2 }}
                     >
-                        <span className="subtitle">Nuestros Especialistas</span>
-                        <h2>Conoce a Nuestro Equipo</h2>
-                    </motion.div>
+                        {/* Texto */}
+                        <motion.div variants={fadeLeft}>
+                            <span className="home-section-tag">Nuestra Esencia</span>
+                            <h2 className="home-about__heading">
+                                Donde la Tradición<br />
+                                se Encuentra con<br />
+                                la Innovación
+                            </h2>
+                            <p className="home-about__text">
+                                Desde 2012, ElegantCut ha sido el santuario para hombres que buscan
+                                más que un simple corte. Inspirados por las barberías clásicas europeas,
+                                creamos un espacio donde cada detalle cuenta. Combinamos técnicas
+                                ancestrales con las últimas tendencias para ofrecerte una experiencia
+                                que transforma no solo tu look, sino tu confianza.
+                            </p>
+                            <motion.button
+                                className="hb-btn-primary"
+                                whileHover={{ scale: 1.04 }}
+                                whileTap={{ scale: 0.97 }}
+                                onClick={() => navigate('/Servicios_dama')}
+                                id="about-cta-servicios"
+                            >
+                                Explorar Servicios <MoveRight size={16} />
+                            </motion.button>
+                        </motion.div>
 
-                    {loadingBarbers ? (
-                        <p className="text-center text-white w-100">Cargando equipo...</p>
-                    ) : barbers.length > 0 ? (
-                        <TeamCarousel barbers={barbers} />
-                    ) : (
-                        <p className="text-center text-white w-100">Aún no hay barberos registrados.</p>
-                    )}
+                        {/* Imagen */}
+                        <motion.div className="home-about__img-wrap" variants={fadeRight}>
+                            <div className="home-about__img-frame">
+                                <img
+                                    src={getCloudinaryHomeUrl('imagen-sec-1_dueyls')}
+                                    alt="Historia de ElegantCut — barberos trabajando"
+                                    className="home-about__img"
+                                />
+                            </div>
+                            <div className="home-about__img-deco" aria-hidden="true" />
+                        </motion.div>
+                    </motion.div>
                 </section>
-            </main>
+
+                {/* ════════════════════════════════
+                    SECCIÓN 3 — TESTIMONIOS (INFINITE SCROLL)
+                    ════════════════════════════════ */}
+                <InfiniteTestimonials reviews={mappedTestimonials} />
+
+                {/* ════════════════════════════════
+                    SECCIÓN 4 — BARBEROS (FRAMER CAROUSEL)
+                    ════════════════════════════════ */}
+                <FramerCarousel barbers={mappedBarbers} />
+
+
+
+            </div>
         </AnimatedPage>
     )
 }
-
-// Componente Carousel para el Equipo
-const TeamCarousel = ({ barbers }) => {
-    const [activeIndex, setActiveIndex] = useState(0);
-
-    const handleNext = () => {
-        setActiveIndex((prev) => (prev + 1) % barbers.length);
-    };
-
-    const handlePrev = () => {
-        setActiveIndex((prev) => (prev - 1 + barbers.length) % barbers.length);
-    };
-
-    return (
-        <div className="team-carousel-container">
-            <div className="team-cards-stack">
-                {barbers.map((barber, index) => {
-                    let offset = (index - activeIndex + barbers.length) % barbers.length;
-
-                    // Ajuste para suavizar cuando el elemento vuelve al final de la cola
-                    const isPrev = offset === barbers.length - 1 && barbers.length > 2;
-                    if (isPrev) {
-                        offset = 3;
-                    }
-
-                    return (
-                        <motion.div
-                            key={barber.id_usuario}
-                            className="team-stacked-card"
-                            initial={false}
-                            animate={{
-                                top: offset * 30,
-                                left: offset * 15,
-                                scale: 1 - offset * 0.05,
-                                zIndex: barbers.length - offset,
-                                opacity: offset >= 3 ? 0 : 1
-                            }}
-                            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-                            onClick={() => {
-                                if (offset !== 0 && offset < 3) {
-                                    setActiveIndex(index);
-                                }
-                            }}
-                        >
-                            {barber.foto_perfil ? (
-                                <img
-                                    src={getCloudinaryUrl(barber.foto_perfil)}
-                                    alt={`${barber.prim_nombre}`}
-                                    className="team-expert-img"
-                                    onError={(e) => { e.target.style.display = 'none'; }}
-                                />
-                            ) : (
-                                <div className="team-expert-placeholder">
-                                    <i className="bi bi-person"></i>
-                                </div>
-                            )}
-                        </motion.div>
-                    );
-                })}
-            </div>
-
-            <div className="team-carousel-info">
-                <div className="team-carousel-controls">
-                    <button onClick={handlePrev} className="carousel-btn prev-btn">
-                        <i className="bi bi-chevron-up"></i>
-                    </button>
-                    <button onClick={handleNext} className="carousel-btn next-btn">
-                        <i className="bi bi-chevron-down"></i>
-                    </button>
-                </div>
-
-                <motion.div
-                    key={activeIndex}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <h3 className="team-expert-name">
-                        {`${barbers[activeIndex]?.prim_nombre || ''} ${barbers[activeIndex]?.apellido1 || ''}`.trim()}
-                    </h3>
-                    <p className="team-expert-role">Barbero Profesional</p>
-                    <div className="team-decorative-lines">
-                        <div className="line"></div>
-                        <div className="line"></div>
-                        <div className="line highlight-line"></div>
-                    </div>
-                </motion.div>
-            </div>
-        </div>
-    );
-};
 
 export default Home

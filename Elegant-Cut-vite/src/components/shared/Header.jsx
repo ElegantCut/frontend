@@ -1,285 +1,180 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../../auth/UseAuth.jsx";
+import { Menu, X, Calendar, User, LogOut, LogIn, Home, Scissors, Star, MessageSquare } from 'lucide-react';
+import './Header.css';
+
+// Hook para detectar el scroll
+function useHeaderScroll(threshold = 20) {
+    const [scrolled, setScrolled] = useState(false);
+
+    const onScroll = useCallback(() => {
+        setScrolled(window.scrollY > threshold);
+    }, [threshold]);
+
+    useEffect(() => {
+        window.addEventListener('scroll', onScroll, { passive: true });
+        // Check initial load
+        onScroll();
+        return () => window.removeEventListener('scroll', onScroll);
+    }, [onScroll]);
+
+    return scrolled;
+}
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [showWelcome, setShowWelcome] = useState(false);
+    const scrolled = useHeaderScroll(30);
     const { isAuthenticated, user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const toggleMenu = () => {
-        console.log('🔄 Menu toggle - Estado actual:', menuOpen);
-        console.log('🔄 Nuevo estado:', !menuOpen);
-
-        // Debug del elemento nav
-        const navElement = document.querySelector('.nav');
-        console.log('🎯 Elemento nav encontrado:', navElement);
-        console.log('🎯 Clases del nav antes:', navElement?.className);
-
-        setMenuOpen(!menuOpen);
-
-        // Verificar después de un breve delay
-        setTimeout(() => {
-            console.log('✅ Estado después del setState:', !menuOpen);
-            const updatedNav = document.querySelector('.nav');
-            console.log('✅ Clases actuales del nav:', updatedNav?.className);
-            console.log('✅ Body classes:', document.body.className);
-
-            // Debug visual adicional
-            if (updatedNav) {
-                console.log('🎨 Estilos computados del nav:');
-                console.log('- display:', window.getComputedStyle(updatedNav).display);
-                console.log('- visibility:', window.getComputedStyle(updatedNav).visibility);
-                console.log('- opacity:', window.getComputedStyle(updatedNav).opacity);
-                console.log('- left:', window.getComputedStyle(updatedNav).left);
-                console.log('- transform:', window.getComputedStyle(updatedNav).transform);
-            }
-        }, 100);
-    };
-
-    const closeMenu = () => {
-        console.log('❌ Cerrando menú');
-        setMenuOpen(false);
-    };
-
-    const handleLogout = () => {
-        logout();
-        closeMenu();
-        navigate('/');
-    };
-
-    const handleLogin = () => {
-        closeMenu();
-        navigate('/login');
-    };
-
-    const handleProfile = () => {
-        closeMenu();
-        if (isAuthenticated) {
-            navigate('/perfil');
-        } else {
-            navigate('/login');
-        }
-    };
-
-    // Desactivar scroll cuando menú está abierto
+    // Lock body scroll when mobile menu is open
     useEffect(() => {
-        console.log('📱 Efecto menuOpen cambiado a:', menuOpen);
-
         if (menuOpen) {
-            document.body.classList.add('menu-open');
-            document.body.style.overflow = "hidden";
-            console.log('🚫 Scroll desactivado');
+            document.body.style.overflow = 'hidden';
         } else {
-            document.body.classList.remove('menu-open');
-            document.body.style.overflow = "auto";
-            console.log('🔄 Scroll reactivado');
+            document.body.style.overflow = '';
         }
-
         return () => {
-            document.body.classList.remove('menu-open');
-            document.body.style.overflow = "auto";
-            console.log('🧹 Cleanup - scroll reactivado');
+            document.body.style.overflow = '';
         };
     }, [menuOpen]);
 
-    // Debug adicional cuando el componente se monta
+    // Close menu on route change
     useEffect(() => {
-        console.log('🔍 Header montado - menuOpen inicial:', menuOpen);
-        console.log('🔍 Elemento nav en montaje:', document.querySelector('.nav'));
-    }, []);
+        setMenuOpen(false);
+    }, [location.pathname]);
 
-    // Efecto para la notificación de bienvenida
-    useEffect(() => {
-        if (isAuthenticated) {
-            setShowWelcome(true);
-            const timer = setTimeout(() => {
-                setShowWelcome(false);
-            }, 5000);
-            return () => clearTimeout(timer);
-        } else {
-            setShowWelcome(false);
-        }
-    }, [isAuthenticated]);
+    const handleLogout = () => {
+        logout();
+        setMenuOpen(false);
+        navigate('/');
+    };
+
+    const handleProfile = () => {
+        setMenuOpen(false);
+        navigate(isAuthenticated ? '/perfil' : '/login');
+    };
+
+    const links = [
+        { label: 'Inicio', href: '/', icon: Home },
+        { label: 'Servicios', href: '/servicios_dama', icon: Scissors },
+        { label: 'Barberos', href: '/Barberos', icon: User },
+        { label: 'Reseñas', href: '/Reseñas', icon: Star },
+        { label: 'PQRS', href: '/Pqrs', icon: MessageSquare },
+    ];
 
     return (
-        <div>
-            {/* Header que se oculta cuando el menú está abierto */}
-            <header className={menuOpen ? "header-hidden" : ""}>
-
-                {/* Logo principal */}
-                <div className="brand-container">
-                    <div className="logo">
-                        <img
-                            src="/assets/logo.png"
-                            alt="ElegantCut Barbería"
-                            className="logo-img"
-                        />
-                    </div>
-                    <div className="brand-name">
-                        <span className="brand-text">ELEGANTCUT</span>
-                    </div>
-                </div>
-
-                {/* Íconos en escritorio */}
-                <div className="button-container desktop-icons">
-                    <Link to="/" className="button nav-button">
-                        <i className="bi bi-house-door"></i>
-                        <span className="nav-label">Inicio</span>
-                    </Link>
-                    <Link to="/Reseñas" className="button nav-button">
-                        <i className="bi bi-star"></i>
-                        <span className="nav-label">Reseñas</span>
-                    </Link>
-                    <button
-                        className="button nav-button"
-                        onClick={handleProfile}
-                    >
-                        <i className="bi bi-person"></i>
-                        <span className="nav-label">
-                            {isAuthenticated ? 'Mi Perfil' : 'Perfil'}
-                        </span>
-                    </button>
-                    <Link to="/Servicios_dama" className="button nav-button">
-                        <i className="bi bi-scissors"></i>
-                        <span className="nav-label">Servicios</span>
-                    </Link>
-                    <Link to="/Barberos" className="button nav-button">
-                        <i className="bi bi-person-badge"></i>
-                        <span className="nav-label">Barberos</span>
-                    </Link>
-                    <Link to="/Pqrs" className="button nav-button" aria-label="Pqrs">
-                        <i className="bi bi-question-circle"></i>
-                        <span className="nav-label">Pqrs</span>
-                    </Link>
-
-                    {/* Autenticación en escritorio */}
-                    {isAuthenticated ? (
-                        <div className="user-info-desktop">
-                            {showWelcome && (
-                                <span className="user-welcome welcome-notification">
-                                    Hola, {user?.name}
-                                </span>
-                            )}
-                            <button
-                                className="button logout-button"
-                                onClick={handleLogout}
-                            >
-                                <i className="bi bi-box-arrow-right"></i>
-                                <span className="nav-label">Salir</span>
-                            </button>
-                        </div>
-                    ) : (
-                        <button
-                            className="button login-button"
-                            onClick={handleLogin}
-                        >
-                            <i className="bi bi-box-arrow-in-right"></i>
-                            <span className="nav-label">Ingresar</span>
-                        </button>
-                    )}
-                </div>
-
-                {/* Botón hamburguesa */}
-                <button
-                    id="abrir"
-                    className="abrir-menu"
-                    aria-label="Abrir menú"
-                    onClick={toggleMenu}
-                >
-                    <i className="bi bi-list"></i>
-                </button>
-            </header>
-
-            {/* Menú móvil */}
-            <nav className={`nav ${menuOpen ? 'visible' : ''}`} id="nav">
-                {/* Botón cerrar */}
-                <button
-                    id="cerrar"
-                    className="cerrar-menu"
-                    aria-label="Cerrar menú"
-                    onClick={closeMenu}
-                >
-                    <i className="bi bi-x"></i>
-                </button>
-
-                {/* Logo móvil pequeño - ORGANIZADO AL PRINCIPIO */}
-                <div className="mobile-brand">
-                    <img
-                        src="/assets/logo.png"
-                        alt="ElegantCut Barbería"
-                        className="mobile-logo-small"
+        <div className={`header-container ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'menu-open' : ''}`}>
+            <nav className="header-nav">
+                {/* ── Brand ── */}
+                <Link to="/" className="header-brand" onClick={() => setMenuOpen(false)}>
+                    <img 
+                        src="/assets/logo.png" 
+                        alt="ElegantCut Logo" 
+                        className="header-logo-img" 
                     />
-                    <div className="mobile-brand-text">ELEGANTCUT</div>
-                    <div className="mobile-slogan">Barbería & Estilo</div>
+                    <span className="header-brand-name">ELEGANTCUT</span>
+                </Link>
+
+                <div className="header-desktop-links">
+                    {links.map((link, i) => {
+                        const Icon = link.icon;
+                        return (
+                            <Link 
+                                key={i} 
+                                to={link.href} 
+                                className={`header-link icon-only-link ${location.pathname === link.href ? 'active' : ''}`}
+                                data-tooltip={link.label}
+                            >
+                                <Icon size={22} className="nav-icon-animated" />
+                            </Link>
+                        );
+                    })}
                 </div>
 
-                {/* Botones del menú */}
-                <div className="menu-icons-container">
-                    <Link to="/" className="button menu-nav-button" onClick={closeMenu}>
-                        <i className="bi bi-house-door"></i>
-                        <span className="menu-nav-label">Inicio</span>
-                    </Link>
-                    <Link to="/Reseñas" className="button menu-nav-button" onClick={closeMenu}>
-                        <i className="bi bi-star"></i>
-                        <span className="menu-nav-label">Reseñas</span>
-                    </Link>
-                    <button
-                        className="button menu-nav-button"
-                        onClick={handleProfile}
-                    >
-                        <i className="bi bi-person"></i>
-                        <span className="menu-nav-label">
-                            {isAuthenticated ? 'Mi Perfil' : 'Iniciar Sesión'}
-                        </span>
-                    </button>
-                    <Link to="/Servicios_dama" className="button menu-nav-button" onClick={closeMenu}>
-                        <i className="bi bi-scissors"></i>
-                        <span className="menu-nav-label">Servicios</span>
-                    </Link>
-                    <Link to="/Barberos" className="button menu-nav-button" onClick={closeMenu}>
-                        <i className="bi bi-person-badge"></i>
-                        <span className="menu-nav-label">Barberos</span>
-                    </Link>
-                    <Link to="/Pqrs" className="button menu-nav-button" onClick={closeMenu}>
-                        <i className="bi bi-question-circle"></i>
-                        <span className="menu-nav-label">Pqrs</span>
-                    </Link>
-
-                    {/* Botón salir / login */}
+                {/* ── Desktop Actions ── */}
+                <div className="header-actions">
                     {isAuthenticated ? (
-                        <button
-                            className="button menu-nav-button logout-mobile"
-                            onClick={handleLogout}
-                        >
-                            <i className="bi bi-box-arrow-right"></i>
-                            <span className="menu-nav-label">Cerrar Sesión</span>
-                        </button>
+                        <>
+                            <span className="header-welcome">Hola, {user?.name?.split(' ')[0]}</span>
+                            <button className="header-btn-outline" onClick={handleProfile}>
+                                <User size={16} /> Perfil
+                            </button>
+                            <button className="header-btn-primary" onClick={() => navigate('/Form_agenda')}>
+                                <Calendar size={16} /> Reservar
+                            </button>
+                            <button className="header-btn-outline" onClick={handleLogout} style={{ padding: '0.6rem' }} aria-label="Cerrar sesión">
+                                <LogOut size={16} />
+                            </button>
+                        </>
                     ) : (
-                        <button
-                            className="button menu-nav-button login-mobile"
-                            onClick={handleLogin}
-                        >
-                            <i className="bi bi-box-arrow-in-right"></i>
-                            <span className="menu-nav-label">Iniciar Sesión</span>
-                        </button>
-                    )}
-
-                    {/* Info del usuario al fondo */}
-                    {isAuthenticated && (
-                        <div className="user-info-mobile">
-                            <div className="user-avatar">
-                                <i className="bi bi-person-circle"></i>
-                            </div>
-                            <div className="user-details">
-                                <span className="user-name">{user?.name}</span>
-                                <span className="user-role">{user?.role}</span>
-                            </div>
-                        </div>
+                        <>
+                            <button className="header-btn-outline" onClick={() => navigate('/login')}>
+                                <LogIn size={16} /> Iniciar Sesión
+                            </button>
+                            <button className="header-btn-primary" onClick={() => navigate('/Form_agenda')}>
+                                <Calendar size={16} /> Reservar Cita
+                            </button>
+                        </>
                     )}
                 </div>
+
+                {/* ── Mobile Toggle ── */}
+                <button 
+                    className="header-mobile-toggle"
+                    onClick={() => setMenuOpen(!menuOpen)}
+                    aria-label="Toggle menu"
+                >
+                    {menuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
             </nav>
+
+            {/* ── Mobile Menu Dropdown ── */}
+            <div className="header-mobile-menu">
+                <div className="header-mobile-links">
+                    {links.map((link, i) => {
+                        const Icon = link.icon;
+                        return (
+                            <Link 
+                                key={i} 
+                                to={link.href} 
+                                className="header-mobile-link"
+                                style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+                            >
+                                <Icon size={20} />
+                                {link.label}
+                            </Link>
+                        );
+                    })}
+                </div>
+
+                <div className="header-mobile-actions">
+                    {isAuthenticated ? (
+                        <>
+                            <button className="header-btn-outline" onClick={handleProfile}>
+                                <User size={18} /> Mi Perfil
+                            </button>
+                            <button className="header-btn-primary" onClick={() => navigate('/Form_agenda')}>
+                                <Calendar size={18} /> Reservar Cita
+                            </button>
+                            <button className="header-btn-outline" onClick={handleLogout}>
+                                <LogOut size={18} /> Cerrar Sesión
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button className="header-btn-outline" onClick={() => navigate('/login')}>
+                                <LogIn size={18} /> Iniciar Sesión
+                            </button>
+                            <button className="header-btn-primary" onClick={() => navigate('/Form_agenda')}>
+                                <Calendar size={18} /> Reservar Cita
+                            </button>
+                        </>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

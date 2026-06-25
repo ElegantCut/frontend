@@ -5,6 +5,7 @@ import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedLi
 import { barberService } from '../lib/barberService';
 import { getCloudinaryUrl } from '../lib/utils/imageHelper';
 import BarberPortfolioModal from './BarberPortfolioModal';
+import { TravelCard } from '../components/ui/card-7';
 
 function Barberos() {
   const navigate = useNavigate();
@@ -127,9 +128,12 @@ function Barberos() {
             src={getCloudinaryUrl(barber.image)}
             alt={`${barber.name} - ${barber.title}`}
             className="w-full h-full object-cover"
-            onError={(e) => { e.target.style.display = 'none'; }}
+            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
           />
         ) : null}
+        <div className="barber-image-fallback" style={{ display: (!barber.image || barber.image.includes('default.png')) ? 'flex' : 'none' }}>
+            <i className="bi bi-person-fill"></i>
+        </div>
         <div className="barber-overlay">
           <div className="specialties">
             {barber.specialties.map((specialty, index) => (
@@ -164,8 +168,12 @@ function Barberos() {
           </div>
         </div>
         <div className="barber-actions">
-          <button className="btn-primary" onClick={() => handleOpenPortfolio(barber)}>Ver Portafolio</button>
-          <button className="btn-secondary" onClick={() => navigate('/Form_agenda', { state: { preselectedBarber: barber } })}>Reservar Cita</button>
+          <button className="btn-primary" onClick={() => handleOpenPortfolio(barber)}>
+            <i className="bi bi-folder2-open"></i> Portafolio
+          </button>
+          <button className="btn-secondary" onClick={() => navigate('/Form_agenda', { state: { preselectedBarber: barber } })}>
+            <i className="bi bi-calendar-check"></i> Reservar
+          </button>
         </div>
       </div>
     </AnimatedItem>

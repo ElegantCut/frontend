@@ -10,5 +10,6 @@ const api = axios.create({
 
 // Eliminamos el interceptor que pegaba el token desde localStorage,
 // ahora las cookies se encargan automáticamente de esto.
+
 export default api;
 ;

@@ -195,16 +195,16 @@ const SettingsTab = () => {
         <h2>Configuración</h2>
       </header>
 
-      {/* Segmented Control Refined */}
-      <div className="d-inline-flex bg-light p-1 rounded-3 mb-4 mx-auto w-100" style={{ maxWidth: '400px', backgroundColor: '#e3e3e8' }}>
+      {/* Segmented Control — Dark */}
+      <div className="ios-segmented-control">
         <button 
-          className={`flex-grow-1 border-0 py-2 rounded-2 transition-all ${activeTab === 'profile' ? 'bg-white shadow-sm fw-bold' : 'bg-transparent text-muted'}`}
+          className={`ios-segmented-btn ${activeTab === 'profile' ? 'active' : ''}`}
           onClick={() => setActiveTab('profile')}
         >
           Perfil
         </button>
         <button 
-          className={`flex-grow-1 border-0 py-2 rounded-2 transition-all ${activeTab === 'reports' ? 'bg-white shadow-sm fw-bold' : 'bg-transparent text-muted'}`}
+          className={`ios-segmented-btn ${activeTab === 'reports' ? 'active' : ''}`}
           onClick={() => setActiveTab('reports')}
         >
           Reportes
@@ -226,25 +226,25 @@ const SettingsTab = () => {
                 <div className="ios-list-item">
                   <div className="ios-item-content">
                     <span className="ios-item-subtitle">Usuario</span>
-                    <input type="text" className="border-0 w-100 p-0 fw-bold" name="username" value={formData.username} onChange={handleChange} style={{outline: 'none', background: 'transparent'}} />
+                    <input type="text" className="ios-inline-input" name="username" value={formData.username} onChange={handleChange} />
                   </div>
                 </div>
                 <div className="ios-list-item">
                   <div className="ios-item-content">
                     <span className="ios-item-subtitle">Email</span>
-                    <input type="email" className="border-0 w-100 p-0 fw-bold" name="email" value={formData.email} onChange={handleChange} style={{outline: 'none', background: 'transparent'}} />
+                    <input type="email" className="ios-inline-input" name="email" value={formData.email} onChange={handleChange} />
                   </div>
                 </div>
                 <div className="ios-list-item">
                   <div className="ios-item-content">
                     <span className="ios-item-subtitle">Nombre</span>
-                    <input type="text" className="border-0 w-100 p-0 fw-bold" name="prim_nombre" value={formData.prim_nombre} onChange={handleChange} style={{outline: 'none', background: 'transparent'}} />
+                    <input type="text" className="ios-inline-input" name="prim_nombre" value={formData.prim_nombre} onChange={handleChange} />
                   </div>
                 </div>
                 <div className="ios-list-item">
                   <div className="ios-item-content">
                     <span className="ios-item-subtitle">Apellido</span>
-                    <input type="text" className="border-0 w-100 p-0 fw-bold" name="apellido1" value={formData.apellido1} onChange={handleChange} style={{outline: 'none', background: 'transparent'}} />
+                    <input type="text" className="ios-inline-input" name="apellido1" value={formData.apellido1} onChange={handleChange} />
                   </div>
                 </div>
               </div>
@@ -257,7 +257,7 @@ const SettingsTab = () => {
 
               <div className="ios-section-header">Seguridad y Acceso</div>
               <div className="ios-list-group">
-                <div className="p-3 ios-item-subtitle bg-light border-bottom" style={{fontSize: '0.85rem'}}>
+                <div className="p-3 ios-item-subtitle" style={{fontSize: '0.85rem', borderBottom: '1px solid var(--ios-separator)'}}>
                   Para cambiar su contraseña, ingrese sus datos actuales para recibir un código de verificación.
                 </div>
                 <div className="ios-list-item">
@@ -265,11 +265,10 @@ const SettingsTab = () => {
                     <span className="ios-item-subtitle">Confirmar Usuario</span>
                     <input 
                       type="text" 
-                      className="border-0 w-100 p-0" 
+                      className="ios-inline-input" 
                       placeholder="Username actual"
                       value={formData.confirmUsername || ''} 
                       onChange={(e) => setFormData({ ...formData, confirmUsername: e.target.value })} 
-                      style={{outline: 'none', background: 'transparent'}} 
                     />
                   </div>
                 </div>
@@ -278,11 +277,10 @@ const SettingsTab = () => {
                     <span className="ios-item-subtitle">Confirmar Email</span>
                     <input 
                       type="email" 
-                      className="border-0 w-100 p-0" 
+                      className="ios-inline-input" 
                       placeholder="Email actual"
                       value={formData.confirmEmail || ''} 
                       onChange={(e) => setFormData({ ...formData, confirmEmail: e.target.value })} 
-                      style={{outline: 'none', background: 'transparent'}} 
                     />
                   </div>
                 </div>
@@ -319,19 +317,17 @@ const SettingsTab = () => {
                  <div className="ios-list-item">
                     <input 
                       type="password" 
-                      className="border-0 w-100 p-0" 
+                      className="ios-inline-input" 
                       placeholder="Nueva Contraseña" 
                       name="password" value={formData.password} onChange={handleChange} 
-                      style={{outline: 'none', background: 'transparent'}}
                     />
                  </div>
                  <div className="ios-list-item">
                     <input 
                       type="password" 
-                      className="border-0 w-100 p-0" 
+                      className="ios-inline-input" 
                       placeholder="Confirmar Nueva Contraseña" 
                       name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} 
-                      style={{outline: 'none', background: 'transparent'}}
                     />
                  </div>
               </div>
