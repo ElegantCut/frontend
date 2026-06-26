@@ -709,6 +709,10 @@ body {
 /* ════════════════════════
    BOOTSTRAP DARK OVERRIDES
    ════════════════════════ */
+.admin-panel header:not(.admin-header) {
+    background: transparent !important;
+}
+
 .admin-panel .bg-white,
 .admin-panel .bg-light,
 .admin-panel .modal-content,
