@@ -103,7 +103,7 @@ export default function Pqrs() {
         id_usuario: Number(currentUser?.id || currentUser?.userId || currentUser?.id_usuario || 0),
         tipo_solicitud: mapRequestType[formData.requestType] || 'Peticion',
         nombre_completo: formData.userName,
-        identificacion: formData.userId,
+        identificacion: String(formData.userId || ''),
         email: formData.userEmail,
         telefono: formData.userPhone,
         asunto: formData.subject,
@@ -111,6 +111,7 @@ export default function Pqrs() {
         medio_respuesta: formData.responseMedium
       };
 
+      console.log('📦 Payload enviado:', JSON.stringify(payload, null, 2));
       const response = await api.post('/pqrs', payload);
       if (response.data.success) {
         showNotification('success', `PQRS enviada con éxito. Su radicado es: ${response.data.radicado}`);
@@ -124,7 +125,14 @@ export default function Pqrs() {
       }
     } catch (error) {
       console.error('Error:', error);
-      showNotification('error', 'Error de conexión o servidor.');
+      const errData = error.response?.data;
+      let serverMsg = 'Error de conexión o servidor.';
+      if (errData) {
+        serverMsg = errData.message || errData.error;
+        if (Array.isArray(serverMsg)) serverMsg = serverMsg.join('. ');
+        if (typeof serverMsg !== 'string') serverMsg = JSON.stringify(errData);
+      }
+      showNotification('error', serverMsg);
     } finally {
       setLoading(false);
     }
@@ -267,8 +275,8 @@ export default function Pqrs() {
                           <Mail size={20} />
                           <span>Correo Electrónico</span>
                         </label>
-                        <label className={`radio-card ${formData.responseMedium === 'phone' ? 'selected' : ''}`}>
-                          <input type="radio" name="responseMedium" value="phone" checked={formData.responseMedium === 'phone'} onChange={handleInputChange} />
+                        <label className={`radio-card ${formData.responseMedium === 'telefono' ? 'selected' : ''}`}>
+                          <input type="radio" name="responseMedium" value="telefono" checked={formData.responseMedium === 'telefono'} onChange={handleInputChange} />
                           <Phone size={20} />
                           <span>Vía Telefónica</span>
                         </label>
