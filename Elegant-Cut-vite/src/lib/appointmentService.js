@@ -23,12 +23,16 @@ export const appointmentService = {
         }
     },
     getHorarios: async () => {
+        const response = await api.get('/appointments/horarios');
+        return response.data;
+    },
+    reschedule: async (appointmentId, data) => {
         try {
-            const response = await api.get('/appointments/horarios');
+            const response = await api.patch(`/appointments/${appointmentId}/reschedule`, data);
             return response.data;
         } catch (error) {
-            console.error("Error al obtener horarios:", error);
-            return [];
+            console.error("Error al reagendar la cita:", error);
+            throw error;
         }
     }
 }
