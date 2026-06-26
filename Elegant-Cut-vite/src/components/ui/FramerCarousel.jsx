@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, animate } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Star, Users } from 'lucide-react';
+import { getCloudinaryUrl } from '../../lib/utils/imageHelper';
 import './FramerCarousel.css';
 
 export function FramerCarousel({ barbers = [] }) {
@@ -48,7 +49,7 @@ export function FramerCarousel({ barbers = [] }) {
             {barbers.map((barber) => (
               <div key={barber.id} className="fc-slide">
                 <img
-                  src={barber.img}
+                  src={getCloudinaryUrl(barber.image)}
                   alt={barber.name}
                   className="fc-slide-img"
                   draggable={false}
