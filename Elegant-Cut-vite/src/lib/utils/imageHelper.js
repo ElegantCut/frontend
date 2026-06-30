@@ -2,7 +2,7 @@
 export const getCloudinaryUrl = (publicId) => {
     if (!publicId) return '';
     if (publicId.startsWith('http') || publicId.startsWith('/')) return publicId;
-    return `https://res.cloudinary.com/dbuldg4dt/image/upload/c_fill,g_face,h_400,w_400/${publicId}`;
+    return `https://res.cloudinary.com/dbuldg4dt/image/upload/f_auto,q_auto,c_fill,g_face,h_800,w_800/${publicId}`;
 };
 
 // Función para banners (ajustada a formato panorámico)
