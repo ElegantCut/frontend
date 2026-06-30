@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AuthClient } from "../../auth/authClient";
 import api, { UPLOADS_BASE_URL } from '../../lib/axios';
 import { Camera, Save, AlertCircle, CheckCircle } from 'lucide-react';
+import { getCloudinaryUrl } from '../../lib/utils/imageHelper';
 
 const BarberSettings = () => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -11,25 +12,53 @@ const BarberSettings = () => {
     const [message, setMessage] = useState({ type: '', text: '' });
     const user = AuthClient.getUser();
 
+    // Personal Profile State
+    const [profileData, setProfileData] = useState({
+        prim_nombre: '',
+        seg_nombre: '',
+        apellido1: '',
+        apellido2: '',
+        email: '',
+        telefono: '',
+        foto_perfil: '',
+    });
+    const [profileLoading, setProfileLoading] = useState(false);
+    const [profileMessage, setProfileMessage] = useState({ type: '', text: '' });
+
     // Portfolio State
     const [portfolioData, setPortfolioData] = useState({
         biografia: '',
         experiencia: '',
-        especialidades: ''
+        especialidades: '',
+        instagram: ''
     });
     const [portfolioLoading, setPortfolioLoading] = useState(false);
     const [portfolioMessage, setPortfolioMessage] = useState({ type: '', text: '' });
 
-    // Cargar datos actuales del portafolio al montar
+    // Cargar datos actuales del perfil y portafolio al montar
     React.useEffect(() => {
-        const fetchPortfolio = async () => {
+        const fetchUserData = async () => {
             const currentUser = AuthClient.getUser();
             const targetUserId = currentUser?.userId || currentUser?.id || currentUser?.id_usuario;
             
             if (!targetUserId) return;
             try {
+                // Traer datos mediante /barbers/:id que incluye portafolio y datos personales del barbero
                 const response = await api.get(`/barbers/${targetUserId}`);
                 const data = response.data;
+                
+                // Mapear datos personales
+                setProfileData({
+                    prim_nombre: data.prim_nombre || '',
+                    seg_nombre: data.seg_nombre || '',
+                    apellido1: data.apellido1 || '',
+                    apellido2: data.apellido2 || '',
+                    email: data.email || '',
+                    telefono: data.telefono || '',
+                    foto_perfil: data.foto_perfil || '',
+                });
+
+                // Mapear datos del portafolio
                 if (data && data.portafolios && data.portafolios.length > 0) {
                     const port = data.portafolios[0];
                     let specs = port.especialidades || '';
@@ -39,19 +68,51 @@ const BarberSettings = () => {
                     setPortfolioData({
                         biografia: port.biografia || '',
                         experiencia: port.experiencia || '',
-                        especialidades: Array.isArray(specs) ? specs.join(', ') : specs
+                        especialidades: Array.isArray(specs) ? specs.join(', ') : specs,
+                        instagram: port.instagram || ''
                     });
                 }
             } catch (err) {
-                console.error("Error al cargar portafolio", err);
+                console.error("Error al cargar datos del barbero:", err);
             }
         };
-        fetchPortfolio();
+        fetchUserData();
     }, []);
+
+    const handleProfileChange = (e) => {
+        const { name, value } = e.target;
+        setProfileData(prev => ({ ...prev, [name]: value }));
+    };
 
     const handlePortfolioChange = (e) => {
         const { name, value } = e.target;
         setPortfolioData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleUpdateProfile = async (e) => {
+        e.preventDefault();
+        setProfileLoading(true);
+        setProfileMessage({ type: '', text: '' });
+
+        try {
+            const response = await api.patch('/users/profile', profileData);
+
+            if (response.status === 200) {
+                setProfileMessage({ type: 'success', text: 'Datos personales actualizados exitosamente.' });
+                // Actualizar el nombre mostrado en el cliente
+                const currentUser = AuthClient.getUser() || {};
+                const name = `${profileData.prim_nombre} ${profileData.apellido1}`.trim();
+                AuthClient.setUser({ ...currentUser, name, email: profileData.email });
+            } else {
+                setProfileMessage({ type: 'error', text: response.data?.message || 'Error al actualizar el perfil.' });
+            }
+        } catch (error) {
+            console.error("Error al actualizar perfil:", error);
+            const msg = error.response?.data?.message || error.message || 'Error de conexión';
+            setProfileMessage({ type: 'error', text: Array.isArray(msg) ? msg.join(', ') : msg });
+        } finally {
+            setProfileLoading(false);
+        }
     };
 
     const handleUpdatePortfolio = async (e) => {
@@ -69,25 +130,29 @@ const BarberSettings = () => {
         setPortfolioMessage({ type: '', text: '' });
 
         try {
-            // Transformar especialidades a array JSON stringificado
+            // Transformar especialidades a array
             const espArray = portfolioData.especialidades.split(',').map(s => s.trim()).filter(Boolean);
+            
+            // Payload del portafolio (para crear/actualizar mediante upsert)
             const payload = {
+                id_usuario: Number(targetUserId),
                 biografia: portfolioData.biografia,
                 experiencia: portfolioData.experiencia,
-                especialidades: JSON.stringify(espArray)
+                instagram: portfolioData.instagram,
+                especialidades: espArray
             };
 
-            const response = await api.patch(`/barbers/${targetUserId}`, payload);
+            const response = await api.post('/portabarbero', payload);
 
-            const data = response.data;
-            if (response.ok) {
+            if (response.status === 200 || response.status === 201) {
                 setPortfolioMessage({ type: 'success', text: 'Portafolio actualizado exitosamente.' });
             } else {
-                setPortfolioMessage({ type: 'error', text: data.message || 'Error al actualizar el portafolio.' });
+                setPortfolioMessage({ type: 'error', text: response.data?.message || 'Error al actualizar el portafolio.' });
             }
         } catch (error) {
-            console.error("Detalles completos del error:", error);
-            setPortfolioMessage({ type: 'error', text: `Error interno: ${error.message || 'Desconocido'}` });
+            console.error("Error al actualizar portafolio:", error);
+            const msg = error.response?.data?.message || error.message || 'Error interno de conexión';
+            setPortfolioMessage({ type: 'error', text: Array.isArray(msg) ? msg.join(', ') : msg });
         } finally {
             setPortfolioLoading(false);
         }
@@ -117,6 +182,7 @@ const BarberSettings = () => {
             const result = await AuthClient.uploadProfilePhoto(formData);
             if (result.success) {
                 setMessage({ type: 'success', text: 'Foto actualizada correctamente.' });
+                setProfileData(prev => ({ ...prev, foto_perfil: result.photoUrl }));
             } else {
                 setMessage({ type: 'error', text: result.error || 'Error al subir la imagen.' });
             }
@@ -147,10 +213,10 @@ const BarberSettings = () => {
 
                     <div style={{ position: 'relative', width: '130px', height: '130px' }}>
                         <motion.img
-                            key={preview || user?.photoUrl}
+                            key={preview || profileData.foto_perfil || user?.photoUrl}
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            src={preview || (user?.photoUrl ? `${UPLOADS_BASE_URL}/${user.photoUrl}` : 'https://via.placeholder.com/150')}
+                            src={preview || getCloudinaryUrl(profileData.foto_perfil || user?.photoUrl || user?.foto_perfil) || 'https://via.placeholder.com/150'}
                             alt="Profile Preview"
                             style={{
                                 width: '100%', height: '100%', borderRadius: '50%',
@@ -211,6 +277,116 @@ const BarberSettings = () => {
                 </div>
             </motion.div>
 
+            {/* ═══ Información Personal ═══ */}
+            <div className="ios-section-header" style={{ marginTop: '2rem' }}>Información Personal</div>
+            <motion.div
+                className="ios-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                style={{ maxWidth: '600px' }}
+            >
+                <form onSubmit={handleUpdateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                        <div style={{ flex: 1 }}>
+                            <label className="ios-label">Primer Nombre</label>
+                            <input 
+                                type="text"
+                                name="prim_nombre"
+                                value={profileData.prim_nombre}
+                                onChange={handleProfileChange}
+                                className="ios-input"
+                                required
+                            />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <label className="ios-label">Segundo Nombre</label>
+                            <input 
+                                type="text"
+                                name="seg_nombre"
+                                value={profileData.seg_nombre}
+                                onChange={handleProfileChange}
+                                className="ios-input"
+                            />
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                        <div style={{ flex: 1 }}>
+                            <label className="ios-label">Primer Apellido</label>
+                            <input 
+                                type="text"
+                                name="apellido1"
+                                value={profileData.apellido1}
+                                onChange={handleProfileChange}
+                                className="ios-input"
+                                required
+                            />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <label className="ios-label">Segundo Apellido</label>
+                            <input 
+                                type="text"
+                                name="apellido2"
+                                value={profileData.apellido2}
+                                onChange={handleProfileChange}
+                                className="ios-input"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="ios-label">Correo Electrónico</label>
+                        <input 
+                            type="email"
+                            name="email"
+                            value={profileData.email}
+                            onChange={handleProfileChange}
+                            className="ios-input"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="ios-label">Teléfono</label>
+                        <input 
+                            type="tel"
+                            name="telefono"
+                            value={profileData.telefono}
+                            onChange={handleProfileChange}
+                            className="ios-input"
+                        />
+                    </div>
+
+                    <AnimatePresence mode="wait">
+                        {profileMessage.text && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className={`ios-badge w-100 text-center d-flex align-items-center justify-content-center gap-2 ${profileMessage.type === 'error' ? 'danger' : 'success'}`}
+                                style={{ padding: '12px', fontSize: '0.9rem' }}
+                            >
+                                {profileMessage.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle size={18} />}
+                                {profileMessage.text}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    <motion.button
+                        type="submit"
+                        whileHover={{ scale: !profileLoading ? 1.02 : 1 }}
+                        whileTap={{ scale: !profileLoading ? 0.98 : 1 }}
+                        disabled={profileLoading}
+                        className={`ios-btn ${profileLoading ? 'secondary' : 'primary'}`}
+                        style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}
+                    >
+                        <Save size={18} />
+                        {profileLoading ? 'Guardando...' : 'Guardar Información Personal'}
+                    </motion.button>
+                </form>
+            </motion.div>
+
             {/* ═══ Información del Portafolio ═══ */}
             <div className="ios-section-header" style={{ marginTop: '2rem' }}>Información del Portafolio</div>
             <motion.div
@@ -260,6 +436,18 @@ const BarberSettings = () => {
                         <small className="ios-item-subtitle" style={{ marginTop: '0.25rem', display: 'block', fontSize: '0.8rem' }}>
                             Separa las especialidades con comas.
                         </small>
+                    </div>
+
+                    <div>
+                        <label className="ios-label">Instagram</label>
+                        <input 
+                            type="text"
+                            name="instagram"
+                            value={portfolioData.instagram}
+                            onChange={handlePortfolioChange}
+                            className="ios-input"
+                            placeholder="Ej. @tu_instagram"
+                        />
                     </div>
 
                     <AnimatePresence mode="wait">
