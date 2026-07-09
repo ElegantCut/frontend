@@ -3,9 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
 
-// Note: Assuming AnimatedList is in the same directory or adjust path accordingly. 
-// Since BarbersTab is in Componentes, and AnimatedList is in Componentes.
-
 const BarbersTab = () => {
   const [barbers, setBarbers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +10,7 @@ const BarbersTab = () => {
   const [showModal, setShowModal] = useState(false);
   const [newBarber, setNewBarber] = useState({
     username: '',
-    password: '',
+    password_hash: '',
     email: '',
     prim_nombre: '',
     seg_nombre: '',
@@ -78,7 +75,7 @@ const BarbersTab = () => {
         alert('Barbero creado correctamente');
         setShowModal(false);
         setNewBarber({
-          username: '', password: '', email: '',
+          username: '', password_hash: '', email: '',
           prim_nombre: '', seg_nombre: '', apellido1: '', apellido2: '',
           telefono: '', biografia: '', experiencia: '', especialidades: '', image: null
         });
@@ -117,7 +114,7 @@ const BarbersTab = () => {
         <h2>Barberos</h2>
         <div className="action-buttons">
           <button className="btn-ios" onClick={() => setShowModal(true)}>
-             <i className="bi bi-person-plus me-1"></i> Nuevo Barbero
+            <i className="bi bi-person-plus me-1"></i> Nuevo Barbero
           </button>
         </div>
       </header>
@@ -133,8 +130,8 @@ const BarbersTab = () => {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
             >
               <div className="d-flex justify-content-between align-items-center mb-4">
-                 <h3 className="ios-item-title fs-4">Nuevo Barbero</h3>
-                 <button className="btn-close" onClick={() => setShowModal(false)}></button>
+                <h3 className="ios-item-title fs-4">Nuevo Barbero</h3>
+                <button className="btn-close" onClick={() => setShowModal(false)}></button>
               </div>
 
               <form onSubmit={handleAddBarber}>
@@ -155,15 +152,37 @@ const BarbersTab = () => {
                     <label className="ios-item-subtitle mb-1 d-block">Apellido</label>
                     <input type="text" className="ios-search-bar" name="apellido1" value={newBarber.apellido1} onChange={handleInputChange} required />
                   </div>
+
+                  <div className="col-md-6">
+                    <label className="ios-item-subtitle mb-1 d-block">Telefono</label>
+                    <input type="text" className="ios-search-bar" name="telefono" value={newBarber.telefono} onChange={handleInputChange} required />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="ios-item-subtitle mb-1 d-block">Biografia</label>
+                    <input type="text" className="ios-search-bar" name="biografia" value={newBarber.biografia}
+                      onChange={handleInputChange} required />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="ios-item-subtitle mb-1 d-block">Experiencia</label>
+                    <input type="text" className="ios-search-bar" name="experiencia" value={newBarber.experiencia} onChange={handleInputChange} required />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="ios-item-subtitle mb-1 d-block">Especialidades</label>
+                    <input type="text" className="ios-search-bar" name="especialidades" value={newBarber.especialidades} onChange={handleInputChange} required />
+                  </div>
+
                   <div className="col-12">
                     <label className="ios-item-subtitle mb-1 d-block">Contraseña</label>
-                    <input type="password" className="ios-search-bar" name="password" value={newBarber.password} onChange={handleInputChange} required />
+                    <input type="password" className="ios-search-bar" name="password_hash" value={newBarber.password_hash} onChange={handleInputChange} required />
                   </div>
                 </div>
 
                 <div className="mt-4 d-flex gap-2 justify-content-end">
-                   <button type="button" className="btn-ios-secondary px-4" onClick={() => setShowModal(false)}>Cancelar</button>
-                   <button type="submit" className="btn-ios px-4">Guardar</button>
+                  <button type="button" className="btn-ios-secondary px-4" onClick={() => setShowModal(false)}>Cancelar</button>
+                  <button type="submit" className="btn-ios px-4">Guardar</button>
                 </div>
               </form>
             </motion.div>
@@ -185,8 +204,8 @@ const BarbersTab = () => {
                 <span className={`ios-badge ${barber.estado ? 'success' : 'danger'}`}>
                   {barber.estado ? 'Activo' : 'Inactivo'}
                 </span>
-                
-                <button 
+
+                <button
                   className={`ios-icon-btn ${barber.estado ? 'danger' : 'success'}`}
                   onClick={() => handleToggleStatus(barber.id_usuario, barber.estado)}
                   title={barber.estado ? "Desactivar" : "Activar"}
