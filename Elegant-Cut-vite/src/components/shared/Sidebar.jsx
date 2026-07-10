@@ -22,6 +22,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
     { id: 'administradores', icon: 'bi-shield-lock', label: 'Administradores', path: '/admin/administradores' },
     { id: 'servicios', icon: 'bi-grid', label: 'Servicios', path: '/admin/servicios' },
     { id: 'resenas', icon: 'bi-star', label: 'Reseñas', path: '/admin/resenas' },
+    { id: 'pqrs', icon: 'bi-envelope-paper', label: 'PQRS', path: '/admin/pqrs' },
     { id: 'configuracion', icon: 'bi-gear', label: 'Configuración', path: '/admin/configuracion' },
   ];
 
