@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import BarberSidebar from '../../components/barber/BarberSidebar';
 
+import '../../styles/AdminPanel.css';
 import '../../styles/BarberPanel.css';
 
 const BarberPanel = () => {

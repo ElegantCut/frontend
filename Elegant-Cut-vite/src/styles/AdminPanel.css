@@ -80,6 +80,12 @@ body {
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--ios-separator);
     position: relative;
+    
+    /* Reset styles polluted globally by Nav.css header tag */
+    background-color: transparent !important;
+    height: auto !important;
+    padding: 0 0 1rem 0 !important;
+    box-shadow: none !important;
 }
 
 .tab-header::after {
