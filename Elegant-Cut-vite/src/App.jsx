@@ -29,6 +29,7 @@ import AppointmentsTab from './components/admin/AppointmentsTab'
 import ClientsTab from './components/admin/ClientsTab'
 import SettingsTab from './components/admin/SettingsTab'
 import ReviewsTab from './components/admin/ReviewsTab'
+import PqrsTab from './components/admin/PqrsTab'
 
 // Importar componentes de Barber
 import BarberPanel from './routes/barber/BarberPanel'
@@ -60,6 +61,7 @@ const AnimatedRoutes = () => {
           <Route path="administradores" element={<AdminsTab />} />
           <Route path="servicios" element={<ServicesTab />} />
           <Route path="resenas" element={<ReviewsTab />} />
+          <Route path="pqrs" element={<PqrsTab />} />
           <Route path="configuracion" element={<SettingsTab />} />
         </Route>
 
