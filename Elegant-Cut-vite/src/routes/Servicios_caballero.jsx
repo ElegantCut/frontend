@@ -60,9 +60,7 @@ function Servicios_caballero() {
   const slideTimer = useRef(null);
   const SLIDE_DURATION = 4000;
 
-  const goToSlide = useCallback((index) => {
-    setCurrentSlide((index + carouselSlidesCab.length) % carouselSlidesCab.length);
-  }, [carouselSlidesCab.length]);
+
 
   useEffect(() => {
     slideTimer.current = setInterval(() => {
@@ -198,21 +196,7 @@ function Servicios_caballero() {
             ))}
           </div>
 
-          {/* Flechas */}
-          <button
-            className="xmi-carousel__btn xmi-carousel__btn--prev"
-            onClick={() => goToSlide(currentSlide - 1)}
-            aria-label="Anterior"
-          >
-            &#8249;
-          </button>
-          <button
-            className="xmi-carousel__btn xmi-carousel__btn--next"
-            onClick={() => goToSlide(currentSlide + 1)}
-            aria-label="Siguiente"
-          >
-            &#8250;
-          </button>
+
 
           {/* Indicadores tipo barra de progreso */}
           <div className="xmi-carousel__indicators">
@@ -287,64 +271,65 @@ function Servicios_caballero() {
               const isDisabled = isSelected || isCategorySelected;
 
               return (
-              <AnimatedItem key={service.id} className="service-card" data-category={service.category}>
-                <div className="service-image">
-                  {service.image && !service.image.includes('default.png') ? (
-                    <img
-                      src={getCloudinaryServiceUrl(service.image)}
-                      alt={service.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-                    />
-                  ) : null}
-                  <div className="service-image-fallback" style={{ display: (!service.image || service.image.includes('default.png')) ? 'flex' : 'none' }}>
+                <AnimatedItem key={service.id} className="service-card" data-category={service.category}>
+                  <div className="service-image">
+                    {service.image && !service.image.includes('default.png') ? (
+                      <img
+                        src={getCloudinaryServiceUrl(service.image)}
+                        alt={service.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                      />
+                    ) : null}
+                    <div className="service-image-fallback" style={{ display: (!service.image || service.image.includes('default.png')) ? 'flex' : 'none' }}>
                       <i className="bi bi-stars"></i>
+                    </div>
                   </div>
-                </div>
-                <div className="category-indicator">{service.categoryLabel}</div>
-                <div className="service-content">
-                  {/* Aquí mostramos el nombre del servicio que viene de la base de datos */}
-                  <h3 className="service-title">{service.name}</h3>
-                  {/* Aquí mostramos el precio */}
-                  <div className="service-price">${service.price.toLocaleString()}</div>
-                  {/* Y aquí la descripción */}
-                  <p className="service-description">
-                    {service.description}
-                  </p>
-                  <div className="service-features">
-                    {service.features && service.features.map((feature, index) => (
-                      <span key={index} className="feature-tag">
+                  <div className="category-indicator">{service.categoryLabel}</div>
+                  <div className="service-content">
+                    {/* Aquí mostramos el nombre del servicio que viene de la base de datos */}
+                    <h3 className="service-title">{service.name}</h3>
+                    {/* Aquí mostramos el precio */}
+                    <div className="service-price">${service.price.toLocaleString()}</div>
+                    {/* Y aquí la descripción */}
+                    <p className="service-description">
+                      {service.description}
+                    </p>
+                    <div className="service-features">
+                      {service.features && service.features.map((feature, index) => (
+                        <span key={index} className="feature-tag">
                           {index === 1 ? <i className="bi bi-clock-history me-1"></i> : <i className="bi bi-check2-circle me-1"></i>}
                           {feature}
-                      </span>
-                    ))}
-                  </div>
-                  <motion.button
-                    whileHover={!isDisabled ? { scale: 1.02 } : {}}
-                    whileTap={!isDisabled ? { scale: 0.95 } : {}}
-                    className="service-button"
-                    onClick={() => {
-                      if (!isDisabled) addToCart(service);
-                    }}
-                    style={{
-                      backgroundColor: isSelected ? 'rgba(46, 204, 113, 0.1)' : (isCategorySelected ? 'rgba(255,255,255,0.05)' : ''),
-                      color: isSelected ? '#2ecc71' : '',
-                      borderColor: isSelected ? 'rgba(46, 204, 113, 0.3)' : '',
-                      cursor: isDisabled ? 'not-allowed' : 'pointer',
-                      opacity: (isCategorySelected && !isSelected) ? 0.6 : 1,
-                    }}
-                  >
-                      {isSelected ? (
-                          <><i className="bi bi-check2-all me-2"></i>Seleccionado</>
-                      ) : (isCategorySelected ? (
-                          <><i className="bi bi-lock-fill me-2"></i>1 por categoría</>
-                      ) : (
-                          <><i className="bi bi-cart-plus me-2"></i>Agregar al Carrito</>
+                        </span>
                       ))}
-                  </motion.button>
-                </div>
-              </AnimatedItem>
-            )})}
+                    </div>
+                    <motion.button
+                      whileHover={!isDisabled ? { scale: 1.02 } : {}}
+                      whileTap={!isDisabled ? { scale: 0.95 } : {}}
+                      className="service-button"
+                      onClick={() => {
+                        if (!isDisabled) addToCart(service);
+                      }}
+                      style={{
+                        backgroundColor: isSelected ? 'rgba(46, 204, 113, 0.1)' : (isCategorySelected ? 'rgba(255,255,255,0.05)' : ''),
+                        color: isSelected ? '#2ecc71' : '',
+                        borderColor: isSelected ? 'rgba(46, 204, 113, 0.3)' : '',
+                        cursor: isDisabled ? 'not-allowed' : 'pointer',
+                        opacity: (isCategorySelected && !isSelected) ? 0.6 : 1,
+                      }}
+                    >
+                      {isSelected ? (
+                        <><i className="bi bi-check2-all me-2"></i>Seleccionado</>
+                      ) : (isCategorySelected ? (
+                        <><i className="bi bi-lock-fill me-2"></i>1 por categoría</>
+                      ) : (
+                        <><i className="bi bi-cart-plus me-2"></i>Agregar al Carrito</>
+                      ))}
+                    </motion.button>
+                  </div>
+                </AnimatedItem>
+              )
+            })}
           </AnimatePresence>
         </AnimatedContainer>
 

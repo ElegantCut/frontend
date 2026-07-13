@@ -4,26 +4,35 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../../components/shared/Sidebar';
 import AdminHeader from '../../components/admin/AdminHeader';
 import '../../styles/AdminPanel.css';
+import { div } from 'framer-motion/client';
 
 const AdminPanel = () => {
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  // Inicializamos el estado leyendo de localStorage (si existe), sino por defecto es false (abierto)
+  const [isCollapsed, setIsCollapsed] = React.useState(() => {
+    const saved = localStorage.getItem('sidebarCollapsed');
+    return saved === 'true';
+  });
+
+  // Cada vez que cambie isCollapsed, lo guardamos en localStorage
+  React.useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', isCollapsed);
+  }, [isCollapsed]);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setIsCollapsed(!isCollapsed);
   };
 
   const closeSidebar = () => {
-    setIsSidebarOpen(false);
+    setIsCollapsed(true);
   };
 
   return (
-    <div className="admin-panel">
-      {/* Overlay for mobile when sidebar is open */}
+    <div className='admin-panel'>
       <AnimatePresence>
-        {isSidebarOpen && (
-          <motion.div
-            className="admin-overlay"
+        {!isCollapsed && (
+          <motion.div 
+            className='admin-overlay'
             onClick={closeSidebar}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -32,10 +41,13 @@ const AdminPanel = () => {
         )}
       </AnimatePresence>
 
-      <Sidebar isOpen={isSidebarOpen} closeSidebar={closeSidebar} />
+      {/* Acá cambiamos el estado del menu uwu */}
+      <Sidebar isCollapsed={isCollapsed} closeSidebar={closeSidebar} toggleSidebar={toggleSidebar} />
 
-      <div className="admin-content">
-        <AdminHeader toggleSidebar={toggleSidebar} />
+      <div className={`admin-content ${isCollapsed ? 'collapsed' : ''}`}>
+        <AdminHeader toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} />
+        
+        {/* ¡No olvides el main y el Outlet! */}
         <main className="admin-main container-fluid py-4 px-md-5">
           <AnimatePresence mode="wait">
             <motion.div

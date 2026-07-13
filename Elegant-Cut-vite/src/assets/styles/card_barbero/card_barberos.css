@@ -49,8 +49,6 @@ main {
   display: flex;
   flex-direction: column;
   height: 100%;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .barber-card:hover {

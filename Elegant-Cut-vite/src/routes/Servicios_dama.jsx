@@ -24,23 +24,18 @@ function Servicios_dama() {
     const [cargando, setCargando] = useState(true);
 
 
-    // 🔗 DEEP LINKING: Lee el parámetro ?categoria= de la URL
-    // Se ejecuta cada vez que cambia la parte "?..." de la URL
     useEffect(() => {
         const queryParams = new URLSearchParams(Location.search);
-        // URLSearchParams convierte "?categoria=uñas" en un objeto consultable
-        // Location.search es "?categoria=uñas" (todo lo que hay después del ?)
 
         const categoria = queryParams.get('categoria');
-        // .get('categoria') extrae el valor: "uñas", "mascarillas", "peinados", etc.
-        // Si no hay ?categoria= en la URL, devuelve null
+
 
         if (categoria) {
             setActiveCategory(categoria);
-            // Activa el filtro visual automáticamente al entrar desde el Footer
+
         }
     }, [Location.search]);
-    // [Location.search] → se vuelve a ejecutar si la URL cambia (ej: navegas a ?categoria=peinados)
+
 
     // --- CARRUSEL ESTILO XIAOMI ---
     const carouselSlidesDama = [
@@ -79,9 +74,6 @@ function Servicios_dama() {
     const slideTimer = useRef(null);
     const SLIDE_DURATION = 4000;
 
-    const goToSlide = useCallback((index) => {
-        setCurrentSlide((index + carouselSlidesDama.length) % carouselSlidesDama.length);
-    }, [carouselSlidesDama.length]);
 
     useEffect(() => {
         slideTimer.current = setInterval(() => {
@@ -192,9 +184,9 @@ function Servicios_dama() {
         { id: 'uñas', name: 'Uñas' },
         { id: 'cortes cabello largo', name: 'Cortes Cabello Largo' },
         { id: 'cortes cabello corto', name: 'Cortes Cabello Corto' },
-        { id: 'color / tintes', name: 'Color / Tintes' },
-        { id: 'peinados', name: 'Peinados' },
-        { id: 'mascarillas', name: 'Mascarillas' }
+        { id: 'color / tintes', name: 'Color / Tintes' }
+
+
     ];
 
     // Productos disponibles: Ahora provienen de `servicios` en lugar de una lista estática
@@ -245,22 +237,6 @@ function Servicios_dama() {
                             </div>
                         ))}
                     </div>
-
-                    {/* Flechas */}
-                    <button
-                        className="xmi-carousel__btn xmi-carousel__btn--prev"
-                        onClick={() => goToSlide(currentSlide - 1)}
-                        aria-label="Anterior"
-                    >
-                        &#8249;
-                    </button>
-                    <button
-                        className="xmi-carousel__btn xmi-carousel__btn--next"
-                        onClick={() => goToSlide(currentSlide + 1)}
-                        aria-label="Siguiente"
-                    >
-                        &#8250;
-                    </button>
 
                     {/* Indicadores tipo barra de progreso */}
                     <div className="xmi-carousel__indicators">

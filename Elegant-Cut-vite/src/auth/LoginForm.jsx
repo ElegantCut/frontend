@@ -459,7 +459,7 @@ function LoginForm() {
                 width: '240px',
                 height: '200px',
                 zIndex: 3,
-                backgroundColor: '#BC2041', /* Crimson Red */
+                backgroundColor: '#BC2041',
                 borderRadius: '120px 120px 0 0',
                 transform: isPasswordVisible ? 'skewX(0deg)' : `skewX(${orangePos.bodySkew || 0}deg)`,
                 transformOrigin: 'bottom center',
@@ -554,13 +554,13 @@ function LoginForm() {
           {/* Header */}
           <div className="text-center mb-10">
             <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">
-              {activeView === 'login' && 'Welcome back!'}
-              {activeView === 'register' && 'Create account'}
-              {activeView === 'forgot-password' && 'Reset password'}
+              {activeView === 'login' && 'Bienvenido de nuevo'}
+              {activeView === 'register' && 'Crear cuenta'}
+              {activeView === 'forgot-password' && 'Cambia tu contraseña'}
               {activeView === 'verification' && 'Check your email'}
             </h1>
             <p className="text-sm" style={{ color: 'var(--color-muted-foreground, #a1a1aa)' }}>
-              {activeView === 'login' && 'Please enter your details'}
+              {activeView === 'login' && ''}
               {activeView === 'register' && 'Fill in your information to get started'}
               {activeView === 'forgot-password' && "We'll send a verification code to your email"}
               {activeView === 'verification' && `We sent a code to ${emailSolicitado}`}
@@ -587,12 +587,12 @@ function LoginForm() {
             <form onSubmit={handleLogin} className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="login-usuario" className="text-sm font-medium text-white/90">
-                  Email / Username
+                  Nombre de usuario
                 </Label>
                 <Input
                   id="login-usuario"
                   type="text"
-                  placeholder="Enter your username or email"
+                  placeholder="Ingresa tu nombre de usuario"
                   value={loginData.usuario}
                   autoComplete="off"
                   onChange={(e) => setLoginData({ ...loginData, usuario: e.target.value })}
@@ -606,7 +606,7 @@ function LoginForm() {
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="login-contrasena" className="text-sm font-medium text-white/90">
-                  Password
+                  Contraseña
                 </Label>
                 <div className="relative">
                   <Input
@@ -649,7 +649,7 @@ function LoginForm() {
 
               <div className="flex flex-col gap-3 mt-2">
                 <Button type="submit" className="w-full h-12 text-base font-medium bg-white text-black hover:bg-neutral-200 rounded-lg transition-all" size="lg" disabled={loading}>
-                  {loading ? 'Signing in...' : 'Log in'}
+                  {loading ? 'Signing in...' : 'Iniciar sesión'}
                 </Button>
 
                 {/*Acá puse el botón de google y el onclick hace las funciones que programé de las alertas uwu :3*/}
@@ -685,8 +685,8 @@ function LoginForm() {
             <form onSubmit={handleRegister} className="flex flex-col gap-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <Label className="text-sm font-medium text-white/90">Username</Label>
-                  <Input placeholder="Username" value={registerData.usuario}
+                  <Label className="text-sm font-medium text-white/90">Nombre de usuario</Label>
+                  <Input placeholder="Nombre de usuario " value={registerData.usuario}
                     onChange={(e) => setRegisterData({ ...registerData, usuario: e.target.value })}
                     required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
                     onFocus={() => setIsTyping(true)} onBlur={() => setIsTyping(false)}
@@ -702,28 +702,28 @@ function LoginForm() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <Label className="text-sm font-medium text-white/90">First Name *</Label>
-                  <Input placeholder="First name" value={registerData.prim_nombre}
+                  <Label className="text-sm font-medium text-white/90">Primer nombre </Label>
+                  <Input placeholder="Primer Nombre " value={registerData.prim_nombre}
                     onChange={(e) => setRegisterData({ ...registerData, prim_nombre: e.target.value })}
                     required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label className="text-sm font-medium text-white/90">Last Name *</Label>
-                  <Input placeholder="Last name" value={registerData.apellido1}
+                  <Label className="text-sm font-medium text-white/90">Segundo nombre </Label>
+                  <Input placeholder="Segundo Nombre" value={registerData.apellido1}
                     onChange={(e) => setRegisterData({ ...registerData, apellido1: e.target.value })}
                     required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">Phone</Label>
-                <Input type="tel" placeholder="Phone number" value={registerData.telefono}
+                <Label className="text-sm font-medium text-white/90">Teléfono</Label>
+                <Input type="tel" placeholder="Número de teléfono" value={registerData.telefono}
                   onChange={(e) => setRegisterData({ ...registerData, telefono: e.target.value })}
                   disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">Password</Label>
+                <Label className="text-sm font-medium text-white/90">Contraseña</Label>
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
@@ -743,13 +743,13 @@ function LoginForm() {
               </div>
 
               <Button type="submit" className="w-full h-12 text-base font-medium bg-white text-black hover:bg-neutral-200 mt-2 rounded-lg transition-all" size="lg" disabled={loading}>
-                {loading ? 'Creating account...' : 'Create Account'}
+                {loading ? 'Creating account...' : 'Crear cuenta'}
               </Button>
 
               <div className="text-center text-sm mt-4 text-neutral-400">
-                Already have an account?{' '}
+                Ya tienes una cuenta?{' '}
                 <button type="button" onClick={switchToLogin} className="font-medium text-white hover:underline ml-1 transition-all">
-                  Sign In
+                  Iniciar sesión
                 </button>
               </div>
             </form>
@@ -764,7 +764,7 @@ function LoginForm() {
                 <Label className="text-sm font-medium text-white/90">Email Address</Label>
                 <Input
                   type="email"
-                  placeholder="Enter your registered email"
+                  placeholder="Ingresa tu correo para tú código"
                   value={forgotPasswordData.email}
                   onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, email: e.target.value })}
                   required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
@@ -782,7 +782,7 @@ function LoginForm() {
                   onClick={switchToLogin}
                   className="inline-flex items-center gap-2 text-sm font-medium text-neutral-400 hover:text-white hover:underline transition-all"
                 >
-                  <ArrowLeft className="w-4 h-4" /> Back to login
+                  <ArrowLeft className="w-4 h-4" /> Volver al Inicio
                 </button>
               </div>
             </form>
@@ -800,7 +800,7 @@ function LoginForm() {
               )}
 
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">6-digit code</Label>
+                <Label className="text-sm font-medium text-white/90">Código de 6 dígitos</Label>
                 <Input
                   type="text"
                   placeholder="123456"
@@ -811,12 +811,12 @@ function LoginForm() {
                   className="h-12 text-center text-xl tracking-widest font-bold bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg"
                 />
                 <p className="text-xs text-center text-neutral-400 mt-1">
-                  ⏰ Code expires in 15 minutes
+                  El código expira en 6 minutos
                 </p>
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">New Password</Label>
+                <Label className="text-sm font-medium text-white/90">Nueva Contraseña</Label>
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
@@ -833,7 +833,7 @@ function LoginForm() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">Confirm Password</Label>
+                <Label className="text-sm font-medium text-white/90">Confirmar Contraseña</Label>
                 <Input
                   type="password"
                   placeholder="Confirm new password"
@@ -851,12 +851,12 @@ function LoginForm() {
               <div className="flex justify-between items-center mt-2">
                 <button type="button" onClick={volverAEmail} disabled={loading}
                   className="inline-flex items-center gap-2 text-sm font-medium text-neutral-400 hover:text-white hover:underline transition-all">
-                  <ArrowLeft className="w-4 h-4" /> Back
+                  <ArrowLeft className="w-4 h-4" /> Volver
                 </button>
                 <button type="button" onClick={handleSolicitarCodigo} disabled={loading}
                   className="text-sm font-medium hover:underline transition-all"
                   style={{ color: '#6C3FF5' }}>
-                  Resend code
+                  Reenviar código
                 </button>
               </div>
             </form>

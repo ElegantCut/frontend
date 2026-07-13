@@ -6,10 +6,13 @@ import { barberService } from '../lib/barberService';
 import { getCloudinaryUrl } from '../lib/utils/imageHelper';
 import BarberPortfolioModal from './BarberPortfolioModal';
 import { TravelCard } from '../components/ui/card-7';
+import { useAuth } from '../auth/UseAuth';
 
 function Barberos() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeFilter, setActiveFilter] = useState('all');
+  console.log("detectando usuario en barberos", user);
   const [barbers, setBarbers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,7 +33,7 @@ function Barberos() {
         const [data] = await Promise.all([
           barberService.getAllBarbers()
         ]);
-        
+
         if (data) {
           const transformedBarbers = data.map((realBarber) => {
             // Buscamos si el barbero tiene un portafolio registrado en la tabla portabarbero
@@ -124,15 +127,16 @@ function Barberos() {
       </div>
       <div className="barber-image">
         {barber.image && !barber.image.includes('default.png') ? (
-          <img
-            src={getCloudinaryUrl(barber.image)}
-            alt={`${barber.name} - ${barber.title}`}
-            className="w-full h-full object-cover"
-            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-          />
+            <img
+              src={getCloudinaryUrl(barber.image)}
+              alt={`${barber.name} - ${barber.title}`}
+              className={`w-full h-full object-cover transition-all duration-500`}
+              style={!user ? { filter: 'blur(16px)', transform: 'scale(1.1)' } : { filter: 'none', transform: 'scale(1)' }}
+              onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+            />
         ) : null}
         <div className="barber-image-fallback" style={{ display: (!barber.image || barber.image.includes('default.png')) ? 'flex' : 'none' }}>
-            <i className="bi bi-person-fill"></i>
+          <i className="bi bi-person-fill"></i>
         </div>
         <div className="barber-overlay">
           <div className="specialties">
