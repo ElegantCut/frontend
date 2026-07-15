@@ -26,6 +26,8 @@ export const AuthProvider = ({ children }) => {
       if (result.user) {
         setIsAuthenticated(true);
         setUser(result.user);
+        // Guardamos el usuario en localStorage para compatibilidad con AuthClient
+        localStorage.setItem('user', JSON.stringify(result.user));
       }
     } catch (error) {
       // Si hay un error de red pero tenemos datos locales, podrías elegir no desloguear

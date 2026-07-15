@@ -247,13 +247,7 @@ function LoginForm() {
   {/*Acá cree la funcion de las alertas con el btón de google*/ }
 
   const handleGoogleLogin = () => {
-    const isGoogleAvailable = false;
-    if (isGoogleAvailable) {
-      mostrarMensaje('Login exitosamente con google', 'success');
-    } else {
-      mostrarMensaje('El botón no está disponible en este momento', 'error');
-    }
-
+    window.location.href = 'http://localhost:3001/api/auth/google';
   };
 
   const handleLogin = async (e) => {
