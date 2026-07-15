@@ -10,7 +10,8 @@
     --ios-text-secondary: #a1a1aa;
     --ios-separator: #27272a;
     --ios-blue: #3b82f6;
-    --ios-red: #bc2041;    /* Accent Rojo original del cliente */
+    --ios-red: #bc2041;
+    /* Accent Rojo original del cliente */
     --ios-red-light: rgba(188, 32, 65, 0.15);
     --ios-red-glow: rgba(188, 32, 65, 0.35);
     --ios-green: #10b981;
@@ -38,7 +39,7 @@ body {
     min-height: 100vh;
     background: var(--ios-bg);
     /* Subtle noise texture via radial gradient */
-    background-image: 
+    background-image:
         radial-gradient(ellipse at 20% 50%, rgba(188, 32, 65, 0.04) 0%, transparent 60%),
         radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
 }
@@ -49,6 +50,10 @@ body {
     flex-direction: column;
     margin-left: 260px;
     transition: margin-left 0.3s ease;
+}
+
+.admin-content.collapsed {
+    margin-left: 80px;
 }
 
 @media (max-width: 992px) {
@@ -80,6 +85,12 @@ body {
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--ios-separator);
     position: relative;
+
+    /* Reset styles polluted globally by Nav.css header tag */
+    background-color: transparent !important;
+    height: auto !important;
+    padding: 0 0 1rem 0 !important;
+    box-shadow: none !important;
 }
 
 .tab-header::after {
@@ -156,7 +167,8 @@ body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-width: 0; /* prevent text overflow */
+    min-width: 0;
+    /* prevent text overflow */
 }
 
 .ios-item-title {
@@ -250,11 +262,25 @@ body {
     transform: scale(1.1);
 }
 
-.ios-icon-btn.danger { color: #ff453a; }
-.ios-icon-btn.danger:hover { background-color: rgba(255, 69, 58, 0.1); }
-.ios-icon-btn.success { color: var(--ios-green); }
-.ios-icon-btn.success:hover { background-color: rgba(16, 185, 129, 0.1); }
-.ios-icon-btn.neutral { color: var(--ios-text-secondary); }
+.ios-icon-btn.danger {
+    color: #ff453a;
+}
+
+.ios-icon-btn.danger:hover {
+    background-color: rgba(255, 69, 58, 0.1);
+}
+
+.ios-icon-btn.success {
+    color: var(--ios-green);
+}
+
+.ios-icon-btn.success:hover {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.ios-icon-btn.neutral {
+    color: var(--ios-text-secondary);
+}
 
 /* ════════════════════════
    BADGES
@@ -269,13 +295,32 @@ body {
     white-space: nowrap;
 }
 
-.ios-badge.success { background-color: var(--ios-green-light); color: var(--ios-green); }
-.ios-badge.neutral { background-color: #27272a; color: var(--ios-text-secondary); }
-.ios-badge.danger { background-color: rgba(255, 69, 58, 0.15); color: #ff453a; }
+.ios-badge.success {
+    background-color: var(--ios-green-light);
+    color: var(--ios-green);
+}
+
+.ios-badge.neutral {
+    background-color: #27272a;
+    color: var(--ios-text-secondary);
+}
+
+.ios-badge.danger {
+    background-color: rgba(255, 69, 58, 0.15);
+    color: #ff453a;
+}
 
 /* ════════════════════════
    OVERLAY
    ════════════════════════ */
+/*Añadimos esto porque el panel se ve borroso unu*/
+@media (min-width: 993PX) {
+    .admin-overlay {
+        display: none !important;
+    }
+}
+
+
 .admin-overlay {
     position: fixed;
     top: 0;
@@ -703,7 +748,9 @@ body {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ════════════════════════
@@ -772,11 +819,23 @@ body {
    KEYFRAMES
    ════════════════════════ */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideUp {
-    from { transform: translateY(30px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }

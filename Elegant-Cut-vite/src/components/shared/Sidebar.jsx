@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink, useNavigate } from 'react-router-dom';
 import '../../styles/Sidebar.css';
 import { AuthClient } from '../../auth/authClient';
+// propiedad sidebar uwu nueva
 
-const Sidebar = ({ isOpen, closeSidebar }) => {
+
+const Sidebar = ({ isCollapsed, closeSidebar, toggleSidebar }) => {
   const navigate = useNavigate();
   const user = AuthClient.getUser() || {};
 
@@ -22,26 +24,39 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
     { id: 'administradores', icon: 'bi-shield-lock', label: 'Administradores', path: '/admin/administradores' },
     { id: 'servicios', icon: 'bi-grid', label: 'Servicios', path: '/admin/servicios' },
     { id: 'resenas', icon: 'bi-star', label: 'Reseñas', path: '/admin/resenas' },
+    { id: 'pqrs', icon: 'bi-envelope-paper', label: 'PQRS', path: '/admin/pqrs' },
     { id: 'configuracion', icon: 'bi-gear', label: 'Configuración', path: '/admin/configuracion' },
   ];
 
   return (
     <motion.div
-      className={`sidebar ${isOpen ? 'open' : ''}`}
-      animate={isOpen ? { x: 0 } : {}}
+      className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
     >
       <div className="sidebar-header">
-        <div className="d-flex justify-content-between align-items-center w-100">
-          <div className="logo-container">
+        <div className={`d-flex align-items-center w-100 ${isCollapsed ? 'justify-content-center' : 'justify-content-between'}`}>
+          <div className="logo-container" style={{ display: isCollapsed ? 'none' : 'flex' }}>
             <i className="bi bi-scissors text-rojo fs-2"></i>
-            <h3 className="ms-2 mb-0 text-negro">Elegant Cut</h3>
+            <h3 className="ms-2 mb-0 text-white">Elegant Cut</h3>
           </div>
+
+          {/* Botón para colapsar en escritorio (dentro de la barra) */}
+          <button
+            className="btn-desktop-toggle d-none d-md-flex align-items-center justify-content-center bg-transparent border-0 text-white p-0 m-0"
+            onClick={toggleSidebar}
+            style={{ cursor: 'pointer' }}
+          >
+            <i className={`bi ${isCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'} fs-3`}></i>
+          </button>
+
+          {/* Botón de cierre para móviles */}
           <button className="btn-close-sidebar d-md-none" onClick={closeSidebar}>
             <i className="bi bi-x-lg"></i>
           </button>
         </div>
-        <p className="text-muted small mt-2">Panel de Administración</p>
+        <p className="text-white-50 small mt-2 px-3" style={{ opacity: isCollapsed ? 0 : 1, transition: 'opacity 0.2s', width: isCollapsed ? 0 : 'auto', whiteSpace: 'nowrap' }}>
+          Panel de Administración
+        </p>
       </div>
 
       <div className="user-profile mb-4 px-3">
@@ -70,7 +85,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
               onClick={() => window.innerWidth < 768 && closeSidebar()}
             >
               <i className={`bi ${item.icon} me-3`}></i>
-              {item.label}
+              <span className='nav-label'>{item.label}</span>
             </NavLink>
           </motion.div>
         ))}
@@ -79,7 +94,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
       <div className="sidebar-footer mt-auto p-3">
         <button className="btn-ios-logout" onClick={handleLogout}>
           <i className="bi bi-box-arrow-right"></i>
-          Cerrar Sesión
+          <span className='logout-text'>Cerrar Sesión</span>
         </button>
       </div>
     </motion.div>

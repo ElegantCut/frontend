@@ -21,13 +21,18 @@ export const authService = {
         }
     },
 
-    // 2. Método para el Login (¡Aquí manejamos el Token mediante cookies!)
-    login: async (credentials) => {
+    // 2. Método para el Login aquí manejamos el Token mediante cookies uwu y añadimos la función que recuerde la sesión uwu usando hooks )
+    login: async (credentials, rememberMe) => {
         try {
-            const response = await api.post('/auth/login', credentials);
+            const response = await api.post('/auth/login', { ...credentials, rememberMe });
 
             if (response.data.user) {
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                if (rememberMe) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+
+                } else {
+                    sessionStorage.setItem('user', JSON.stringify(response.data.user));
+                }
             }
 
             return response.data;

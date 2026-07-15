@@ -4,132 +4,144 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
 
 const AdminsTab = () => {
-    const [admins, setAdmins] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [editingId, setEditingId] = useState(null);
-    const [formData, setFormData] = useState({
-        username: '',
-        password: '',
-        email: '',
-        prim_nombre: '',
-        seg_nombre: '',
-        apellido1: '',
-        apellido2: '',
-        telefono: ''
-    });
+  const [admins, setAdmins] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    email: '',
+    prim_nombre: '',
+    seg_nombre: '',
+    apellido1: '',
+    apellido2: '',
+    telefono: ''
+  });
 
-    useEffect(() => {
+  useEffect(() => {
+    loadAdmins();
+  }, []);
+
+  const loadAdmins = async () => {
+    try {
+      const response = await api.get('/admin/administrators');
+      const data = response.data;
+
+      if (data.success && data.data) {
+        setAdmins(data.data);
+      } else {
+        setError('No se pudieron cargar los administradores');
+      }
+    } catch (err) {
+      console.error('Error loading admins:', err);
+      setError('Error de conexión');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const url = editingId
+        ? `/admin/administrators/${editingId}`
+        : '/admin/administrators';
+
+      const method = editingId ? 'patch' : 'post';
+
+      // Si estamos editando y no hay contraseña, la quitamos del objeto para no sobreescribirla
+      const payload = { ...formData };
+      if (editingId && !payload.password) {
+        delete payload.password;
+      }
+
+      // Mapeamos password a password_hash si el backend lo requiere
+      if (payload.password) {
+        payload.password_hash = payload.password;
+        delete payload.password;
+      }
+
+      const response = await api[method](url, payload);
+      const data = response.data;
+
+      if (data.success || data.id_usuario) { // NestJS a veces devuelve el objeto creado directamente
         loadAdmins();
-    }, []);
+        setShowModal(false);
+        resetForm();
+      } else {
+        alert(data.error || 'Error al guardar');
+      }
+    } catch (error) {
+      console.error('Error saving admin:', error);
+      const msg = error.response?.data?.message;
 
-    const loadAdmins = async () => {
-        try {
-            const response = await api.get('/admin/administrators');
-            const data = response.data;
 
-            if (data.success && data.data) {
-                setAdmins(data.data);
-            } else {
-                setError('No se pudieron cargar los administradores');
-            }
-        } catch (err) {
-            console.error('Error loading admins:', err);
-            setError('Error de conexión');
-        } finally {
-            setLoading(false);
-        }
-    };
+      if (Array.isArray(msg)) {
+        alert(msg.join('\n'));
+      } else if (typeof msg === 'object') {
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const url = editingId
-                ? `/admin/administrators/${editingId}`
-                : '/admin/administrators';
+        alert(JSON.stringify(msg, null, 2));
+      } else {
 
-            const method = editingId ? 'patch' : 'post';
-            
-            // Si estamos editando y no hay contraseña, la quitamos del objeto para no sobreescribirla
-            const payload = { ...formData };
-            if (editingId && !payload.password) {
-                delete payload.password;
-            }
+        alert(msg || 'Error de conexión');
+      }
+    }
 
-            // Mapeamos password a password_hash si el backend lo requiere
-            if (payload.password) {
-                payload.password_hash = payload.password;
-                delete payload.password;
-            }
+  };
 
-            const response = await api[method](url, payload);
-            const data = response.data;
+  const handleToggleStatus = async (id, currentStatus) => {
+    const action = currentStatus ? 'desactivar' : 'activar';
+    if (!window.confirm(`¿Seguro que deseas ${action} este administrador?`)) return;
 
-            if (data.success || data.id_usuario) { // NestJS a veces devuelve el objeto creado directamente
-                loadAdmins();
-                setShowModal(false);
-                resetForm();
-            } else {
-                alert(data.error || 'Error al guardar');
-            }
-        } catch (error) {
-            console.error('Error saving admin:', error);
-            alert(error.response?.data?.message || 'Error de conexión');
-        }
-    };
+    try {
+      const response = await api.put(`/admin/administrators/${id}/toggle`);
+      const data = response.data;
 
-    const handleToggleStatus = async (id, currentStatus) => {
-        const action = currentStatus ? 'desactivar' : 'activar';
-        if (!window.confirm(`¿Seguro que deseas ${action} este administrador?`)) return;
+      // data es el objeto usuario actualizado
+      if (data) {
+        loadAdmins();
+      }
+    } catch (error) {
+      console.error('Error toggling admin:', error);
+      alert('Error al cambiar el estado');
+    }
+  };
 
-        try {
-            const response = await api.put(`/admin/administrators/${id}/toggle`);
-            const data = response.data;
+  const handleEdit = (admin) => {
+    setEditingId(admin.id_usuario);
+    setFormData({
+      username: admin.username,
+      password: '',
+      email: admin.email,
+      prim_nombre: admin.prim_nombre,
+      seg_nombre: admin.seg_nombre || '',
+      apellido1: admin.apellido1,
+      apellido2: admin.apellido2 || '',
+      telefono: admin.telefono || ''
+    });
+    setShowModal(true);
+  };
 
-            // data es el objeto usuario actualizado
-            if (data) {
-                loadAdmins();
-            }
-        } catch (error) {
-            console.error('Error toggling admin:', error);
-            alert('Error al cambiar el estado');
-        }
-    };
+  const resetForm = () => {
+    setEditingId(null);
+    setFormData({
+      username: '',
+      password: '',
+      email: '',
+      prim_nombre: '',
+      seg_nombre: '',
+      apellido1: '',
+      apellido2: '',
+      telefono: ''
+    });
+  };
 
-    const handleEdit = (admin) => {
-        setEditingId(admin.id_usuario);
-        setFormData({
-            username: admin.username,
-            password: '', 
-            email: admin.email,
-            prim_nombre: admin.prim_nombre,
-            seg_nombre: admin.seg_nombre || '',
-            apellido1: admin.apellido1,
-            apellido2: admin.apellido2 || '',
-            telefono: admin.telefono || ''
-        });
-        setShowModal(true);
-    };
+  if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
+  if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
-    const resetForm = () => {
-        setEditingId(null);
-        setFormData({
-            username: '',
-            password: '',
-            email: '',
-            prim_nombre: '',
-            seg_nombre: '',
-            apellido1: '',
-            apellido2: '',
-            telefono: ''
-        });
-    };
-
-    if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
-    if (error) return <div className="alert alert-warning m-3">{error}</div>;
-
-    return (
+  return (
     <div className="admins-container">
       <header className="tab-header">
         <h2>Administradores</h2>
@@ -151,8 +163,8 @@ const AdminsTab = () => {
               exit={{ opacity: 0, scale: 0.95, y: 30 }}
             >
               <div className="p-4 border-bottom d-flex justify-content-between align-items-center sticky-top" style={{ backgroundColor: 'var(--ios-card)' }}>
-                 <h3 className="ios-item-title fs-5 m-0">{editingId ? 'Editar Administrador' : 'Nuevo Administrador'}</h3>
-                 <button className="btn-close" style={{ filter: 'invert(1) grayscale(100%) brightness(200%)' }} onClick={() => setShowModal(false)}></button>
+                <h3 className="ios-item-title fs-5 m-0">{editingId ? 'Editar Administrador' : 'Nuevo Administrador'}</h3>
+                <button className="btn-close" style={{ filter: 'invert(1) grayscale(100%) brightness(200%)' }} onClick={() => setShowModal(false)}></button>
               </div>
 
               <form onSubmit={handleSubmit} className="p-4" style={{ maxHeight: '75vh', overflowY: 'auto', backgroundColor: 'var(--ios-card)' }}>
@@ -183,7 +195,7 @@ const AdminsTab = () => {
                       onChange={e => setFormData({ ...formData, prim_nombre: e.target.value })}
                     />
                   </div>
-                   <div className="col-md-6">
+                  <div className="col-md-6">
                     <label className="ios-label">Apellido</label>
                     <input type="text" className="ios-input" required
                       placeholder="Apellido..."
@@ -193,18 +205,18 @@ const AdminsTab = () => {
                   </div>
 
                   <div className="col-12">
-                     <label className="ios-label">Correo Electrónico</label>
-                     <input type="email" className="ios-input" required
-                        placeholder="email@ejemplo.com"
-                        value={formData.email}
-                        onChange={e => setFormData({ ...formData, email: e.target.value })}
-                     />
+                    <label className="ios-label">Correo Electrónico</label>
+                    <input type="email" className="ios-input" required
+                      placeholder="email@ejemplo.com"
+                      value={formData.email}
+                      onChange={e => setFormData({ ...formData, email: e.target.value })}
+                    />
                   </div>
                 </div>
 
                 <div className="mt-5 d-flex gap-2 justify-content-end">
-                   <button type="button" className="btn-ios-secondary px-4 py-2" onClick={() => setShowModal(false)}>Cancelar</button>
-                   <button type="submit" className="btn-ios px-4 py-2">Guardar</button>
+                  <button type="button" className="btn-ios-secondary px-4 py-2" onClick={() => setShowModal(false)}>Cancelar</button>
+                  <button type="submit" className="btn-ios px-4 py-2">Guardar</button>
                 </div>
               </form>
             </motion.div>
@@ -226,16 +238,16 @@ const AdminsTab = () => {
                 <span className={`ios-badge ${admin.estado ? 'success' : 'neutral'}`}>
                   {admin.estado ? 'Activo' : 'Inactivo'}
                 </span>
-                
+
                 <button className="ios-icon-btn ms-2" onClick={() => handleEdit(admin)}>
                   <i className="bi bi-pencil"></i>
                 </button>
 
-                <button 
+                <button
                   className={`ios-icon-btn ${admin.estado ? 'danger' : 'success'}`}
                   onClick={() => handleToggleStatus(admin.id_usuario, admin.estado)}
                 >
-                   <i className={`bi ${admin.estado ? 'bi-person-x' : 'bi-person-check'}`}></i>
+                  <i className={`bi ${admin.estado ? 'bi-person-x' : 'bi-person-check'}`}></i>
                 </button>
               </div>
             </AnimatedItem>
@@ -243,7 +255,7 @@ const AdminsTab = () => {
         </AnimatedContainer>
       </div>
     </div>
-    );
+  );
 };
 export default AdminsTab;
 

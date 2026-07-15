@@ -130,6 +130,8 @@ function LoginForm() {
   const [forgotPasswordData, setForgotPasswordData] = useState({
     email: '', codigo: '', newPassword: '', confirmarContrasena: '',
   });
+  {/*función de recordar contraseña dejamos false por buena práctica uwu */ }
+  const [rememberMe, setRememberMe] = useState(false);
 
   // ── UI State ────────────────────────────────────────────────────────────────
   const [loading, setLoading] = useState(false);
@@ -242,12 +244,19 @@ function LoginForm() {
   const mostrarMensaje = (text, type) => setMessage({ text, type });
 
   // ── Handlers ────────────────────────────────────────────────────────────────
+  {/*Acá cree la funcion de las alertas con el btón de google*/ }
+
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:3001/api/auth/google';
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     mostrarMensaje('', '');
     try {
-      const data = await login({ username: loginData.usuario, contrasena: loginData.contrasena });
+      {/*Esta función hace que que se guarde la llave uwu y que me recuerde mis huevonadas jaja */ }
+      const data = await login({ username: loginData.usuario, contrasena: loginData.contrasena }, rememberMe);
       mostrarMensaje('¡Login exitoso! Redirigiendo...', 'success');
       setTimeout(() => {
         const role = data.user?.role;
@@ -444,7 +453,7 @@ function LoginForm() {
                 width: '240px',
                 height: '200px',
                 zIndex: 3,
-                backgroundColor: '#BC2041', /* Crimson Red */
+                backgroundColor: '#BC2041',
                 borderRadius: '120px 120px 0 0',
                 transform: isPasswordVisible ? 'skewX(0deg)' : `skewX(${orangePos.bodySkew || 0}deg)`,
                 transformOrigin: 'bottom center',
@@ -539,13 +548,13 @@ function LoginForm() {
           {/* Header */}
           <div className="text-center mb-10">
             <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">
-              {activeView === 'login' && 'Welcome back!'}
-              {activeView === 'register' && 'Create account'}
-              {activeView === 'forgot-password' && 'Reset password'}
+              {activeView === 'login' && 'Bienvenido de nuevo'}
+              {activeView === 'register' && 'Crear cuenta'}
+              {activeView === 'forgot-password' && 'Cambia tu contraseña'}
               {activeView === 'verification' && 'Check your email'}
             </h1>
             <p className="text-sm" style={{ color: 'var(--color-muted-foreground, #a1a1aa)' }}>
-              {activeView === 'login' && 'Please enter your details'}
+              {activeView === 'login' && ''}
               {activeView === 'register' && 'Fill in your information to get started'}
               {activeView === 'forgot-password' && "We'll send a verification code to your email"}
               {activeView === 'verification' && `We sent a code to ${emailSolicitado}`}
@@ -554,13 +563,12 @@ function LoginForm() {
 
           {/* ── Message Banner ── */}
           {message.text && (
-            <div className={`p-4 text-sm rounded-lg mb-5 border ${
-              message.type === 'error'
-                ? 'text-[#842029] bg-[#f8d7da] border-[#f5c2c7]'
-                : message.type === 'success'
-                  ? 'text-[#0f5132] bg-[#d1e7dd] border-[#badbcc]'
-                  : 'text-[#055160] bg-[#cff4fc] border-[#b6effb]'
-            }`}
+            <div className={`p-4 text-sm rounded-lg mb-5 border ${message.type === 'error'
+              ? 'text-[#842029] bg-[#f8d7da] border-[#f5c2c7]'
+              : message.type === 'success'
+                ? 'text-[#0f5132] bg-[#d1e7dd] border-[#badbcc]'
+                : 'text-[#055160] bg-[#cff4fc] border-[#b6effb]'
+              }`}
             >
               {message.text}
             </div>
@@ -573,12 +581,12 @@ function LoginForm() {
             <form onSubmit={handleLogin} className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="login-usuario" className="text-sm font-medium text-white/90">
-                  Email / Username
+                  Nombre de usuario
                 </Label>
                 <Input
                   id="login-usuario"
                   type="text"
-                  placeholder="Enter your username or email"
+                  placeholder="Ingresa tu nombre de usuario"
                   value={loginData.usuario}
                   autoComplete="off"
                   onChange={(e) => setLoginData({ ...loginData, usuario: e.target.value })}
@@ -592,7 +600,7 @@ function LoginForm() {
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="login-contrasena" className="text-sm font-medium text-white/90">
-                  Password
+                  Contraseña
                 </Label>
                 <div className="relative">
                   <Input
@@ -617,9 +625,11 @@ function LoginForm() {
 
               <div className="flex items-center justify-between mt-1">
                 <div className="flex items-center gap-3">
-                  <Checkbox id="remember" className="border-neutral-500 w-5 h-5 rounded data-[state=checked]:bg-white data-[state=checked]:text-black" />
+                  <Checkbox id="remember" className="border-neutral-500 w-5 h-5 rounded data-[state=checked]:bg-white data-[state=checked]:text-black"
+                    checked={rememberMe}
+                    onCheckedChange={setRememberMe} />
                   <Label htmlFor="remember" className="text-sm font-normal cursor-pointer text-white/80 select-none">
-                    Remember for 30 days
+                    Recuerdame por 30 días
                   </Label>
                 </div>
                 <button
@@ -627,31 +637,36 @@ function LoginForm() {
                   onClick={showForgotPasswordForm}
                   className="text-sm font-medium text-white/90 hover:text-white hover:underline transition-all"
                 >
-                  Forgot password?
+                  Olvidate tú contraseña?
                 </button>
               </div>
 
               <div className="flex flex-col gap-3 mt-2">
                 <Button type="submit" className="w-full h-12 text-base font-medium bg-white text-black hover:bg-neutral-200 rounded-lg transition-all" size="lg" disabled={loading}>
-                  {loading ? 'Signing in...' : 'Log in'}
+                  {loading ? 'Signing in...' : 'Iniciar sesión'}
                 </Button>
 
-                <Button
-                  variant="outline"
-                  className="w-full h-12 bg-transparent border-neutral-800 text-white hover:bg-neutral-900 rounded-lg transition-all"
-                  type="button"
-                  disabled={loading}
-                  onClick={() => window.location.href = 'http://localhost:3001/api/auth/google'}
-                >
-                  <Mail className="mr-2 w-5 h-5 text-neutral-400" />
-                  Log in with Google
-                </Button>
+                {/*Acá puse el botón de google y el onclick hace las funciones que programé de las alertas uwu :3*/}
+
+                <button onClick={handleGoogleLogin}
+                  type='button' className='flex items-center justify-center gap-3 w-full h-12 bg-white  text-black font-medium hover:bg-gray-300 transition-colors cursor-pointer rounded-full'>
+
+
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                  </svg>
+
+                  <span> Continuar con google</span>
+                </button>
               </div>
 
               <div className="text-center text-sm mt-2 text-neutral-400">
-                Don't have an account?{' '}
+                No tienes una cuenta?{' '}
                 <button type="button" onClick={switchToRegister} className="font-medium text-white hover:underline transition-all ml-1">
-                  Sign Up
+                  Registrate
                 </button>
               </div>
             </form>
@@ -664,8 +679,8 @@ function LoginForm() {
             <form onSubmit={handleRegister} className="flex flex-col gap-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <Label className="text-sm font-medium text-white/90">Username</Label>
-                  <Input placeholder="Username" value={registerData.usuario}
+                  <Label className="text-sm font-medium text-white/90">Nombre de usuario</Label>
+                  <Input placeholder="Nombre de usuario " value={registerData.usuario}
                     onChange={(e) => setRegisterData({ ...registerData, usuario: e.target.value })}
                     required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
                     onFocus={() => setIsTyping(true)} onBlur={() => setIsTyping(false)}
@@ -681,37 +696,37 @@ function LoginForm() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <Label className="text-sm font-medium text-white/90">First Name *</Label>
-                  <Input placeholder="First name" value={registerData.prim_nombre}
+                  <Label className="text-sm font-medium text-white/90">Primer nombre </Label>
+                  <Input placeholder="Primer Nombre " value={registerData.prim_nombre}
                     onChange={(e) => setRegisterData({ ...registerData, prim_nombre: e.target.value })}
                     required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label className="text-sm font-medium text-white/90">Last Name *</Label>
-                  <Input placeholder="Last name" value={registerData.apellido1}
+                  <Label className="text-sm font-medium text-white/90">Segundo nombre </Label>
+                  <Input placeholder="Segundo Nombre" value={registerData.apellido1}
                     onChange={(e) => setRegisterData({ ...registerData, apellido1: e.target.value })}
                     required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">Phone</Label>
-                <Input type="tel" placeholder="Phone number" value={registerData.telefono}
+                <Label className="text-sm font-medium text-white/90">Teléfono</Label>
+                <Input type="tel" placeholder="Número de teléfono" value={registerData.telefono}
                   onChange={(e) => setRegisterData({ ...registerData, telefono: e.target.value })}
                   disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">Password</Label>
+                <Label className="text-sm font-medium text-white/90">Contraseña</Label>
                 <div className="relative">
-                    <Input
+                  <Input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={registerData.contrasena}
                     onChange={(e) => setRegisterData({ ...registerData, contrasena: e.target.value })}
                     required disabled={loading} className="h-12 pr-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
                   />
-                    <button
+                  <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors text-neutral-400 hover:text-white"
@@ -722,13 +737,13 @@ function LoginForm() {
               </div>
 
               <Button type="submit" className="w-full h-12 text-base font-medium bg-white text-black hover:bg-neutral-200 mt-2 rounded-lg transition-all" size="lg" disabled={loading}>
-                {loading ? 'Creating account...' : 'Create Account'}
+                {loading ? 'Creating account...' : 'Crear cuenta'}
               </Button>
 
               <div className="text-center text-sm mt-4 text-neutral-400">
-                Already have an account?{' '}
+                Ya tienes una cuenta?{' '}
                 <button type="button" onClick={switchToLogin} className="font-medium text-white hover:underline ml-1 transition-all">
-                  Sign In
+                  Iniciar sesión
                 </button>
               </div>
             </form>
@@ -741,9 +756,9 @@ function LoginForm() {
             <form onSubmit={handleSolicitarCodigo} className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <Label className="text-sm font-medium text-white/90">Email Address</Label>
-                  <Input
+                <Input
                   type="email"
-                  placeholder="Enter your registered email"
+                  placeholder="Ingresa tu correo para tú código"
                   value={forgotPasswordData.email}
                   onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, email: e.target.value })}
                   required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
@@ -761,7 +776,7 @@ function LoginForm() {
                   onClick={switchToLogin}
                   className="inline-flex items-center gap-2 text-sm font-medium text-neutral-400 hover:text-white hover:underline transition-all"
                 >
-                  <ArrowLeft className="w-4 h-4" /> Back to login
+                  <ArrowLeft className="w-4 h-4" /> Volver al Inicio
                 </button>
               </div>
             </form>
@@ -779,8 +794,8 @@ function LoginForm() {
               )}
 
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">6-digit code</Label>
-                  <Input
+                <Label className="text-sm font-medium text-white/90">Código de 6 dígitos</Label>
+                <Input
                   type="text"
                   placeholder="123456"
                   maxLength={6}
@@ -790,14 +805,14 @@ function LoginForm() {
                   className="h-12 text-center text-xl tracking-widest font-bold bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg"
                 />
                 <p className="text-xs text-center text-neutral-400 mt-1">
-                  ⏰ Code expires in 15 minutes
+                  El código expira en 6 minutos
                 </p>
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">New Password</Label>
+                <Label className="text-sm font-medium text-white/90">Nueva Contraseña</Label>
                 <div className="relative">
-                    <Input
+                  <Input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="New password"
                     value={forgotPasswordData.newPassword}
@@ -812,8 +827,8 @@ function LoginForm() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">Confirm Password</Label>
-                  <Input
+                <Label className="text-sm font-medium text-white/90">Confirmar Contraseña</Label>
+                <Input
                   type="password"
                   placeholder="Confirm new password"
                   value={forgotPasswordData.confirmarContrasena}
@@ -830,12 +845,12 @@ function LoginForm() {
               <div className="flex justify-between items-center mt-2">
                 <button type="button" onClick={volverAEmail} disabled={loading}
                   className="inline-flex items-center gap-2 text-sm font-medium text-neutral-400 hover:text-white hover:underline transition-all">
-                  <ArrowLeft className="w-4 h-4" /> Back
+                  <ArrowLeft className="w-4 h-4" /> Volver
                 </button>
                 <button type="button" onClick={handleSolicitarCodigo} disabled={loading}
                   className="text-sm font-medium hover:underline transition-all"
                   style={{ color: '#6C3FF5' }}>
-                  Resend code
+                  Reenviar código
                 </button>
               </div>
             </form>

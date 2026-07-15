@@ -43,7 +43,9 @@
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     padding: 1.5rem 0;
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+        transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    overflow: visible; /* Asegurar que el botón flotante no se corte */
 }
 
 /* ════════════════════════
@@ -53,6 +55,7 @@
     padding: 0 1.5rem 1.2rem;
     border-bottom: 1px solid var(--dark-border);
     margin-bottom: 1rem;
+    overflow: visible;
 }
 
 .logo-container {
@@ -125,7 +128,7 @@
     padding: 0.8rem 1rem;
     border: none;
     background: transparent;
-    color: var(--text-muted) !important;
+    color: #ffffff !important;
     border-radius: 12px;
     cursor: pointer;
     transition: all var(--sidebar-transition);
@@ -134,6 +137,10 @@
     font-size: 0.95rem;
     text-decoration: none;
     position: relative;
+}
+
+.sidebar .nav-label, .sidebar .logout-text {
+    color: #ffffff !important;
 }
 
 .nav-item:hover {
@@ -244,4 +251,64 @@
 
 .btn-ios-logout i {
     font-size: 1.2rem;
+}
+
+/* ════════════════════════
+   DESKTOP TOGGLE BUTTON
+   ════════════════════════ */
+.btn-desktop-toggle {
+    transition: all var(--sidebar-transition);
+}
+
+.btn-desktop-toggle:hover {
+    color: var(--Rojo) !important;
+    transform: scale(1.1);
+}
+
+/*Añado los estilos del colapso del sidebar del admin uwu*/
+.sidebar.collapsed {
+    width: 80px;
+    /* Esto evita que el botón flotante se corte si usamos overflow-x hidden */
+    overflow: visible !important; 
+}
+
+/* Nos aseguramos que el contenedor del menú oculte lo que sobra para que no rompa el diseño */
+.sidebar-nav {
+    overflow-x: hidden;
+}
+
+.sidebar.collapsed .logo-container h3,
+.sidebar.collapsed .sidebar-header p.text-muted,
+.sidebar.collapsed .user-profile .ms-2,
+.sidebar.collapsed .nav-label,
+.sidebar.collapsed .logout-text {
+    opacity: 0;
+    width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.sidebar.collapsed .btn-ios-logout {
+    padding: 10px;
+    justify-content: center;
+}
+
+.sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 0.8rem 0;
+}
+
+.sidebar.collapsed .nav-item i {
+    margin-right: 0 !important;
+    font-size: 1.3rem;
+}
+
+.logo-container h3,
+.nav-label,
+.user-profile .ms-2 {
+
+    transition: opacity 0.2s ease;
 }

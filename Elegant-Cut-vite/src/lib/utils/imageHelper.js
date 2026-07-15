@@ -1,8 +1,11 @@
-// Función para obtener URL de Cloudinary para fotos de perfil (con recorte facial)
 export const getCloudinaryUrl = (publicId) => {
     if (!publicId) return '';
-    if (publicId.startsWith('http') || publicId.startsWith('/')) return publicId;
-    return `https://res.cloudinary.com/dbuldg4dt/image/upload/f_auto,q_auto,c_fill,g_face,h_800,w_800/${publicId}`;
+    const cleanId = publicId.trim();
+    // Si ya es un enlace completo, lo limpiamos de cualquier desenfoque accidental en la BD
+    if (cleanId.startsWith('http') || cleanId.startsWith('/')) {
+        return cleanId.replace(/e_blur:\d+,?/g, '').replace(/blur/g, '');
+    }
+    return `https://res.cloudinary.com/dbuldg4dt/image/upload/f_auto,q_auto,c_fill,g_face,h_800,w_800/${cleanId}`;
 };
 
 // Función para banners (ajustada a formato panorámico)
