@@ -641,7 +641,7 @@ function LoginForm() {
                   className="w-full h-12 bg-transparent border-neutral-800 text-white hover:bg-neutral-900 rounded-lg transition-all"
                   type="button"
                   disabled={loading}
-                  onClick={() => mostrarMensaje('Google login no está configurado aún.', 'info')}
+                  onClick={() => window.location.href = 'http://localhost:3001/api/auth/google'}
                 >
                   <Mail className="mr-2 w-5 h-5 text-neutral-400" />
                   Log in with Google
