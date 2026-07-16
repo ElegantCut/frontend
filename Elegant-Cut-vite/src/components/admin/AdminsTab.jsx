@@ -7,6 +7,7 @@ const AdminsTab = () => {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
@@ -67,26 +68,27 @@ const AdminsTab = () => {
       const data = response.data;
 
       if (data.success || data.id_usuario) { // NestJS a veces devuelve el objeto creado directamente
+        setSuccessMessage(editingId ? 'Administrador actualizado con éxito' : 'Administrador creado con éxito');
+        setTimeout(() => setSuccessMessage(null), 3000);
         loadAdmins();
         setShowModal(false);
         resetForm();
       } else {
-        alert(data.error || 'Error al guardar');
+        setError(data.error || 'Error al guardar');
+        setTimeout(() => setError(null), 3000);
       }
     } catch (error) {
       console.error('Error saving admin:', error);
       const msg = error.response?.data?.message;
 
-
       if (Array.isArray(msg)) {
-        alert(msg.join('\n'));
+        setError(msg.join('\n'));
       } else if (typeof msg === 'object') {
-
-        alert(JSON.stringify(msg, null, 2));
+        setError(JSON.stringify(msg, null, 2));
       } else {
-
-        alert(msg || 'Error de conexión');
+        setError(msg || 'Error de conexión');
       }
+      setTimeout(() => setError(null), 3000);
     }
 
   };
@@ -139,7 +141,6 @@ const AdminsTab = () => {
   };
 
   if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
-  if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
   return (
     <div className="admins-container">
@@ -151,6 +152,9 @@ const AdminsTab = () => {
           </button>
         </div>
       </header>
+
+      {!showModal && error && <div className="alert alert-danger m-3">{error}</div>}
+      {!showModal && successMessage && <div className="alert alert-success m-3">{successMessage}</div>}
 
       <AnimatePresence>
         {showModal && (
@@ -166,6 +170,9 @@ const AdminsTab = () => {
                 <h3 className="ios-item-title fs-5 m-0">{editingId ? 'Editar Administrador' : 'Nuevo Administrador'}</h3>
                 <button className="btn-close" style={{ filter: 'invert(1) grayscale(100%) brightness(200%)' }} onClick={() => setShowModal(false)}></button>
               </div>
+
+              {error && <div className="alert alert-danger m-3">{error}</div>}
+              {successMessage && <div className="alert alert-success m-3">{successMessage}</div>}
 
               <form onSubmit={handleSubmit} className="p-4" style={{ maxHeight: '75vh', overflowY: 'auto', backgroundColor: 'var(--ios-card)' }}>
                 <div className="row g-4">

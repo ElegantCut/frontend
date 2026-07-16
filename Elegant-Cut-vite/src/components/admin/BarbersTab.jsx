@@ -7,6 +7,7 @@ const BarbersTab = () => {
   const [barbers, setBarbers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [newBarber, setNewBarber] = useState({
     username: '',
@@ -50,7 +51,20 @@ const BarbersTab = () => {
   };
 
   const handleFileChange = (e) => {
-    setNewBarber(prev => ({ ...prev, image: e.target.files[0] }));
+    const file = e.target.files[0];
+    if (file) {
+      // Validar que sea estrictamente menor a 2 MB
+      if (file.size >= 2 * 1024 * 1024) {
+        setError('La imagen de perfil debe pesar menos de 2 MB. Por favor, selecciona una más ligera.');
+        setTimeout(() => setError(null), 5000);
+        e.target.value = ''; // Limpiar el input
+        setNewBarber(prev => ({ ...prev, image: null }));
+        return;
+      }
+      setNewBarber(prev => ({ ...prev, image: file }));
+    } else {
+      setNewBarber(prev => ({ ...prev, image: null }));
+    }
   };
 
   const handleAddBarber = async (e) => {
@@ -72,7 +86,8 @@ const BarbersTab = () => {
 
       const data = response.data;
       if (data.success) {
-        alert('Barbero creado correctamente');
+        setSuccessMessage('Barbero creado correctamente');
+        setTimeout(() => setSuccessMessage(null), 3000);
         setShowModal(false);
         setNewBarber({
           username: '', password_hash: '', email: '',
@@ -81,11 +96,13 @@ const BarbersTab = () => {
         });
         loadBarbers();
       } else {
-        alert('Error: ' + data.message);
+        setError('Error: ' + data.message);
+        setTimeout(() => setError(null), 3000);
       }
     } catch (err) {
       console.error(err);
-      alert('Error al crear barbero');
+      setError('Error al crear barbero');
+      setTimeout(() => setError(null), 3000);
     }
   };
 
@@ -106,7 +123,6 @@ const BarbersTab = () => {
   };
 
   if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
-  if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
   return (
     <div className="barbers-container">
@@ -118,6 +134,9 @@ const BarbersTab = () => {
           </button>
         </div>
       </header>
+
+      {!showModal && error && <div className="alert alert-danger m-3">{error}</div>}
+      {!showModal && successMessage && <div className="alert alert-success m-3">{successMessage}</div>}
 
       <AnimatePresence>
         {showModal && (
@@ -133,6 +152,9 @@ const BarbersTab = () => {
                 <h3 className="ios-item-title fs-4">Nuevo Barbero</h3>
                 <button className="btn-close" onClick={() => setShowModal(false)}></button>
               </div>
+
+              {error && <div className="alert alert-danger m-3">{error}</div>}
+              {successMessage && <div className="alert alert-success m-3">{successMessage}</div>}
 
               <form onSubmit={handleAddBarber}>
                 <div className="row g-3">
@@ -177,6 +199,10 @@ const BarbersTab = () => {
                   <div className="col-12">
                     <label className="ios-item-subtitle mb-1 d-block">Contraseña</label>
                     <input type="password" className="ios-search-bar" name="password_hash" value={newBarber.password_hash} onChange={handleInputChange} required />
+                  </div>
+                  <div className="col-12">
+                    <label className="ios-item-subtitle mb-1 d-block">Foto de Perfil (Max 2 MB)</label>
+                    <input type="file" className="ios-search-bar p-2" name="image" onChange={handleFileChange} accept="image/*" />
                   </div>
                 </div>
 

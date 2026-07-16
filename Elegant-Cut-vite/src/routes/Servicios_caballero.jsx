@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react"; // Estos son cajistas de memoria
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/UseAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedPage from "../components/shared/AnimatedPage";
@@ -222,12 +222,12 @@ function Servicios_caballero() {
         <div className="seleccion-genero">
           <h2>Selecciona el tipo de servicios</h2>
           <div className="botones-genero">
-            <Link to="/Servicios_dama" className="btn-dama">
+            <NavLink to="/Servicios_dama" className="btn-dama">
               Damas
-            </Link>
-            <Link to="/Servicios_caballero" className="btn-caballero">
+            </NavLink>
+            <NavLink to="/Servicios_caballero" className="btn-caballero">
               Caballeros
-            </Link>
+            </NavLink>
           </div>
         </div>
 
