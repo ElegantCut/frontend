@@ -32,7 +32,7 @@ const AdminPanel = () => {
       <AnimatePresence>
         {!isCollapsed && (
           <motion.div 
-            className='admin-overlay'
+            className='sidebar-overlay'
             onClick={closeSidebar}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

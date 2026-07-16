@@ -24,7 +24,7 @@ export class AuthClient {
       }
     } catch (error) {
       console.log(' Error de conexión:', error);
-      return { success: false, error: 'No se pudo conectar al servidor' };
+      return { success: false, error: error.response?.data?.message || 'No se pudo conectar al servidor' };
     }
   }
 
@@ -74,7 +74,7 @@ export class AuthClient {
       }
     } catch (error) {
       console.log('🚨 Error de conexión:', error);
-      return { success: false, error: 'No se pudo conectar al servidor' };
+      return { success: false, error: error.response?.data?.message || 'No se pudo conectar al servidor' };
     }
   }
 

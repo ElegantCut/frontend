@@ -295,7 +295,8 @@ function LoginForm() {
       mostrarMensaje('¡Registro exitoso! Ya puedes iniciar sesión.', 'success');
       setTimeout(switchToLogin, 1500);
     } catch (error) {
-      mostrarMensaje('Error: ' + error, 'error');
+      const msg = typeof error === 'string' ? error : (error?.message || 'Error al registrarse');
+      mostrarMensaje(msg, 'error');
     } finally {
       setLoading(false);
     }
@@ -312,7 +313,8 @@ function LoginForm() {
       setEmailSolicitado(forgotPasswordData.email);
       setActiveView('verification');
     } catch (error) {
-      mostrarMensaje('Error: ' + (error.message || 'No se pudo enviar el código.'), 'error');
+      const msg = typeof error === 'string' ? error : (error?.message || 'No se pudo enviar el código.');
+      mostrarMensaje(msg, 'error');
     } finally {
       setLoading(false);
     }

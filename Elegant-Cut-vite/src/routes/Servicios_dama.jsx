@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthClient } from '../auth/authClient';
 import { useAuth } from '../auth/UseAuth';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -263,8 +263,8 @@ function Servicios_dama() {
                 <div className="seleccion-genero">
                     <h2>Selecciona el tipo de servicios</h2>
                     <div className="botones-genero">
-                        <Link to="/Servicios_dama" className="btn-dama">Damas</Link>
-                        <Link to="/Servicios_caballero" className="btn-caballero">Caballeros</Link>
+                        <NavLink to="/Servicios_dama" className="btn-dama">Damas</NavLink>
+                        <NavLink to="/Servicios_caballero" className="btn-caballero">Caballeros</NavLink>
                     </div>
                 </div>
 

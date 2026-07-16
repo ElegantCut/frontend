@@ -17,7 +17,8 @@ export const authService = {
             const response = await api.post('/auth/register', userData);
             return response.data;
         } catch (error) {
-            throw error.response?.data?.message || "Error al crear la cuenta";
+            const message = error.response?.data?.message;
+            throw (Array.isArray(message) ? message[0] : message) || "Error al crear la cuenta";
         }
     },
 
@@ -58,7 +59,7 @@ export const authService = {
             const response = await api.post('/auth/forgot-password', { email });
             return response.data;
         } catch (error) {
-            throw error.response?.data || { message: "Error al enviar el correo" };
+            throw error.response?.data?.message || "Error al enviar el correo";
         }
     },
 
@@ -68,7 +69,7 @@ export const authService = {
             const response = await api.put('/auth/reset-password', { email, codigo, newPassword });
             return response.data;
         } catch (error) {
-            throw error.response?.data || { message: "Código inválido o expirado" };
+            throw error.response?.data?.message || "Código inválido o expirado";
         }
     }
 };

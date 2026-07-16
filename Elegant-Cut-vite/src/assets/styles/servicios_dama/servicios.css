@@ -193,13 +193,27 @@ main {
   transition: all 0.3s ease;
 }
 
-.btn-dama:hover, .btn-caballero:hover {
-  color: var(--TextPrimary);
+.btn-dama:hover {
+  color: var(--AccentRed);
 }
 
-/* Efecto visual de estar activo simulado por la ruta (ajustar en JS si es necesario, pero así funciona con focus/active visualmente) */
-.btn-caballero[href="/Servicios_caballero"]:active,
-.btn-dama[href="/Servicios_dama"]:active {
+.btn-dama.active {
+  color: var(--AccentRed);
+  background: rgba(188, 32, 65, 0.1);
+}
+
+.btn-caballero:hover {
+  color: var(--AccentGold);
+}
+
+.btn-caballero.active {
+  color: var(--AccentGold);
+  background: rgba(201, 168, 76, 0.1);
+}
+
+/* Efecto visual al presionar (click) */
+.btn-caballero:active,
+.btn-dama:active {
   background: var(--DarkCard);
 }
 

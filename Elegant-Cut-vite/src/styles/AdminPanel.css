@@ -315,13 +315,13 @@ body {
    ════════════════════════ */
 /*Añadimos esto porque el panel se ve borroso unu*/
 @media (min-width: 993PX) {
-    .admin-overlay {
+    .sidebar-overlay {
         display: none !important;
     }
 }
 
 
-.admin-overlay {
+.admin-overlay, .sidebar-overlay {
     position: fixed;
     top: 0;
     left: 0;
