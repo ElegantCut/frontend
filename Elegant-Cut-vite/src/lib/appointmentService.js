@@ -26,6 +26,12 @@ export const appointmentService = {
         const response = await api.get('/appointments/horarios');
         return response.data;
     },
+    getAvailability: async (date, barberId, serviceDuration) => {
+        let url = `/appointments/availability?date=${date}&barberId=${barberId}`;
+        if (serviceDuration) url += `&serviceDuration=${serviceDuration}`;
+        const response = await api.get(url);
+        return response.data;
+    },
     reschedule: async (appointmentId, data) => {
         try {
             const response = await api.patch(`/appointments/${appointmentId}/reschedule`, data);

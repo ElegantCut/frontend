@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedContainer, AnimatedItem } from '../../components/shared/AnimatedList';
-import { Calendar, Clock, User, Phone, Mail, CheckCircle, XCircle, Edit } from 'lucide-react';
+import { Calendar, Clock, User, Phone, Mail, CheckCircle, XCircle, Edit, ShieldAlert } from 'lucide-react';
 import { appointmentService } from '../../lib/appointmentService';
 import api from '../../lib/axios';
 import { useAuth } from '../../auth/UseAuth.jsx';
 
 const BarberAppointments = () => {
+    const { barberId } = useParams();
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all'); // all, pending, completed, cancelled
+    const [hasPermission, setHasPermission] = useState(true);
 
     // Estados para Reprogramación (Aplazar)
     const { user, token } = useAuth();
@@ -21,8 +24,15 @@ const BarberAppointments = () => {
     const [loadingSlots, setLoadingSlots] = useState(false);
 
     useEffect(() => {
-        fetchAppointments();
-    }, []);
+        const loggedInId = user?.userId || user?.id;
+        if (barberId && Number(barberId) !== Number(loggedInId)) {
+            setHasPermission(false);
+            setLoading(false);
+        } else {
+            setHasPermission(true);
+            fetchAppointments();
+        }
+    }, [barberId, user]);
 
     // Cargar horarios cuando cambia la fecha en el modal
     useEffect(() => {
@@ -33,12 +43,13 @@ const BarberAppointments = () => {
 
     const fetchAppointments = async () => {
         try {
-            const barberId = user?.userId || user?.id;
+            const loggedInId = user?.userId || user?.id;
+            const barberIdToUse = barberId ? Number(barberId) : loggedInId;
 
-            if (!barberId) return;
+            if (!barberIdToUse) return;
 
             // Llamada a tu NUEVA ruta en NestJS
-            const rawData = await appointmentService.getAppointmentsByBarber(barberId);
+            const rawData = await appointmentService.getAppointmentsByBarber(barberIdToUse);
 
             // Garantizar que sea un arreglo (si Nest retorna { data: [...] } lo extraemos)
             const aptList = Array.isArray(rawData) ? rawData : (rawData.data || []);
@@ -89,8 +100,9 @@ const BarberAppointments = () => {
     const fetchAvailableSlots = async () => {
         setLoadingSlots(true);
         try {
-            const barberId = user?.userId || user?.id;
-            const response = await api.get(`/appointments/availability?date=${newDate}&barberId=${barberId}`);
+            const loggedInId = user?.userId || user?.id;
+            const barberIdToUse = barberId ? Number(barberId) : loggedInId;
+            const response = await api.get(`/appointments/availability?date=${newDate}&barberId=${barberIdToUse}`);
             setAvailableSlots(response.data);
         } catch (error) {
             console.error('Error fetching slots:', error);
@@ -173,6 +185,30 @@ const BarberAppointments = () => {
                     <span className="visually-hidden">Cargando...</span>
                 </div>
                 <p className="mt-2 text-white">Cargando citas...</p>
+            </div>
+        );
+    }
+
+    if (!hasPermission) {
+        return (
+            <div style={{ padding: '2rem' }}>
+                <header className="tab-header">
+                    <div>
+                        <h2>Seguridad de Acceso</h2>
+                        <p className="ios-item-subtitle" style={{ marginTop: '0.25rem' }}>
+                            Validación de permisos
+                        </p>
+                    </div>
+                </header>
+                <div className="alert alert-danger d-flex align-items-center gap-3 p-4 rounded-3" style={{ borderLeft: '5px solid #ff453a', background: 'rgba(255, 69, 58, 0.1)', marginTop: '2rem' }}>
+                    <ShieldAlert size={40} className="text-danger flex-shrink-0" />
+                    <div>
+                        <h4 className="alert-heading fw-bold mb-1 text-white">Acceso Denegado</h4>
+                        <p className="mb-0 text-white-50" style={{ fontSize: '1rem' }}>
+                            No tienes permisos para consultar las citas asignadas a otro barbero.
+                        </p>
+                    </div>
+                </div>
             </div>
         );
     }

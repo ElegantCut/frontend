@@ -48,21 +48,21 @@ const AnimatedRoutes = () => {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute>
               <AdminPanel />
             </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardTab />} />
-          <Route path="citas" element={<AppointmentsTab />} />
-          <Route path="clientes" element={<ClientsTab />} />
-          <Route path="barberos" element={<BarbersTab />} />
-          <Route path="administradores" element={<AdminsTab />} />
-          <Route path="servicios" element={<ServicesTab />} />
-          <Route path="resenas" element={<ReviewsTab />} />
-          <Route path="pqrs" element={<PqrsTab />} />
-          <Route path="configuracion" element={<SettingsTab />} />
+          <Route path="citas" element={<ProtectedRoute requiredRole="admin"><AppointmentsTab /></ProtectedRoute>} />
+          <Route path="clientes" element={<ProtectedRoute requiredRole="admin"><ClientsTab /></ProtectedRoute>} />
+          <Route path="barberos" element={<ProtectedRoute requiredRole="admin"><BarbersTab /></ProtectedRoute>} />
+          <Route path="administradores" element={<ProtectedRoute requiredRole="admin"><AdminsTab /></ProtectedRoute>} />
+          <Route path="servicios" element={<ProtectedRoute requiredRole="admin"><ServicesTab /></ProtectedRoute>} />
+          <Route path="resenas" element={<ProtectedRoute requiredRole="admin"><ReviewsTab /></ProtectedRoute>} />
+          <Route path="pqrs" element={<ProtectedRoute requiredRole="admin"><PqrsTab /></ProtectedRoute>} />
+          <Route path="configuracion" element={<ProtectedRoute requiredRole="admin"><SettingsTab /></ProtectedRoute>} />
         </Route>
 
         <Route
@@ -75,6 +75,7 @@ const AnimatedRoutes = () => {
         >
           <Route index element={<Navigate to="/barber/appointments" replace />} />
           <Route path="appointments" element={<BarberAppointments />} />
+          <Route path="appointments/:barberId" element={<BarberAppointments />} />
           <Route path="configuracion" element={<BarberSettings />} />
         </Route>
 
