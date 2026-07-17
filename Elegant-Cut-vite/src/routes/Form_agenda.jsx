@@ -116,6 +116,45 @@ function Form_agenda() {
   const [payMethod, setPayMethod] = useState('efectivo');
   const [contact, setContact] = useState({ name: '', phone: '', email: '', notes: '' });
   const [confirmed, setConfirmed] = useState(false);
+  const [bookingError, setBookingError] = useState(null);
+  const [occupiedSlots, setOccupiedSlots] = useState(new Set());
+
+  // Consultar disponibilidad cuando hay fecha + barbero (+ servicio para duración)
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      const barberId = selectedBarber?.id_usuario || selectedBarber?.id;
+      if (!selectedDate || !barberId) {
+        setOccupiedSlots(new Set());
+        return;
+      }
+      try {
+        // Obtener duración del servicio seleccionado (en minutos)
+        const svcDuration = selectedService?.duracion || selectedService?.duration || undefined;
+        const slots = await appointmentService.getAvailability(selectedDate, barberId, svcDuration);
+        const occupied = new Set();
+        slots.forEach(s => {
+          if (!s.isAvailable) occupied.add(s.time);
+        });
+        setOccupiedSlots(occupied);
+        // Si la hora seleccionada ya está ocupada, limpiarla
+        if (selectedTime) {
+          const matched = slots.find(s => {
+            let [hh, mm] = s.time.split(':').map(Number);
+            let ampm = hh >= 12 ? 'pm' : 'am';
+            let hh12 = hh % 12 || 12;
+            let str = `${hh12}:${mm.toString().padStart(2, '0')} ${ampm}`;
+            return str === selectedTime;
+          });
+          if (matched && !matched.isAvailable) {
+            setSelectedTime('');
+          }
+        }
+      } catch (err) {
+        console.error('Error cargando disponibilidad:', err);
+      }
+    };
+    fetchAvailability();
+  }, [selectedDate, selectedBarber, selectedService]);
 
   const weekDays = useMemo(() => buildWeekDays(weekBase), [weekBase]);
 
@@ -132,10 +171,23 @@ function Form_agenda() {
   }
 
   const handleConfirm = async () => {
-    if (!contact.name || !contact.phone) return alert('Por favor completa nombre y teléfono.');
+    if (!selectedDate || !selectedTime) {
+      setBookingError('Por favor selecciona una fecha y hora válidas en el paso 1.');
+      setTimeout(() => setBookingError(null), 5000);
+      return;
+    }
+    if (!contact.name || !contact.phone) {
+      setBookingError('Por favor completa tu nombre y teléfono de contacto.');
+      setTimeout(() => setBookingError(null), 5000);
+      return;
+    }
 
     const currentUser = AuthClient.getUser();
-    if (!currentUser) return alert('Debes iniciar sesión para agendar una cita.');
+    if (!currentUser) {
+      setBookingError('Debes iniciar sesión para agendar una cita.');
+      setTimeout(() => setBookingError(null), 5000);
+      return;
+    }
 
     // Mapear el tiempo seleccionado al ID de horario real
     const selectedHorarioObj = realHorarios.find(h => {
@@ -167,12 +219,25 @@ function Form_agenda() {
     try {
       await appointmentService.create(formData);
 
+      setBookingError(null);
       setConfirmed(true);
     } catch (error) {
-      alert("Hubo un error al agendar la cita. Por favor intenta de nuevo.");
+      const msg = error.response?.data?.message || 'Hubo un error al agendar la cita. Por favor intenta de nuevo.';
+      setBookingError(typeof msg === 'string' ? msg : Array.isArray(msg) ? msg.join(', ') : 'Error desconocido');
+      setTimeout(() => setBookingError(null), 6000);
       console.error(error);
     }
   }
+
+  const handleStep2Submit = () => {
+    if (!selectedTime) {
+      setBookingError('El servicio seleccionado se cruza con otra cita ya agendada para este barbero a la hora elegida. Por favor, regresa al paso 1 y selecciona otro horario.');
+      setTimeout(() => setBookingError(null), 8000);
+      return;
+    }
+    setBookingError(null);
+    goStep(3);
+  };
 
   function resetForm() {
     setStep(1); setDir(1); setSelectedDate(''); setSelectedTime('');
@@ -370,16 +435,33 @@ function Form_agenda() {
                             {period.charAt(0).toUpperCase() + period.slice(1)}
                           </div>
                           <div className="fa-slots-grid">
-                            {slots.map(slot => (
-                              <motion.button
-                                key={slot}
-                                className={`fa-slot ${selectedTime === slot ? 'selected' : ''}`}
-                                onClick={() => setSelectedTime(slot)}
-                                whileTap={{ scale: 0.93 }}
-                              >
-                                {slot}
-                              </motion.button>
-                            ))}
+                            {slots.map(slot => {
+                              // Convertir "9:00 am" -> "09:00" para comparar con occupiedSlots
+                              const parts = slot.match(/^(\d+):(\d+)\s*(am|pm)$/i);
+                              let isOccupied = false;
+                              if (parts) {
+                                let hh = parseInt(parts[1]);
+                                const mm = parts[2];
+                                const ampm = parts[3].toLowerCase();
+                                if (ampm === 'pm' && hh !== 12) hh += 12;
+                                if (ampm === 'am' && hh === 12) hh = 0;
+                                const key = `${hh.toString().padStart(2, '0')}:${mm}`;
+                                isOccupied = occupiedSlots.has(key);
+                              }
+                              return (
+                                <motion.button
+                                  key={slot}
+                                  className={`fa-slot ${selectedTime === slot ? 'selected' : ''} ${isOccupied ? 'disabled' : ''}`}
+                                  onClick={() => !isOccupied && setSelectedTime(slot)}
+                                  whileTap={!isOccupied ? { scale: 0.93 } : {}}
+                                  disabled={isOccupied}
+                                  style={isOccupied ? { opacity: 0.4, cursor: 'not-allowed', textDecoration: 'line-through' } : {}}
+                                  title={isOccupied ? 'Este horario ya está reservado' : ''}
+                                >
+                                  {slot}
+                                </motion.button>
+                              );
+                            })}
                           </div>
                         </div>
                       ))}
@@ -540,13 +622,19 @@ function Form_agenda() {
                       </>
                     )}
 
+                    {bookingError && (
+                      <div className="alert alert-danger" style={{ margin: '1rem 0', fontSize: '0.9rem' }}>
+                        {bookingError}
+                      </div>
+                    )}
+
                     <div className="fa-nav-btns">
                       <button className="fa-btn-back" onClick={() => goStep(1)}>
                         <ChevronLeft size={17} /> Atrás
                       </button>
                       <motion.button
                         className="fa-btn-next"
-                        onClick={() => goStep(3)}
+                        onClick={handleStep2Submit}
                         disabled={!step2Ok}
                         whileHover={step2Ok ? { scale: 1.03 } : {}}
                         whileTap={step2Ok ? { scale: 0.97 } : {}}
@@ -652,6 +740,12 @@ function Form_agenda() {
                         </motion.div>
                       ))}
                     </div>
+
+                    {bookingError && (
+                      <div className="alert alert-danger" style={{ margin: '0.75rem 0', fontSize: '0.9rem' }}>
+                        {bookingError}
+                      </div>
+                    )}
 
                     <div className="fa-nav-btns">
                       <button className="fa-btn-back" onClick={() => goStep(2)}>

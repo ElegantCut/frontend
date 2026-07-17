@@ -14,6 +14,8 @@
   pointer-events: none; /* allows clicking through empty areas */
 }
 
+
+
 /* ── The actual navbar pill ── */
 .header-nav {
   position: relative;
@@ -21,13 +23,15 @@
   width: 100%;
   max-width: 1280px;
   height: 4.5rem;
-  border-radius: 0;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
-  background-color: transparent;
-  border: 1px solid transparent;
+  background-color: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: auto;
 }

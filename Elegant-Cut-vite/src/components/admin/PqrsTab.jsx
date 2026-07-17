@@ -12,6 +12,7 @@ const PqrsTab = () => {
   const [selectedPqrs, setSelectedPqrs] = useState(null);
   const [respuestaAdmin, setRespuestaAdmin] = useState('');
   const [saving, setSaving] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
   useEffect(() => {
     loadPqrs();
@@ -63,7 +64,10 @@ const PqrsTab = () => {
       };
 
       await api.patch(`/pqrs/${selectedPqrs.id_pqrs}`, payload);
-      
+      setShowSuccessAlert(true);
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+      }, 4000);
       loadPqrs();
       handleCloseModal();
     } catch (error) {
@@ -90,17 +94,33 @@ const PqrsTab = () => {
         <h2>Gestión de PQRS</h2>
       </div>
 
+      {showSuccessAlert && (
+        <div 
+          className="alert alert-success d-flex align-items-center gap-2 mb-4 p-3 rounded-3" 
+          role="alert"
+          style={{ 
+            borderLeft: '5px solid #24b263', 
+            background: 'rgba(36, 178, 99, 0.15)', 
+            color: '#24b263',
+            borderColor: 'rgba(36, 178, 99, 0.3)'
+          }}
+        >
+          <i className="bi bi-check-circle-fill fs-5"></i>
+          <div>
+            <strong>¡PQRS respondida!</strong> La respuesta se ha guardado correctamente.
+          </div>
+        </div>
+      )}
+
       <AnimatePresence>
         {showModal && selectedPqrs && (
-          <motion.div 
-            className="modal-backdrop-ios"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div 
+            className="admin-overlay d-flex align-items-center justify-content-center p-3"
             onClick={handleCloseModal}
           >
             <motion.div 
-              className="modal-content-ios"
+              className="ios-card w-100 shadow-lg"
+              style={{ maxWidth: '600px', borderRadius: '24px', overflow: 'hidden' }}
               onClick={e => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.95, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -164,7 +184,7 @@ const PqrsTab = () => {
                 </form>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
 

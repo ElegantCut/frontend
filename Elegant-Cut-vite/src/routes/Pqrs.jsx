@@ -147,6 +147,7 @@ export default function Pqrs() {
   return (
     <AnimatedPage>
       <main className="pqrs-modern-layout" style={{ maxWidth: '100%', margin: 0, padding: '120px 20px 60px', background: '#060606', width: '100%' }}>
+        <div style={{ height: '60px' }} className="header-spacer" />
         <div className="pqrs-container">
           
           {/* Sidebar / Navegación */}
