@@ -46,7 +46,6 @@ const BarberSettings = () => {
                 // Traer datos mediante /barbers/:id que incluye portafolio y datos personales del barbero
                 const response = await api.get(`/barbers/${targetUserId}`);
                 const data = response.data;
-                
                 // Mapear datos personales
                 setProfileData({
                     prim_nombre: data.prim_nombre || '',
@@ -59,18 +58,22 @@ const BarberSettings = () => {
                 });
 
                 // Mapear datos del portafolio
-                if (data && data.portafolios && data.portafolios.length > 0) {
-                    const port = data.portafolios[0];
-                    let specs = port.especialidades || '';
-                    if (typeof specs === 'string' && specs.startsWith('[')) {
-                        try { specs = JSON.parse(specs).join(', '); } catch(e){}
+                if (data && data.portafolios) {
+                    // La base de datos puede devolver un objeto directo o un arreglo
+                    const port = Array.isArray(data.portafolios) ? data.portafolios[0] : data.portafolios;
+                    
+                    if (port) {
+                        let specs = port.especialidades || '';
+                        if (typeof specs === 'string' && specs.startsWith('[')) {
+                            try { specs = JSON.parse(specs).join(', '); } catch(e){}
+                        }
+                        setPortfolioData({
+                            biografia: port.biografia || '',
+                            experiencia: port.experiencia || '',
+                            especialidades: Array.isArray(specs) ? specs.join(', ') : specs,
+                            instagram: port.instagram || ''
+                        });
                     }
-                    setPortfolioData({
-                        biografia: port.biografia || '',
-                        experiencia: port.experiencia || '',
-                        especialidades: Array.isArray(specs) ? specs.join(', ') : specs,
-                        instagram: port.instagram || ''
-                    });
                 }
             } catch (err) {
                 console.error("Error al cargar datos del barbero:", err);
@@ -144,10 +147,11 @@ const BarberSettings = () => {
 
             const response = await api.post('/portabarbero', payload);
 
-            if (response.status === 200 || response.status === 201) {
+            const data = response.data;
+            if (response.status >= 200 && response.status < 300) {
                 setPortfolioMessage({ type: 'success', text: 'Portafolio actualizado exitosamente.' });
             } else {
-                setPortfolioMessage({ type: 'error', text: response.data?.message || 'Error al actualizar el portafolio.' });
+                setPortfolioMessage({ type: 'error', text: data?.message || 'Error al actualizar el portafolio.' });
             }
         } catch (error) {
             console.error("Error al actualizar portafolio:", error);
