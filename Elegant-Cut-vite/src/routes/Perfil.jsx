@@ -245,10 +245,17 @@ function Perfil() {
         }
     };
 
+    const parseUTCDateToLocal = (dateString) => {
+        if (!dateString) return null;
+        const str = typeof dateString === 'string' ? dateString : new Date(dateString).toISOString();
+        const [year, month, day] = str.split('T')[0].split('-').map(Number);
+        return new Date(year, month - 1, day);
+    };
+
     const formatDate = (dateString) => {
         if (!dateString) return 'No disponible';
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return 'Fecha inválida';
+        const date = parseUTCDateToLocal(dateString);
+        if (!date || isNaN(date.getTime())) return 'Fecha inválida';
         return date.toLocaleDateString('es-ES', {
             day: '2-digit',
             month: 'long',
@@ -281,15 +288,15 @@ function Perfil() {
     today.setHours(0, 0, 0, 0); // Inicio del día de hoy
 
     const upcomingCitas = appointments.filter(c => {
-        const citaDate = new Date(c.fecha);
+        const citaDate = parseUTCDateToLocal(c.fecha);
         // Si la cita es hoy o en el futuro, y no está cancelada (3) ni completada (2)
-        return citaDate >= today && c.id_estado_cita !== 3 && c.id_estado_cita !== 2;
+        return citaDate && citaDate >= today && c.id_estado_cita !== 3 && c.id_estado_cita !== 2;
     });
 
     const historyCitas = appointments.filter(c => {
-        const citaDate = new Date(c.fecha);
+        const citaDate = parseUTCDateToLocal(c.fecha);
         // Si la cita es anterior a hoy, o está cancelada (3) o completada (2)
-        return citaDate < today || c.id_estado_cita === 3 || c.id_estado_cita === 2;
+        return citaDate && (citaDate < today || c.id_estado_cita === 3 || c.id_estado_cita === 2);
     });
 
     return (
@@ -457,8 +464,8 @@ function Perfil() {
                                                 {upcomingCitas.map(cita => (
                                                     <div key={cita.id_reservas} className="appointment-card">
                                                         <div className="apt-date">
-                                                            <span className="day">{new Date(cita.fecha).getDate()}</span>
-                                                            <span className="month">{new Date(cita.fecha).toLocaleString('es-ES', { month: 'short' }).toUpperCase()}</span>
+                                                            <span className="day">{parseUTCDateToLocal(cita.fecha)?.getDate()}</span>
+                                                            <span className="month">{parseUTCDateToLocal(cita.fecha)?.toLocaleString('es-ES', { month: 'short' }).toUpperCase()}</span>
                                                         </div>
                                                         <div className="apt-details">
                                                             <h3>{cita.detalle_cita_servicio?.[0]?.servicios?.nombre || 'Servicio'}</h3>

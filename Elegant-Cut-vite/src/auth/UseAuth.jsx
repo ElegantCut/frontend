@@ -30,10 +30,16 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(result.user));
       }
     } catch (error) {
-      // Si hay un error de red pero tenemos datos locales, podrías elegir no desloguear
-      // Pero para seguridad estricta con HttpOnly, lo ideal es limpiar si el token no sirve
-      if (error !== "No se pudo conectar al servidor") {
-          logoutLocal(); 
+      if (error === "No se pudo conectar al servidor") {
+        // Tolerancia a fallos: Si no hay red pero el usuario estaba logueado localmente, mantenemos la sesión
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+           setUser(JSON.parse(savedUser));
+           setIsAuthenticated(true);
+        }
+      } else {
+        // Si el error fue que el token expiró o es inválido, sí lo expulsamos
+        logoutLocal(); 
       }
     }
     setLoading(false);

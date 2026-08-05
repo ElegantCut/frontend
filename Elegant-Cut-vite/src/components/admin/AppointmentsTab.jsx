@@ -66,7 +66,7 @@ const AppointmentsTab = () => {
                       : (apt.cliente || 'Cliente')}
                   </span>
                   <span className="ios-item-subtitle">
-                    {apt.servicio} • {apt.fecha ? new Date(apt.fecha).toLocaleDateString() : 'Cita'} a las {apt.hora_inicio || '--:--'}
+                    {apt.servicio} • {apt.fecha ? new Date(apt.fecha).toLocaleDateString('es-CO', { timeZone: 'UTC' }) : 'Cita'} a las {apt.hora_inicio || '--:--'}
                   </span>
                 </div>
 
