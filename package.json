@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "dev": "npm --prefix Elegant-Cut-vite run dev",
+    "build": "npm --prefix Elegant-Cut-vite run build",
+    "preview": "npm --prefix Elegant-Cut-vite run preview",
+    "test": "npm --prefix Elegant-Cut-vite run test"
+  },
+  "devDependencies": {
+    "happy-dom": "^20.11.2"
+  }
+}
