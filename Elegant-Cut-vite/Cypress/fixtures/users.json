@@ -1,17 +1,32 @@
 {
   "admin": {
+    "id_usuario": 1,
+    "userId": 1,
+    "username": "admin",
     "email": "admin@example.com",
     "password": "Password123!",
-    "role": "admin"
+    "role": "admin",
+    "id_rol": 1,
+    "name": "Administrador"
   },
   "barber": {
+    "id_usuario": 2,
+    "userId": 2,
+    "username": "carlos",
     "email": "carlos.rivera@example.com",
     "password": "Password123!",
-    "role": "barber"
+    "role": "barber",
+    "id_rol": 3,
+    "name": "Carlos Rivera"
   },
   "client": {
+    "id_usuario": 3,
+    "userId": 3,
+    "username": "cliente",
     "email": "cliente@example.com",
     "password": "Password123!",
-    "role": "client"
+    "role": "client",
+    "id_rol": 2,
+    "name": "Cliente"
   }
 }
