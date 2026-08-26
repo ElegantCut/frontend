@@ -191,7 +191,11 @@ export class AuthClient {
 
   // Obtener datos del usuario
   static getUser() {
-    const userData = localStorage.getItem('user');
+    // Primero buscar en localStorage (rememberMe), luego en sessionStorage
+    let userData = localStorage.getItem('user');
+    if (!userData || userData === 'undefined' || userData === 'null') {
+      userData = sessionStorage.getItem('user');
+    }
     if (userData && userData !== 'undefined' && userData !== 'null') {
       try { return JSON.parse(userData); } catch (e) { }
     }

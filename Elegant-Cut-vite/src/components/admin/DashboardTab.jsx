@@ -2,6 +2,7 @@ import api from '../../lib/axios';
 import React, { useState, useEffect } from 'react';
 import { AnimatedContainer, AnimatedItem } from '../shared/AnimatedList';
 import { motion } from 'framer-motion';
+import { AuthClient } from '../../auth/authClient';
 
 const DashboardTab = () => {
   const [stats, setStats] = useState({
@@ -22,7 +23,7 @@ const DashboardTab = () => {
 
   const loadStats = async () => {
     try {
-      const response = await api.get('/dashboard/stats');
+      const response = await api.get(`/dashboard/stats?_t=${Date.now()}`);
       const data = response.data;
 
       if (data.success && data.data) {
@@ -41,7 +42,7 @@ const DashboardTab = () => {
   const handleDownloadPDF = async () => {
     setDownloadingPdf(true);
     try {
-      const response = await api.get('/dashboard/stats/pdf', {
+      const response = await api.get(`/dashboard/stats/pdf?_t=${Date.now()}`, {
         responseType: 'blob',
       });
 
@@ -75,6 +76,33 @@ const DashboardTab = () => {
       <div style={{ padding: '20px', textAlign: 'center' }}>
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
+
+  const user = AuthClient.getUser() || {};
+  const isAdmin = Number(user.id_rol) === 1 || user.role?.toLowerCase() === 'admin';
+
+  if (!isAdmin) {
+    return (
+      <div style={{ padding: '2rem' }}>
+        <header className="tab-header">
+          <div>
+            <h2>Reporte de Estadísticas</h2>
+            <p className="ios-item-subtitle" style={{ marginTop: '0.25rem' }}>
+              Panel de Control de Negocio
+            </p>
+          </div>
+        </header>
+        <div className="alert alert-danger d-flex align-items-center gap-3 p-4 rounded-3" style={{ borderLeft: '5px solid #ff453a', background: 'rgba(255, 69, 58, 0.1)', marginTop: '2rem' }}>
+          <i className="bi bi-shield-slash-fill text-danger fs-2 flex-shrink-0"></i>
+          <div>
+            <h4 className="alert-heading fw-bold mb-1 text-white">Acceso Denegado</h4>
+            <p className="mb-0 text-white-50" style={{ fontSize: '1rem' }}>
+              No tienes los permisos necesarios para acceder al reporte de estadísticas del negocio.
+            </p>
+          </div>
         </div>
       </div>
     );
