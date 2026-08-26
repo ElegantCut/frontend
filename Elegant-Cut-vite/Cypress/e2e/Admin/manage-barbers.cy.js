@@ -47,23 +47,17 @@ describe('Gestión de Barberos - Rol Admin', () => {
     // Iniciar sesión como administrador
     cy.loginAsAdmin();
     cy.visit('/admin/barberos');
-    cy.wait(800);
   });
 
   it('Debe cargar la vista y mostrar el listado de barberos', () => {
     cy.contains('Barberos').should('be.visible');
-    cy.wait(600);
     cy.contains('Carlos Rivera').should('be.visible');
-    cy.wait(600);
     cy.contains('María Rodríguez').should('be.visible');
-    cy.wait(800);
   });
 
   it('Debe abrir el modal de Nuevo Barbero', () => {
-    cy.contains('button', 'Nuevo Barbero').click();
-    cy.wait(600);
+    cy.contains('button', 'Nuevo Barbero').should('be.visible').click();
     cy.contains('h3', 'Nuevo Barbero').should('be.visible');
     cy.get('input[name="prim_nombre"]').should('be.visible');
-    cy.wait(800);
   });
 });
