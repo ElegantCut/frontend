@@ -105,10 +105,10 @@ export class AuthClient {
       console.log('🔐 Verificando código para:', email);
 
       // Usar el endpoint real del backend: /auth/reset-password (PUT)
-      const response = await api.put('/auth/reset-password', { 
-        email, 
-        codigo, 
-        newPassword: nuevaContrasena 
+      const response = await api.put('/auth/reset-password', {
+        email,
+        codigo,
+        newPassword: nuevaContrasena
       });
       const data = response.data;
 
@@ -186,14 +186,14 @@ export class AuthClient {
 
   // Obtener token (Ya no es posible con HttpOnly)
   static getToken() {
-    return null; 
+    return null;
   }
 
   // Obtener datos del usuario
   static getUser() {
     const userData = localStorage.getItem('user');
     if (userData && userData !== 'undefined' && userData !== 'null') {
-      try { return JSON.parse(userData); } catch(e) {}
+      try { return JSON.parse(userData); } catch (e) { }
     }
     return null;
   }
