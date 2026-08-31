@@ -127,13 +127,12 @@ function Barberos() {
       </div>
       <div className="barber-image">
         {barber.image && !barber.image.includes('default.png') ? (
-            <img
-              src={getCloudinaryUrl(barber.image)}
-              alt={`${barber.name} - ${barber.title}`}
-              className={`w-full h-full object-cover transition-all duration-500`}
-              style={!user ? { filter: 'blur(16px)', transform: 'scale(1.1)' } : { filter: 'none', transform: 'scale(1)' }}
-              onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-            />
+          <img
+            src={getCloudinaryUrl(barber.image)}
+            alt={`${barber.name} - ${barber.title}`}
+            className="w-full h-full object-cover transition-all duration-500"
+            onError={(e) => { e.target.style.display = 'none'; if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex'; }}
+          />
         ) : null}
         <div className="barber-image-fallback" style={{ display: (!barber.image || barber.image.includes('default.png')) ? 'flex' : 'none' }}>
           <i className="bi bi-person-fill"></i>

@@ -1,9 +1,12 @@
 export const getCloudinaryUrl = (publicId) => {
     if (!publicId) return '';
     const cleanId = publicId.trim();
-    // Si ya es un enlace completo, lo limpiamos de cualquier desenfoque accidental en la BD
-    if (cleanId.startsWith('http') || cleanId.startsWith('/')) {
-        return cleanId.replace(/e_blur:\d+,?/g, '').replace(/blur/g, '');
+    if (cleanId.startsWith('http://') || cleanId.startsWith('https://')) {
+        return cleanId
+            .replace(/e_blur(:\d+)?/g, '')
+            .replace(/blur/g, '')
+            .replace(/\/upload\/+,?\//g, '/upload/')
+            .replace(/\/image\/upload\/(f_auto[^/]+\/)?/, '/image/upload/f_auto,q_auto/');
     }
     return `https://res.cloudinary.com/dbuldg4dt/image/upload/f_auto,q_auto/${cleanId}`;
 };
