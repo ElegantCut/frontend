@@ -24,11 +24,15 @@ describe('Barbero - Agenda y Citas', () => {
     }).as('getAppointments');
 
     cy.loginAsBarber();
+    cy.wait(3500);
     cy.visit('/barber/appointments');
+    cy.wait(3500);
   });
 
   it('Debe cargar la vista del panel del barbero', () => {
     cy.url().should('include', '/barber');
     cy.get('body').should('be.visible');
+    cy.wait(3500);
   });
 });
+
