@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "dev": "npm --prefix Elegant-Cut-vite run dev",
+    "build": "npm --prefix Elegant-Cut-vite run build",
+    "preview": "npm --prefix Elegant-Cut-vite run preview",
+    "test": "npm --prefix Elegant-Cut-vite run test",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open"
+  },
+  "devDependencies": {
+    "cypress": "^15.21.0",
+    "happy-dom": "^20.11.2"
+  }
+}

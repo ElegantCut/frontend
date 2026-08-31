@@ -15,5 +15,10 @@ export default defineConfig({
     host: true, // Needed for Docker exposure
     port: 5173,
   },
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    setupFiles: './src/test/setup.js',
+  },
 })
 
