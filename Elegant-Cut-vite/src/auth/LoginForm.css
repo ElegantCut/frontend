@@ -1,0 +1,414 @@
+/* LoginForm.css - MINIMAL DARK AESTHETIC (SHADCN STYLE) */
+:root {
+    --bg: #09090b; /* Very dark background from the image */
+    --surface: rgba(255, 255, 255, 0.03);
+    --surface-hover: rgba(255, 255, 255, 0.08);
+    --text: #fafafa;
+    --text-muted: #a1a1aa;
+    --border: rgba(255, 255, 255, 0.1);
+    --focus-ring: rgba(167, 139, 250, 0.5); /* Violet focus from prompt */
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.login-form-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-left-pane {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    z-index: 10;
+    overflow-y: auto;
+}
+
+.login-right-pane {
+    display: none;
+}
+
+@media (min-width: 800px) {
+    .login-right-pane {
+        flex: 1;
+        display: block;
+        position: relative;
+        padding: 1rem;
+    }
+}
+
+.hero-image-box {
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.simple-container {
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Titles and Layout */
+.form-title {
+    font-size: 3rem;
+    font-weight: 400;
+    letter-spacing: -0.05em;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+}
+
+.form-description {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-group.half {
+    flex: 1;
+}
+
+/* Inputs */
+.input-icon-wrapper {
+    position: absolute;
+    right: 14px;
+    top: 38px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    transition: var(--transition);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    font-size: 0.95rem;
+    color: var(--text);
+    transition: var(--transition);
+    outline: none;
+    font-family: inherit;
+    backdrop-filter: blur(8px);
+}
+
+.form-input:focus {
+    border-color: rgba(167, 139, 250, 0.7);
+    background: rgba(167, 139, 250, 0.1);
+}
+
+.form-input::placeholder {
+    color: #52525b;
+}
+
+/* Botones */
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: #e4e4e7;
+}
+
+.submit-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Divider */
+.divider-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+.divider-line {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    position: absolute;
+}
+
+.divider-text {
+    background: var(--bg);
+    padding: 0 1rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Google Button */
+.google-btn {
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.google-btn:hover {
+    background: var(--surface-hover);
+}
+
+/* Links & Auth Footer */
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.auth-link {
+    background: none;
+    border: none;
+    color: rgba(167, 139, 250, 1);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0;
+    margin-left: 0.5rem;
+}
+
+.auth-link:hover {
+    text-decoration: underline;
+}
+
+.custom-checkbox-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.custom-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+}
+
+.custom-checkbox {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--text-muted);
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+}
+
+.custom-checkbox:checked {
+    background: var(--text);
+    border-color: var(--text);
+}
+
+.custom-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid var(--bg);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Verificación */
+.instruction-text {
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.verification-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.verification-subtitle strong {
+    color: var(--text);
+}
+
+.code-label {
+    display: block;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.code-input {
+    text-align: center;
+    font-size: 1.8rem;
+    letter-spacing: 12px;
+    font-weight: 800;
+    color: var(--text);
+    border: 2px solid var(--border);
+    background: var(--surface-2);
+    border-radius: 12px;
+    width: 100%;
+    padding: 15px;
+    outline: none;
+    transition: var(--transition);
+}
+
+.code-input:focus {
+    border-color: var(--rojo);
+    box-shadow: 0 0 0 4px var(--rojo-glow);
+}
+
+.code-hint {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--rojo);
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.verification-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.back-btn,
+.resend-btn {
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.back-btn {
+    color: var(--text-muted);
+}
+
+.back-btn:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.resend-btn {
+    color: var(--rojo);
+}
+
+.resend-btn:hover {
+    background: var(--rojo-glow);
+}
+
+.user-info-text {
+    color: var(--rojo);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .login-form-container {
+        padding: 15px;
+    }
+
+    .form-box {
+        padding: 30px 20px;
+        border-radius: 15px;
+    }
+
+    .form-title {
+        font-size: 1.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .form-group.half {
+        width: 100%;
+    }
+}

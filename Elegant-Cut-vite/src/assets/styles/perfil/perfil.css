@@ -1,0 +1,548 @@
+/* ============================================
+   ESTILOS PARA PÁGINA DE PERFIL
+   ============================================ */
+
+/* Contenedor principal */
+.perfil-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 40px 20px;
+}
+
+.perfil-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   LOADING SPINNER
+   ============================================ */
+
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #BC2041;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spinner p {
+    margin-top: 20px;
+    color: #666;
+    font-size: 16px;
+}
+
+/* ============================================
+   HEADER DEL PERFIL
+   ============================================ */
+
+.perfil-header {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.perfil-avatar {
+    position: relative;
+}
+
+.avatar-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #BC2041 0%, #d62952 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(188, 32, 65, 0.3);
+}
+
+.avatar-initials {
+    font-size: 48px;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+}
+
+.avatar-edit-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #BC2041;
+    color: #BC2041;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-edit-btn:hover {
+    background: #BC2041;
+    color: white;
+    transform: scale(1.1);
+}
+
+.perfil-header-info h1 {
+    margin: 0 0 8px 0;
+    font-size: 32px;
+    color: #333;
+    font-weight: 700;
+}
+
+.perfil-username {
+    color: #666;
+    font-size: 16px;
+    margin: 0 0 12px 0;
+}
+
+.perfil-role {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.role-admin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.role-barbero {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.role-cliente {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.perfil-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    overflow-x: auto;
+}
+
+.perfil-tabs .tab-btn {
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #666;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.perfil-tabs .tab-btn:hover {
+    background: rgba(188, 32, 65, 0.1);
+    color: #BC2041;
+}
+
+.perfil-tabs .tab-btn.active {
+    background: linear-gradient(135deg, #BC2041 0%, #d62952 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(188, 32, 65, 0.3);
+}
+
+.perfil-tabs .tab-btn i {
+    font-size: 16px;
+}
+
+/* ============================================
+   CONTENIDO
+   ============================================ */
+
+.perfil-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.perfil-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.perfil-section h2 {
+    margin: 0 0 25px 0;
+    font-size: 22px;
+    color: #333;
+    font-weight: 600;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.section-header h2 {
+    margin: 0;
+}
+
+/* ============================================
+   BOTONES DE EDICIÓN
+   ============================================ */
+
+.btn-edit,
+.btn-save,
+.btn-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #BC2041 0%, #d62952 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(188, 32, 65, 0.2);
+}
+
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(188, 32, 65, 0.3);
+}
+
+.edit-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
+    color: white;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-cancel {
+    background: white;
+    color: #666;
+    border: 2px solid #e1e1e1;
+}
+
+.btn-cancel:hover {
+    background: #f5f5f5;
+    border-color: #BC2041;
+    color: #BC2041;
+}
+
+/* ============================================
+   GRID DE INFORMACIÓN
+   ============================================ */
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-item label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.info-item p {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px solid transparent;
+}
+
+.edit-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e1e1;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: white;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.edit-input:focus {
+    outline: none;
+    border-color: #BC2041;
+    box-shadow: 0 0 0 3px rgba(188, 32, 65, 0.1);
+}
+
+/* ============================================
+   ESTADÍSTICAS
+   ============================================ */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-color: #BC2041;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #BC2041 0%, #d62952 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.stat-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 32px;
+    color: #333;
+    font-weight: 700;
+}
+
+.stat-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* ============================================
+   ACCIONES RÁPIDAS
+   ============================================ */
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.action-btn {
+    padding: 18px 24px;
+    background: white;
+    border: 2px solid #e1e1e1;
+    border-radius: 12px;
+    color: #333;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.action-btn i {
+    font-size: 28px;
+    color: #BC2041;
+}
+
+.action-btn:hover {
+    background: #f8f9fa;
+    border-color: #BC2041;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn.danger {
+    border-color: #dc3545;
+}
+
+.action-btn.danger i {
+    color: #dc3545;
+}
+
+.action-btn.danger:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.action-btn.danger:hover i {
+    color: white;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .perfil-container {
+        padding: 20px 10px;
+    }
+
+    .perfil-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+
+    .perfil-header-info h1 {
+        font-size: 24px;
+    }
+
+    .perfil-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 10px;
+    }
+
+    .perfil-tabs .tab-btn {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+
+    .perfil-section {
+        padding: 20px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .edit-actions {
+        width: 100%;
+    }
+
+    .btn-edit,
+    .btn-save,
+    .btn-cancel {
+        flex: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .avatar-circle {
+        width: 100px;
+        height: 100px;
+    }
+
+    .avatar-initials {
+        font-size: 40px;
+    }
+
+    .perfil-header-info h1 {
+        font-size: 20px;
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .stat-info h3 {
+        font-size: 24px;
+    }
+}

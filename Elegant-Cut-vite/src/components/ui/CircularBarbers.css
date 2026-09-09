@@ -1,0 +1,347 @@
+/* ================================================
+   CircularBarbers.css
+   UI/UX Pro Max Skill → Soft UI Evolution + Luxury Dark
+   Paleta: #1a1a1a / #c9a84c (Gold Accent) / #f1f1f7
+   Tipografía: Playfair Display (heading) + Inter (body)
+   ================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ── Contenedor principal ── */
+.cb-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* ── Grid 2 columnas (imagen | contenido) ── */
+.cb-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .cb-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+/* ── Panel de imágenes ── */
+.cb-image-panel {
+  position: relative;
+  width: 100%;
+  height: 22rem;
+  perspective: 1100px;
+}
+
+@media (min-width: 768px) {
+  .cb-image-panel {
+    height: 26rem;
+  }
+}
+
+/* ── Imágenes individuales ── */
+.cb-barber-img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1.25rem;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  /* transition se aplica en el style inline */
+}
+
+/* ── Indicadores de puntos ── */
+.cb-dots {
+  position: absolute;
+  bottom: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.cb-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  padding: 0;
+}
+
+.cb-dot.active {
+  background: #c9a84c;
+  transform: scale(1.35);
+}
+
+/* ── Panel de contenido ── */
+.cb-content-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding-top: 1rem;
+}
+
+/* ── Info del barbero ── */
+.cb-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Badge de experiencia ── */
+.cb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(201, 168, 76, 0.15);
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  color: #c9a84c;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  width: fit-content;
+  text-transform: uppercase;
+}
+
+/* ── Nombre ── */
+.cb-name {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: #f1f1f7;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+/* ── Título/Rol ── */
+.cb-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin: 0;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Estrellas (SVG inline) ── */
+.cb-stars {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.cb-rating-num {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #c9a84c;
+  font-weight: 600;
+  margin-left: 0.35rem;
+}
+
+/* ── Bio ── */
+.cb-bio {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.925rem;
+  color: #d1d5db;
+  line-height: 1.7;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* ── Specialties tags ── */
+.cb-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cb-specialty-tag {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e5e7eb;
+  padding: 0.2rem 0.65rem;
+  border-radius: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.cb-specialty-tag:hover {
+  background: rgba(201, 168, 76, 0.12);
+  border-color: rgba(201, 168, 76, 0.35);
+  color: #c9a84c;
+}
+
+/* ── Stats ── */
+.cb-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cb-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.cb-stat strong {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f1f1f7;
+  line-height: 1;
+}
+
+.cb-stat span {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.cb-stat-divider {
+  width: 1px;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Botones de acción ── */
+.cb-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cb-btn-primary {
+  background: #c9a84c;
+  color: #0a0a0a;
+  border: none;
+  padding: 0.65rem 1.4rem;
+  border-radius: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+  letter-spacing: 0.02em;
+}
+
+.cb-btn-primary:hover {
+  background: #e0bc5e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(201, 168, 76, 0.35);
+}
+
+.cb-btn-primary:active {
+  transform: translateY(0);
+}
+
+.cb-btn-secondary {
+  background: transparent;
+  color: #f1f1f7;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.65rem 1.4rem;
+  border-radius: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, transform 0.2s;
+}
+
+.cb-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.cb-btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* ── Flechas de navegación ── */
+.cb-arrows {
+  display: flex;
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.cb-arrow-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.cb-arrow-btn:hover {
+  transform: scale(1.1);
+}
+
+.cb-arrow-btn:active {
+  transform: scale(0.96);
+}
+
+/* ── Responsive mobile ── */
+@media (max-width: 767px) {
+  .cb-image-panel {
+    height: 18rem;
+  }
+
+  .cb-name {
+    font-size: 1.5rem;
+  }
+
+  .cb-actions {
+    flex-direction: column;
+  }
+
+  .cb-btn-primary,
+  .cb-btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .cb-arrows {
+    justify-content: center;
+  }
+}
+
+/* ── prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .cb-barber-img,
+  .cb-arrow-btn,
+  .cb-btn-primary,
+  .cb-btn-secondary,
+  .cb-dot {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,20 @@
+# ==============================================
+# DOCKERFILE - Frontend (React + Vite)
+# ==============================================
+FROM node:20
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 5173
+
+# 7. Comando que se ejecuta cuando el contenedor arranca
+#    "--" separa los argumentos de npm de los de vite
+#    "--host" hace que Vite escuche en TODAS las interfaces de red (0.0.0.0)
+#    Sin --host, Vite solo escucha en 127.0.0.1 (localhost) y NO se puede
+#    acceder desde fuera del contenedor.
+CMD ["npm", "run", "dev", "--", "--host"]

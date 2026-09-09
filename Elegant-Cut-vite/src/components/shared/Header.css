@@ -1,0 +1,349 @@
+/* ================================================
+   Header.css — ElegantCut Barbería
+   UI/UX Pro Max: Dark OLED + Floating Glassmorphism
+   ================================================ */
+
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 1rem;
+  pointer-events: none; /* allows clicking through empty areas */
+}
+
+
+
+/* ── The actual navbar pill ── */
+.header-nav {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1280px;
+  height: 4.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  background-color: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+/* Scrolled state (Floating pill) */
+.header-container.scrolled .header-nav {
+  height: 4rem;
+  max-width: 1000px;
+  border-radius: 2rem;
+  background-color: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  padding: 0 1.5rem 0 2rem;
+}
+
+/* Open mobile menu state */
+.header-container.menu-open .header-nav {
+  background-color: #0a0a0a;
+  border-radius: 0;
+  max-width: 100%;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ── Brand / Logo ── */
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  z-index: 1001;
+}
+
+.header-logo-img {
+  height: 32px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.header-brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f4f4f4;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.header-container.scrolled .header-logo-img {
+  height: 28px;
+}
+.header-container.scrolled .header-brand-name {
+  font-size: 1.25rem;
+}
+
+/* ── Desktop Links ── */
+.header-desktop-links {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .header-desktop-links {
+    display: flex;
+  }
+}
+
+.header-link.icon-only-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  color: rgba(244, 244, 244, 0.6);
+  background: transparent;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: none;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+}
+
+.header-link.icon-only-link:hover {
+  color: #bc2041;
+  background: rgba(188, 32, 65, 0.1);
+  transform: translateY(-3px) scale(1.1);
+}
+
+.header-link.icon-only-link.active {
+  color: #fff;
+  background: #bc2041;
+  box-shadow: 0 4px 12px rgba(188, 32, 65, 0.3);
+}
+
+.nav-icon-animated {
+  transition: all 0.3s ease;
+}
+
+.header-link.icon-only-link:hover .nav-icon-animated {
+  transform: rotate(5deg) scale(1.1);
+}
+
+/* ── Tooltips (Burbujita Animada) ── */
+.header-link.icon-only-link::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px) scale(0.9);
+  background: rgba(10, 10, 10, 0.9);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Triangulito del tooltip */
+.header-link.icon-only-link::before {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent rgba(10, 10, 10, 0.9) transparent;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.header-link.icon-only-link:hover::after,
+.header-link.icon-only-link:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+/* ── Auth Actions ── */
+.header-actions {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+@media (min-width: 1024px) {
+  .header-actions {
+    display: flex;
+  }
+}
+
+.header-btn-outline {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #f4f4f4;
+  text-decoration: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.header-btn-primary {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: 2rem;
+  background: #bc2041;
+  border: none;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-btn-primary:hover {
+  background: #a11a36;
+  transform: translateY(-1px);
+}
+
+.header-welcome {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #c9a84c;
+  font-weight: 500;
+  padding: 0 0.5rem;
+  animation: fade-in 0.3s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Mobile Toggle Button ── */
+.header-mobile-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #f4f4f4;
+  cursor: pointer;
+  z-index: 1001;
+  transition: all 0.2s ease;
+}
+
+.header-mobile-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@media (min-width: 1024px) {
+  .header-mobile-toggle {
+    display: none;
+  }
+}
+
+/* ── Mobile Menu Dropdown ── */
+.header-mobile-menu {
+  position: fixed;
+  top: 4.5rem; /* same as un-scrolled nav height */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #0a0a0a;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  overflow-y: auto;
+  pointer-events: auto;
+  
+  /* Animation setup */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header-container.menu-open .header-mobile-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.header-mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.header-mobile-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #f4f4f4;
+  text-decoration: none;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  transition: background 0.2s ease;
+}
+
+.header-mobile-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #c9a84c;
+}
+
+.header-mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.header-mobile-actions .header-btn-outline,
+.header-mobile-actions .header-btn-primary {
+  width: 100%;
+  justify-content: center;
+  padding: 1rem;
+}

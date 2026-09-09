@@ -1,0 +1,188 @@
+/* ================================================
+   Footer.css — ElegantCut Barbería
+   UI/UX Pro Max: Dark OLED + Luxury Brand
+   ================================================ */
+
+.footer-root {
+  background-color: #060606;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 5rem 0 3rem;
+  font-family: 'Inter', sans-serif;
+  color: #f4f4f4;
+}
+
+.footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 5%;
+}
+
+/* ── Top Section: Brand & Social ── */
+.footer-top {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .footer-top {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #f4f4f4;
+}
+
+.footer-brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #f4f4f4;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(244, 244, 244, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.footer-social-btn:hover {
+  background: #bc2041;
+  color: #fff;
+  border-color: #bc2041;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(188, 32, 65, 0.4);
+}
+
+.footer-social-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Bottom Section: 3 Columns Layout ── */
+.footer-bottom {
+  margin-top: 3.5rem;
+  padding-top: 3.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .footer-bottom {
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+/* Columna 1: Info & Contact */
+.footer-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.footer-copyright {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(244, 244, 244, 0.45);
+  max-width: 380px;
+}
+
+.footer-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contact-line {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: rgba(244, 244, 244, 0.7);
+}
+
+.contact-line svg {
+  color: #c9a84c;
+}
+
+/* Columnas 2 y 3: Links */
+.footer-links-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.footer-col-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f4f4f4;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.footer-nav-list, 
+.footer-legal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-nav-link {
+  color: #c9a84c;
+  font-size: 0.95rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.footer-nav-link:hover {
+  color: #dfbf65;
+  transform: translateX(4px);
+}
+
+.footer-legal-link {
+  color: rgba(244, 244, 244, 0.5);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.footer-legal-link:hover {
+  color: rgba(244, 244, 244, 0.9);
+  transform: translateX(4px);
+}

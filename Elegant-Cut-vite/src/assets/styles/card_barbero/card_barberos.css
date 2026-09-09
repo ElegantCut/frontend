@@ -1,0 +1,295 @@
+/* ================================================
+   card_barberos.css — ElegantCut Barbería
+   UI/UX Pro Max: Dark OLED + Glassmorphism
+   ================================================ */
+
+:root {
+  --DarkBase: #060606;
+  --DarkCard: rgba(255, 255, 255, 0.03);
+  --DarkBorder: rgba(255, 255, 255, 0.08);
+  --TextPrimary: #f4f4f4;
+  --TextSecondary: rgba(244, 244, 244, 0.6);
+  --AccentRed: #bc2041;
+  --AccentGold: #c9a84c;
+}
+
+/* Override global main if needed */
+main {
+  padding: 0 !important;
+  max-width: none !important;
+  background-color: var(--DarkBase);
+  width: 100%;
+}
+
+.barbers-section {
+  padding: 4rem 1rem 6rem;
+  background-color: var(--DarkBase);
+  color: var(--TextPrimary);
+  min-height: 100vh;
+}
+
+.barbers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1rem;
+}
+
+.barber-card {
+  background: var(--DarkCard);
+  border: 1px solid var(--DarkBorder);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.barber-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.barber-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.25rem;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.barber-badge,
+.barber-experience {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--TextPrimary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-transform: uppercase;
+}
+
+.barber-badge.expert {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.8) 0%, rgba(188, 32, 65, 0.8) 100%);
+  border: none;
+}
+
+.barber-image {
+  position: relative;
+  height: 340px;
+  overflow: hidden;
+  background: linear-gradient(#0a0a0a, #1a1a1a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fallback div visual para cuando no hay imagen */
+.barber-image-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(188, 32, 65, 0.2) 0%, rgba(201, 168, 76, 0.1) 100%);
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 4rem;
+}
+
+.barber-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  filter: contrast(1.1) brightness(0.9);
+}
+
+.barber-card:hover .barber-image img {
+  transform: scale(1.08);
+  filter: contrast(1.1) brightness(1);
+}
+
+.barber-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(6, 6, 6, 1) 0%, rgba(6, 6, 6, 0) 100%);
+  padding: 3rem 1.5rem 1rem;
+  opacity: 1;
+}
+
+.specialties {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.specialty-tag {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--TextPrimary);
+  padding: 0.3rem 0.8rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.barber-card:hover .specialty-tag {
+  background: rgba(188, 32, 65, 0.8);
+  border-color: transparent;
+}
+
+.barber-info {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.barber-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--TextPrimary);
+  margin-bottom: 0.25rem;
+  transition: color 0.3s ease;
+}
+
+.barber-card:hover .barber-name {
+  color: var(--AccentGold);
+}
+
+.barber-title {
+  color: var(--AccentRed);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.barber-rating {
+  margin-bottom: 1rem;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.stars i {
+  color: var(--AccentGold);
+  font-size: 0.9rem;
+}
+
+.stars span {
+  margin-left: 0.5rem;
+  color: var(--TextSecondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.barber-bio {
+  color: var(--TextSecondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.barber-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--DarkBorder);
+  border-bottom: 1px solid var(--DarkBorder);
+}
+
+.barber-stats .stat {
+  text-align: center;
+  flex: 1;
+}
+
+.barber-stats .stat strong {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--TextPrimary);
+}
+
+.barber-stats .stat span {
+  font-size: 0.75rem;
+  color: var(--TextSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.barber-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--AccentRed);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #a11a36;
+  box-shadow: 0 4px 15px rgba(188, 32, 65, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--TextPrimary);
+  border: 1px solid var(--DarkBorder);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+  .barbers-grid {
+    grid-template-columns: 1fr;
+  }
+}
