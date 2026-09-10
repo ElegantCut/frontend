@@ -82,7 +82,7 @@ const BarbersTab = () => {
         }
       });
 
-      const response = await api.post('/barbers', formData);
+      const response = await api.post('/barbers/create', formData);
 
       const data = response.data;
       if (data.success) {
