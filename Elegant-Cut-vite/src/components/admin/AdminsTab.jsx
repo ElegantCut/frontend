@@ -64,7 +64,7 @@ const AdminsTab = () => {
         delete payload.password;
       }
 
-      const response = await api[method](url, payload);
+      Object.keys(payload).forEach(key => { if (payload[key] === '') delete payload[key]; }); const response = await api[method](url, payload);
       const data = response.data;
 
       if (data.success || data.id_usuario) { // NestJS a veces devuelve el objeto creado directamente
