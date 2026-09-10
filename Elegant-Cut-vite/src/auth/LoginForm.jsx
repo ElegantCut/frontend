@@ -124,8 +124,8 @@ function LoginForm() {
   // ── Form Data ───────────────────────────────────────────────────────────────
   const [loginData, setLoginData] = useState({ usuario: '', contrasena: '' });
   const [registerData, setRegisterData] = useState({
-    email: '', usuario: '', contrasena: '', prim_nombre: '',
-    seg_nombre: '', apellido1: '', apellido2: '', telefono: '',
+    email: '', usuario: '', contrasena: '',
+    prim_nombre: '', seg_nombre: '', apellido1: '', apellido2: '', telefono: '',
   });
   const [forgotPasswordData, setForgotPasswordData] = useState({
     email: '', codigo: '', newPassword: '', confirmarContrasena: '',
@@ -271,10 +271,33 @@ function LoginForm() {
     }
   };
 
+  // Regex: solo letras (incluyendo tildes y ñ)
+  const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
   const handleRegister = async (e) => {
     e.preventDefault();
     if (!registerData.prim_nombre || !registerData.apellido1) {
       mostrarMensaje('Ingresa al menos tu primer nombre y primer apellido.', 'error');
+      return;
+    }
+    if (!soloLetras.test(registerData.prim_nombre)) {
+      mostrarMensaje('El primer nombre solo debe contener letras.', 'error');
+      return;
+    }
+    if (registerData.seg_nombre && !soloLetras.test(registerData.seg_nombre)) {
+      mostrarMensaje('El segundo nombre solo debe contener letras.', 'error');
+      return;
+    }
+    if (!soloLetras.test(registerData.apellido1)) {
+      mostrarMensaje('El primer apellido solo debe contener letras.', 'error');
+      return;
+    }
+    if (registerData.apellido2 && !soloLetras.test(registerData.apellido2)) {
+      mostrarMensaje('El segundo apellido solo debe contener letras.', 'error');
+      return;
+    }
+    if (registerData.contrasena.length < 8) {
+      mostrarMensaje('La contraseña debe tener al menos 8 caracteres.', 'error');
       return;
     }
     setLoading(true);
@@ -285,18 +308,26 @@ function LoginForm() {
         password_hash: registerData.contrasena,
         email: registerData.email,
         prim_nombre: registerData.prim_nombre,
-        seg_nombre: registerData.seg_nombre || '',
+        seg_nombre: registerData.seg_nombre || undefined,
         apellido1: registerData.apellido1,
-        apellido2: registerData.apellido2 || '',
-        telefono: registerData.telefono || '',
+        apellido2: registerData.apellido2 || undefined,
+        telefono: registerData.telefono || undefined,
         id_rol: 2,
         estado: true,
       });
       mostrarMensaje('¡Registro exitoso! Ya puedes iniciar sesión.', 'success');
       setTimeout(switchToLogin, 1500);
     } catch (error) {
-      const msg = typeof error === 'string' ? error : (error?.message || 'Error al registrarse');
-      mostrarMensaje(msg, 'error');
+      // authService lanza el mensaje como string directo
+      const rawMsg = typeof error === 'string' ? error : (error?.message ?? String(error) ?? 'Error al registrarse');
+      const lowerMsg = rawMsg.toLowerCase();
+      if (lowerMsg.includes('email') && (lowerMsg.includes('registrado') || lowerMsg.includes('exist') || lowerMsg.includes('duplicate'))) {
+        mostrarMensaje(' Ya existe una cuenta registrada con este correo electrónico.', 'error');
+      } else if (lowerMsg.includes('usuario') && lowerMsg.includes('registrado')) {
+        mostrarMensaje(' Este nombre de usuario ya está en uso. Elige otro.', 'error');
+      } else {
+        mostrarMensaje(rawMsg || 'Error al registrarse', 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -535,7 +566,7 @@ function LoginForm() {
       </div>
 
       {/* ── RIGHT: Form Panel ───────────────────────────────────────────────── */}
-      <div className="flex items-center justify-center p-8" style={{ backgroundColor: 'var(--color-background, #09090b)' }}>
+      <div className="flex items-start justify-center p-8 py-10 overflow-y-auto" style={{ backgroundColor: 'var(--color-background, #09090b)' }}>
         <div className="w-full max-w-[420px]">
 
           {/* Mobile logo */}
@@ -679,54 +710,129 @@ function LoginForm() {
           {/* ══════════════════════════════════════════════════════════════════ */}
           {activeView === 'register' && (
             <form onSubmit={handleRegister} className="flex flex-col gap-5">
+
+              {/* Fila 1: Usuario + Email */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <Label className="text-sm font-medium text-white/90">Nombre de usuario</Label>
-                  <Input placeholder="Nombre de usuario " value={registerData.usuario}
+                  <Label htmlFor="reg-usuario" className="text-sm font-medium text-white/90">Nombre de usuario</Label>
+                  <Input
+                    id="reg-usuario"
+                    placeholder="Ej: juanito_23"
+                    value={registerData.usuario}
                     onChange={(e) => setRegisterData({ ...registerData, usuario: e.target.value })}
-                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                    required disabled={loading}
+                    className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
                     onFocus={() => setIsTyping(true)} onBlur={() => setIsTyping(false)}
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label className="text-sm font-medium text-white/90">Email</Label>
-                  <Input type="email" placeholder="Email" value={registerData.email}
+                  <Label htmlFor="reg-email" className="text-sm font-medium text-white/90">Email</Label>
+                  <Input
+                    id="reg-email"
+                    type="email"
+                    placeholder="correo@ejemplo.com"
+                    value={registerData.email}
                     onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
-                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
+                    required disabled={loading}
+                    className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                  />
                 </div>
               </div>
 
+              {/* Fila 2: Primer nombre + Segundo nombre */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <Label className="text-sm font-medium text-white/90">Primer nombre </Label>
-                  <Input placeholder="Primer Nombre " value={registerData.prim_nombre}
-                    onChange={(e) => setRegisterData({ ...registerData, prim_nombre: e.target.value })}
-                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
+                  <Label htmlFor="reg-prim-nombre" className="text-sm font-medium text-white/90">Primer nombre <span className="text-red-400">*</span></Label>
+                  <Input
+                    id="reg-prim-nombre"
+                    placeholder="Primer nombre"
+                    value={registerData.prim_nombre}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(val))
+                        setRegisterData({ ...registerData, prim_nombre: val });
+                    }}
+                    required disabled={loading}
+                    className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                  />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label className="text-sm font-medium text-white/90">Segundo nombre </Label>
-                  <Input placeholder="Segundo Nombre" value={registerData.apellido1}
-                    onChange={(e) => setRegisterData({ ...registerData, apellido1: e.target.value })}
-                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
+                  <Label htmlFor="reg-seg-nombre" className="text-sm font-medium text-white/90">Segundo nombre</Label>
+                  <Input
+                    id="reg-seg-nombre"
+                    placeholder="Segundo nombre (opcional)"
+                    value={registerData.seg_nombre}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(val))
+                        setRegisterData({ ...registerData, seg_nombre: val });
+                    }}
+                    disabled={loading}
+                    className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                  />
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">Teléfono</Label>
-                <Input type="tel" placeholder="Número de teléfono" value={registerData.telefono}
-                  onChange={(e) => setRegisterData({ ...registerData, telefono: e.target.value })}
-                  disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
+              {/* Fila 3: Primer apellido + Segundo apellido */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="reg-apellido1" className="text-sm font-medium text-white/90">Primer apellido <span className="text-red-400">*</span></Label>
+                  <Input
+                    id="reg-apellido1"
+                    placeholder="Primer apellido"
+                    value={registerData.apellido1}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(val))
+                        setRegisterData({ ...registerData, apellido1: val });
+                    }}
+                    required disabled={loading}
+                    className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="reg-apellido2" className="text-sm font-medium text-white/90">Segundo apellido</Label>
+                  <Input
+                    id="reg-apellido2"
+                    placeholder="Segundo apellido (opcional)"
+                    value={registerData.apellido2}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(val))
+                        setRegisterData({ ...registerData, apellido2: val });
+                    }}
+                    disabled={loading}
+                    className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                  />
+                </div>
               </div>
 
+              {/* Fila 4: Teléfono */}
               <div className="flex flex-col gap-2">
-                <Label className="text-sm font-medium text-white/90">Contraseña</Label>
+                <Label htmlFor="reg-telefono" className="text-sm font-medium text-white/90">Teléfono</Label>
+                <Input
+                  id="reg-telefono"
+                  type="tel"
+                  placeholder="Número de teléfono (opcional)"
+                  value={registerData.telefono}
+                  onChange={(e) => setRegisterData({ ...registerData, telefono: e.target.value })}
+                  disabled={loading}
+                  className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                />
+              </div>
+
+              {/* Fila 5: Contraseña */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="reg-contrasena" className="text-sm font-medium text-white/90">Contraseña</Label>
                 <div className="relative">
                   <Input
+                    id="reg-contrasena"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
+                    placeholder="Mínimo 8 caracteres"
                     value={registerData.contrasena}
                     onChange={(e) => setRegisterData({ ...registerData, contrasena: e.target.value })}
-                    required disabled={loading} className="h-12 pr-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                    required disabled={loading}
+                    className="h-12 pr-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
                   />
                   <button
                     type="button"
@@ -738,12 +844,14 @@ function LoginForm() {
                 </div>
               </div>
 
+
+
               <Button type="submit" className="w-full h-12 text-base font-medium bg-white text-black hover:bg-neutral-200 mt-2 rounded-lg transition-all" size="lg" disabled={loading}>
-                {loading ? 'Creating account...' : 'Crear cuenta'}
+                {loading ? 'Creando cuenta...' : 'Crear cuenta'}
               </Button>
 
               <div className="text-center text-sm mt-4 text-neutral-400">
-                Ya tienes una cuenta?{' '}
+                ¿Ya tienes una cuenta?{' '}
                 <button type="button" onClick={switchToLogin} className="font-medium text-white hover:underline ml-1 transition-all">
                   Iniciar sesión
                 </button>
