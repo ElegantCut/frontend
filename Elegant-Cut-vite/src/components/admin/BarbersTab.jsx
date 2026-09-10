@@ -77,7 +77,7 @@ const BarbersTab = () => {
         } else if (key === 'especialidades' && newBarber[key]) {
           const arr = newBarber[key].split(',').map(item => item.trim()).filter(Boolean);
           formData.append('especialidades', JSON.stringify(arr));
-        } else if (key !== 'image') {
+        } else if (key !== 'image' && newBarber[key] !== '') {
           formData.append(key, newBarber[key]);
         }
       });
