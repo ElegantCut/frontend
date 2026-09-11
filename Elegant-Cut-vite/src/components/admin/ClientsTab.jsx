@@ -58,7 +58,7 @@ const ClientsTab = () => {
   if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
   return (
-    <div className="clients-container">
+    <div className="admin-tab-wrapper w-100">
       <header className="tab-header">
         <h2>Clientes</h2>
         <div className="action-buttons">

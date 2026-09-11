@@ -377,7 +377,7 @@ const SettingsTab = () => {
   const currentPhotoSrc = preview || (formData.foto_perfil ? getCloudinaryUrl(formData.foto_perfil) : null);
 
   return (
-    <div className="settings-container">
+    <div className="admin-tab-wrapper w-100">
       <header className="tab-header">
         <h2>Configuración</h2>
       </header>

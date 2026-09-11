@@ -103,7 +103,7 @@ const ServicesTab = () => {
   if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
   return (
-    <div className="services-container">
+    <div className="admin-tab-wrapper w-100">
       <header className="tab-header">
         <h2>Servicios</h2>
         <div className="action-buttons">

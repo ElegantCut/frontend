@@ -89,7 +89,7 @@ const PqrsTab = () => {
   if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
   return (
-    <div className="pqrs-container">
+    <div className="admin-tab-wrapper w-100">
       <div className="tab-header">
         <h2>Gestión de PQRS</h2>
       </div>

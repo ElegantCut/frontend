@@ -46,7 +46,7 @@ const AppointmentsTab = () => {
   if (error) return <div className="alert alert-warning m-3">{error}</div>;
 
   return (
-    <div className="appointments-container">
+    <div className="admin-tab-wrapper w-100">
       <header className="tab-header">
         <h2>Citas</h2>
       </header>

@@ -48,7 +48,7 @@ const AdminPanel = () => {
         <AdminHeader toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} />
         
         {/* ¡No olvides el main y el Outlet! */}
-        <main className="admin-main container-fluid py-4 px-md-5">
+        <main className="admin-main container-fluid py-4 px-md-5 w-100 overflow-x-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

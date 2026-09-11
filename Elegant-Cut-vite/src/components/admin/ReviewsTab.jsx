@@ -82,7 +82,7 @@ const ReviewsTab = () => {
     });
 
     return (
-    <div className="reviews-container">
+    <div className="admin-tab-wrapper w-100">
       <header className="tab-header">
         <div>
           <h2>Reseñas</h2>

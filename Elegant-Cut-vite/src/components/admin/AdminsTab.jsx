@@ -143,7 +143,7 @@ const AdminsTab = () => {
   if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
 
   return (
-    <div className="admins-container">
+    <div className="admin-tab-wrapper w-100">
       <header className="tab-header">
         <h2>Administradores</h2>
         <div className="action-buttons">
