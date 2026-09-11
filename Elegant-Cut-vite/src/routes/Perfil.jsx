@@ -225,7 +225,7 @@ function Perfil() {
         setRescheduleMsg({ type: '', text: '' });
         try {
             await appointmentService.reschedule(apptId, {
-                userId: parseInt(user.id_usuario),
+                userId: parseInt(user.id_usuario || user.userId || user.id),
                 fecha: rescheduleDate,
                 id_horarios: parseInt(rescheduleTimeId),
             });
