@@ -566,7 +566,7 @@ function LoginForm() {
       </div>
 
       {/* ── RIGHT: Form Panel ───────────────────────────────────────────────── */}
-      <div className="flex items-start justify-center p-8 py-10 overflow-y-auto" style={{ backgroundColor: 'var(--color-background, #09090b)' }}>
+      <div className="flex items-start justify-center px-4 sm:px-8 py-10 overflow-y-auto" style={{ backgroundColor: 'var(--color-background, #09090b)' }}>
         <div className="w-full max-w-[420px] my-auto">
 
           {/* Mobile logo */}
@@ -656,7 +656,7 @@ function LoginForm() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between mt-1">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-1 gap-4 sm:gap-0">
                 <div className="flex items-center gap-3">
                   <Checkbox id="remember" className="border-neutral-500 w-5 h-5 rounded data-[state=checked]:bg-white data-[state=checked]:text-black"
                     checked={rememberMe}
