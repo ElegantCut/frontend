@@ -395,7 +395,7 @@ function LoginForm() {
 
         {/* Characters Stage */}
         <div className="relative z-20 flex flex-1 items-center justify-center mt-12" style={{ minHeight: '420px' }}>
-          <div className="relative" style={{ width: '550px', height: '400px' }}>
+          <div className="relative origin-center scale-[0.6] sm:scale-75 lg:scale-[0.8] xl:scale-100 2xl:scale-110 transition-transform duration-300" style={{ width: '550px', height: '400px' }}>
 
             {/* Purple — back layer */}
             <div
@@ -567,7 +567,7 @@ function LoginForm() {
 
       {/* ── RIGHT: Form Panel ───────────────────────────────────────────────── */}
       <div className="flex items-start justify-center p-8 py-10 overflow-y-auto" style={{ backgroundColor: 'var(--color-background, #09090b)' }}>
-        <div className="w-full max-w-[420px]">
+        <div className="w-full max-w-[420px] my-auto">
 
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center justify-center gap-2 text-lg font-semibold mb-12 text-white">
