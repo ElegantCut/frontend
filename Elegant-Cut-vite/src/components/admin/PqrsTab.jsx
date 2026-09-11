@@ -199,11 +199,11 @@ const PqrsTab = () => {
               <AnimatedItem key={pqrs.id_pqrs} className="col-12 col-lg-6">
                 <div className="ios-card d-flex flex-column h-100">
                   <div className="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                      <h3 className="ios-item-title mb-1">
+                    <div style={{ minWidth: 0, flex: 1, marginRight: '1rem' }}>
+                      <h3 className="ios-item-title mb-1 text-truncate">
                         {pqrs.tipo} - {pqrs.asunto}
                       </h3>
-                      <span className="ios-item-subtitle d-block">
+                      <span className="ios-item-subtitle d-block text-truncate">
                         <i className="bi bi-person me-1"></i>
                         {pqrs.usuarios?.prim_nombre} ({pqrs.usuarios?.email})
                       </span>
