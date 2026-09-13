@@ -54,7 +54,7 @@ export class AuthClient {
 
   // FunciÃ³n para hacer login
   
-  // FUNCIÓN NUEVA: Login con token de Google
+  // FUNCIï¿½N NUEVA: Login con token de Google
   static async loginWithGoogleToken(token) {
     try {
       console.log('Enviando token de Google al servidor...');
@@ -68,7 +68,7 @@ export class AuthClient {
         return { success: false, error: data.message || 'Error en login con Google' };
       }
     } catch (error) {
-      console.log('Error de conexión:', error);
+      console.log('Error de conexiï¿½n:', error);
       return { success: false, error: error.response?.data?.message || 'No se pudo conectar al servidor' };
     }
   }
@@ -210,6 +210,8 @@ export class AuthClient {
   }
 
   // Obtener datos del usuario
+  static setUser(user) { localStorage.setItem('user', JSON.stringify(user)); }
+
   static getUser() {
     // Primero buscar en localStorage (rememberMe), luego en sessionStorage
     let userData = localStorage.getItem('user');
