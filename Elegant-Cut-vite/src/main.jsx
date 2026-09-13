@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import App from './App';
 import "./App.css";
 import "./tailwind.css";
@@ -18,6 +19,8 @@ import './assets/styles/servicios_dama/servicios.css';
 import './assets/styles/perfil/perfil.css';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <GoogleOAuthProvider clientId="859330875259-h0oa83sb0k5e46rg3bop16unfao1jch6.apps.googleusercontent.com">
+      <App />
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );

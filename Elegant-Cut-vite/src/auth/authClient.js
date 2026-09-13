@@ -53,6 +53,26 @@ export class AuthClient {
   }
 
   // FunciÃ³n para hacer login
+  
+  // FUNCIÓN NUEVA: Login con token de Google
+  static async loginWithGoogleToken(token) {
+    try {
+      console.log('Enviando token de Google al servidor...');
+      const response = await api.post('/auth/google', { token });
+      const data = response.data;
+      if (data.success) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        console.log('Login con Google exitoso!');
+        return { success: true, user: data.user };
+      } else {
+        return { success: false, error: data.message || 'Error en login con Google' };
+      }
+    } catch (error) {
+      console.log('Error de conexión:', error);
+      return { success: false, error: error.response?.data?.message || 'No se pudo conectar al servidor' };
+    }
+  }
+
   static async login(username, password) {
     try {
       console.log('ðŸ“ž Enviando login al servidor...');
