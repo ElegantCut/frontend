@@ -36,3 +36,5 @@ describe('Barbero - Agenda y Citas', () => {
   });
 });
 
+//No esta terminado al 100%, debido a que no se visualizan las citas
+

@@ -108,15 +108,13 @@ describe('Publicación de Reseñas - Rol Cliente', () => {
 
 
   it('Debe iniciar sesión, ir a la vista de reseñas, calificar con 5 estrellas, escribir la opinión, publicarla y mostrarla en la lista', () => {
-    // ----------------------------------------------------
+
     // PASO 1: INICIAR SESIÓN COMO CLIENTE
-    // ----------------------------------------------------
+
     cy.loginAsClient();
     cy.wait(3500);
 
-    // ----------------------------------------------------
     // PASO 2: NAVEGAR A LA VISTA DE RESEÑAS
-    // ----------------------------------------------------
     // Navegar haciendo clic en el enlace de Reseñas del Header
     cy.get('.header-desktop-links [data-tooltip="Reseñas"], .header-desktop-links a[href*="ese"]')
       .first()
@@ -125,17 +123,15 @@ describe('Publicación de Reseñas - Rol Cliente', () => {
     cy.contains('Tu Opinión', { timeout: 8000 }).should('be.visible');
     cy.wait(3500);
 
-    // ----------------------------------------------------
     // PASO 3: SELECCIONAR CALIFICACIÓN DE 5 ESTRELLAS
-    // ----------------------------------------------------
-    // Hacer clic en la 5ta estrella
+   // Hacer clic en la 5ta estrella
     cy.get('.rf-star-btn').eq(4).should('be.visible').click({ scrollBehavior: false });
     cy.get('.rf-star-label').should('contain', '¡Excelente!');
     cy.wait(3000);
 
-    // ----------------------------------------------------
+  
     // PASO 4: ESCRIBIR LA DESCRIPCIÓN DE LA RESEÑA
-    // ----------------------------------------------------
+  
     cy.get('textarea[name="comentario"]')
       .should('be.visible')
       .should('not.be.disabled')
@@ -146,9 +142,7 @@ describe('Publicación de Reseñas - Rol Cliente', () => {
     cy.get('textarea[name="comentario"]').should('have.value', commentText);
     cy.wait(3500);
 
-    // ----------------------------------------------------
     // PASO 5: PUBLICAR LA RESEÑA
-    // ----------------------------------------------------
     cy.contains('button.rf-submit', /Publicar Reseña/i)
       .should('be.visible')
       .should('not.be.disabled')
@@ -161,9 +155,8 @@ describe('Publicación de Reseñas - Rol Cliente', () => {
       expect(body.dirigido_a).to.equal('establecimiento');
     });
 
-    // ----------------------------------------------------
+  
     // PASO 6: VALIDAR MENSAJE DE ÉXITO Y VISUALIZACIÓN DE LA RESEÑA
-    // ----------------------------------------------------
     cy.get('.rf-alert.success', { timeout: 8000 })
       .should('be.visible')
       .and('contain', '¡Gracias por tu reseña!');

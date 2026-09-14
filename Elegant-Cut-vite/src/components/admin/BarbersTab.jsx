@@ -101,7 +101,8 @@ const BarbersTab = () => {
       }
     } catch (err) {
       console.error(err);
-      setError('Error al crear barbero');
+      const msg = err.response?.data?.message || err.message || 'Error al crear barbero';
+      setError(msg);
       setTimeout(() => setError(null), 3000);
     }
   };

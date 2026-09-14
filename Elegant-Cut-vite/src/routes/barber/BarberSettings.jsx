@@ -38,104 +38,65 @@ const BarberSettings = () => {
     const [uploadingGallery, setUploadingGallery] = useState(false);
 
     // Cargar datos actuales del perfil y portafolio al montar
-    React.useEffect(() => {
-        const fetchUserData = async () => {
-            const currentUser = AuthClient.getUser();
-            const targetUserId = currentUser?.userId || currentUser?.id || currentUser?.id_usuario;
+    const loadUserData = async () => {
+        try {
+            // 1. Obtener perfil completo directamente de la API
+            const meResponse = await api.get('/users/me');
+            const userData = meResponse.data;
+            setUser(userData);
 
-            if (!targetUserId) return;
-            try {
-                // Traer datos mediante /barbers/:id que incluye portafolio y datos personales del barbero
-                const response = await api.get(`/barbers/${targetUserId}`);
-                const data = response.data;
-                // Mapear datos personales
-                setProfileData({
-                    prim_nombre: data.prim_nombre || '',
-                    seg_nombre: data.seg_nombre || '',
-                    apellido1: data.apellido1 || '',
-                    apellido2: data.apellido2 || '',
-                    email: data.email || '',
-                    telefono: data.telefono || '',
-                    foto_perfil: data.foto_perfil || '',
-                });
+            setProfileData({
+                prim_nombre: userData.prim_nombre || '',
+                seg_nombre: userData.seg_nombre || '',
+                apellido1: userData.apellido1 || '',
+                apellido2: userData.apellido2 || '',
+                email: userData.email || '',
+                telefono: userData.telefono || '',
+                foto_perfil: userData.foto_perfil || '',
+            });
 
-                // Mapear datos del portafolio
-                if (data && data.portafolios) {
-                    // La base de datos puede devolver un objeto directo o un arreglo
-                    const port = Array.isArray(data.portafolios) ? data.portafolios[0] : data.portafolios;
-
-                    if (port) {
-                        let specs = port.especialidades || '';
-                        if (typeof specs === 'string' && specs.startsWith('[')) {
-                            try { specs = JSON.parse(specs).join(', '); } catch (e) { }
-                        }
-                        setPortfolioData({
-                            biografia: port.biografia || '',
-                            experiencia: port.experiencia || '',
-                            especialidades: Array.isArray(specs) ? specs.join(', ') : specs,
-                            instagram: port.instagram || ''
-                        });
-                    }
-                    const loadUserData = async () => {
+            // 2. Obtener portafolio por su id_usuario
+            if (userData.id_usuario) {
+                const portResponse = await api.get(`/portabarbero/${userData.id_usuario}`);
+                const port = portResponse.data;
+                if (port) {
+                    let specs = port.especialidades || '';
+                    if (typeof specs === 'string' && (specs.startsWith('[') || specs.startsWith('"'))) {
                         try {
-                            // 1. Obtener perfil completo directamente de la API
-                            const meResponse = await api.get('/users/me');
-                            const userData = meResponse.data;
-                            setUser(userData);
+                            const parsed = JSON.parse(specs);
+                            specs = Array.isArray(parsed) ? parsed.join(', ') : parsed;
+                        } catch (e) { }
+                    } else if (Array.isArray(specs)) {
+                        specs = specs.join(', ');
+                    }
 
-                            setProfileData({
-                                prim_nombre: userData.prim_nombre || '',
-                                seg_nombre: userData.seg_nombre || '',
-                                apellido1: userData.apellido1 || '',
-                                apellido2: userData.apellido2 || '',
-                                email: userData.email || '',
-                                telefono: userData.telefono || '',
-                                foto_perfil: userData.foto_perfil || '',
-                            });
-
-                            // 2. Obtener portafolio por su id_usuario
-                            if (userData.id_usuario) {
-                                const portResponse = await api.get(`/portabarbero/${userData.id_usuario}`);
-                                const port = portResponse.data;
-                                if (port) {
-                                    let specs = port.especialidades || '';
-                                    if (typeof specs === 'string' && (specs.startsWith('[') || specs.startsWith('"'))) {
-                                        try {
-                                            const parsed = JSON.parse(specs);
-                                            specs = Array.isArray(parsed) ? parsed.join(', ') : parsed;
-                                        } catch (e) { }
-                                    } else if (Array.isArray(specs)) {
-                                        specs = specs.join(', ');
-                                    }
-
-                                    let fotos = [];
-                                    if (port.fotos_portafolio) {
-                                        if (typeof port.fotos_portafolio === 'string' && port.fotos_portafolio.startsWith('[')) {
-                                            try { fotos = JSON.parse(port.fotos_portafolio); } catch (e) { }
-                                        } else if (Array.isArray(port.fotos_portafolio)) {
-                                            fotos = port.fotos_portafolio;
-                                        }
-                                    }
-
-                                    setPortfolioData({
-                                        biografia: port.biografia || '',
-                                        experiencia: port.experiencia || '',
-                                        especialidades: specs || '',
-                                        instagram: port.instagram || '',
-                                        fotos_portafolio: Array.isArray(fotos) ? fotos : []
-                                    });
-                                    origin / develop
-                                }
-                            }
-                        } catch (err) {
-                            console.error("Error al cargar datos del barbero:", err);
-                            setProfileMessage({ type: 'error', text: 'No se pudieron cargar los datos del perfil.' });
+                    let fotos = [];
+                    if (port.fotos_portafolio) {
+                        if (typeof port.fotos_portafolio === 'string' && port.fotos_portafolio.startsWith('[')) {
+                            try { fotos = JSON.parse(port.fotos_portafolio); } catch (e) { }
+                        } else if (Array.isArray(port.fotos_portafolio)) {
+                            fotos = port.fotos_portafolio;
                         }
-                    };
+                    }
 
-                    useEffect(() => {
-                        loadUserData();
-                    }, []);
+                    setPortfolioData({
+                        biografia: port.biografia || '',
+                        experiencia: port.experiencia || '',
+                        especialidades: specs || '',
+                        instagram: port.instagram || '',
+                        fotos_portafolio: Array.isArray(fotos) ? fotos : []
+                    });
+                }
+            }
+        } catch (err) {
+            console.error("Error al cargar datos del barbero:", err);
+            setProfileMessage({ type: 'error', text: 'No se pudieron cargar los datos del perfil.' });
+        }
+    };
+
+    useEffect(() => {
+        loadUserData();
+    }, []);
 
                     const handleProfileChange = (e) => {
                         const { name, value } = e.target;
@@ -215,15 +176,14 @@ const BarberSettings = () => {
 
                             const data = response.data;
                             if (response.status >= 200 && response.status < 300) {
-
                                 if (response.status === 200 || response.status === 201 || response.data) {
-                                    origin / develop
                                     setPortfolioMessage({ type: 'success', text: 'Portafolio actualizado exitosamente.' });
                                     setTimeout(() => setPortfolioMessage({ type: '', text: '' }), 4000);
                                 } else {
                                     setPortfolioMessage({ type: 'error', text: data?.message || 'Error al actualizar el portafolio.' });
                                 }
-                            } catch (error) {
+                            }
+                        } catch (error) {
                                 console.error("Error al actualizar portafolio:", error);
                                 const msg = error.response?.data?.message || error.message || 'Error de conexión';
                                 setPortfolioMessage({ type: 'error', text: Array.isArray(msg) ? msg.join(', ') : msg });
@@ -729,5 +689,3 @@ const BarberSettings = () => {
                     };
 
                     export default BarberSettings;
-                }
-            }
