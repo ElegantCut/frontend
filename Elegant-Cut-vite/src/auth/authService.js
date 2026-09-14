@@ -7,6 +7,10 @@ export const authService = {
             const response = await api.post('/auth/check-token');
             return response.data;
         } catch (error) {
+            // Si es un error de red (no hay respuesta del servidor)
+            if (!error.response) {
+                throw "No se pudo conectar al servidor";
+            }
             throw error.response?.data?.message || "Sesión inválida";
         }
     },
