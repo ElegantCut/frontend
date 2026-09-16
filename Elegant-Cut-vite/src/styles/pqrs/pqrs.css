@@ -644,3 +644,36 @@
     }
 }
 
+
+@media (max-width: 768px) {
+    .pqrs-container {
+        max-width: 100vw;
+        overflow-x: hidden;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+    .pqrs-sidebar {
+        width: 100%;
+        max-width: 100%;
+    }
+    .pqrs-nav-menu {
+        flex-direction: column;
+    }
+    .nav-tab-btn {
+        width: 100%;
+        min-width: 0;
+    }
+    .pqrs-main {
+        width: 100%;
+        max-width: 100%;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+    .form-group-modern input, 
+    .form-group-modern select, 
+    .form-group-modern textarea {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
