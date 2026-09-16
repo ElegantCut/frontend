@@ -5,6 +5,7 @@ export const UPLOADS_BASE_URL = API_BASE_URL.replace('/api', '/uploads');
 
 const api = axios.create({
     baseURL: API_BASE_URL,
+    timeout: 15000, // 15s timeout to prevent UI from hanging
     withCredentials: true // Permite enviar y recibir cookies (JWT)
 });
 

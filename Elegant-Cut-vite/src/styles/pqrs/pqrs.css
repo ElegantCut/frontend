@@ -629,3 +629,18 @@
         height: 50px;
     }
 }
+@media (max-width: 768px) {
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+    }
+    .radio-cards {
+        grid-template-columns: 1fr;
+    }
+    .pqrs-main {
+        padding: 20px;
+    }
+    .panel-header h2 {
+        font-size: 1.8rem;
+    }
+}
+
