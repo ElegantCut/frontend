@@ -27,7 +27,6 @@ import BarbersTab from './components/admin/BarbersTab'
 import AdminsTab from './components/admin/AdminsTab'
 import AppointmentsTab from './components/admin/AppointmentsTab'
 import ClientsTab from './components/admin/ClientsTab'
-import SettingsTab from './components/admin/SettingsTab'
 import ReviewsTab from './components/admin/ReviewsTab'
 import PqrsTab from './components/admin/PqrsTab'
 
@@ -62,7 +61,6 @@ const AnimatedRoutes = () => {
           <Route path="servicios" element={<ProtectedRoute requiredRole="admin"><ServicesTab /></ProtectedRoute>} />
           <Route path="resenas" element={<ProtectedRoute requiredRole="admin"><ReviewsTab /></ProtectedRoute>} />
           <Route path="pqrs" element={<ProtectedRoute requiredRole="admin"><PqrsTab /></ProtectedRoute>} />
-          <Route path="configuracion" element={<ProtectedRoute requiredRole="admin"><SettingsTab /></ProtectedRoute>} />
         </Route>
 
         <Route
