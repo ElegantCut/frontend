@@ -29,7 +29,7 @@ const Sidebar = ({ isCollapsed, closeSidebar, toggleSidebar }) => {
 
   return (
     <motion.div
-      className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}
+      className={`sidebar ${isCollapsed ? 'collapsed' : 'open'}`}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
     >
       <div className="sidebar-header">
