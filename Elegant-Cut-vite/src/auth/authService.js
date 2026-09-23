@@ -1,4 +1,4 @@
-﻿import api from "../lib/axios";
+import api from "../lib/axios";
 
 export const authService = {
     // 0. Método para verificar el token (sesión activa)
@@ -22,18 +22,12 @@ export const authService = {
         }
     },
 
-    // 2. Método para el Login - ahora guarda el token en localStorage para compatibilidad con Safari iOS
+    // 2. Método para el Login aquí manejamos el Token mediante cookies uwu y añadimos la función que recuerde la sesión uwu usando hooks )
     login: async (credentials, rememberMe) => {
         try {
             const response = await api.post('/auth/login', { ...credentials, rememberMe });
 
-            // Guardar el token JWT en localStorage para el interceptor de axios
-            // Esto es necesario porque Safari iOS bloquea cookies cross-site
-            if (response.data.token) {
-                localStorage.setItem('auth_token', response.data.token);
-            }
-
-            if (response.data.user) {
+            if (response.data.token) { localStorage.setItem('auth_token', response.data.token); } if (response.data.user) {
                 if (rememberMe) {
                     localStorage.setItem('user', JSON.stringify(response.data.user));
 
@@ -55,8 +49,7 @@ export const authService = {
         } catch (error) {
             console.error("Error al cerrar sesión", error);
         }
-        localStorage.removeItem('user');
-        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user'); localStorage.removeItem('auth_token');
         window.location.href = '/login';
     },
 

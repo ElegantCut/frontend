@@ -9,17 +9,8 @@ const api = axios.create({
     withCredentials: true // Permite enviar y recibir cookies (JWT)
 });
 
-// Interceptor de request: agrega el token JWT como header Authorization
-// Esto funciona como fallback cuando las cookies cross-site son bloqueadas
-// (ej: Safari iOS bloquea cookies de terceros por Intelligent Tracking Prevention)
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-        config.headers.Authorization = 'Bearer ' + token;
-    }
-    return config;
-}, (error) => {
-    return Promise.reject(error);
-});
+api.interceptors.request.use((config) => { const token = localStorage.getItem('auth_token'); if (token) { config.headers.Authorization = 'Bearer ' + token; } return config; }, (error) => { return Promise.reject(error); });
+// ahora las cookies se encargan automáticamente de esto.
 
 export default api;
+;

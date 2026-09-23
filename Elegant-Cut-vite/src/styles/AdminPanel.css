@@ -1,6 +1,6 @@
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   ELEGANT CUT â€” ADMIN PANEL  â€¢  Premium Dark UI System
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ═══════════════════════════════════════════════════════
+   ELEGANT CUT — ADMIN PANEL  •  Premium Dark UI System
+   ═══════════════════════════════════════════════════════ */
 
 :root {
     --ios-bg: #09090b;
@@ -31,9 +31,9 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    LAYOUT
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .admin-panel {
     display: flex;
     min-height: 100vh;
@@ -74,9 +74,9 @@ body {
     }
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   TAB HEADER â€” Premium Title
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ════════════════════════
+   TAB HEADER — Premium Title
+   ════════════════════════ */
 .tab-header {
     display: flex;
     justify-content: space-between;
@@ -85,23 +85,12 @@ body {
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--ios-separator);
     position: relative;
-    flex-wrap: wrap;
-    gap: 1rem;
 
     /* Reset styles polluted globally by Nav.css header tag */
     background-color: transparent !important;
     height: auto !important;
     padding: 0 0 1rem 0 !important;
     box-shadow: none !important;
-}
-
-@media (max-width: 576px) {
-    .tab-header {
-        align-items: center;
-        flex-direction: column;
-        text-align: center;
-        padding-top: 1rem;
-    }
 }
 
 .tab-header::after {
@@ -123,17 +112,9 @@ body {
     letter-spacing: -0.5px;
 }
 
-@media (max-width: 576px) {
-    .tab-header h2 {
-        font-size: 1.6rem;
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-}
-
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    SECTION HEADERS
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-section-header {
     font-size: 0.8rem;
     font-weight: 500;
@@ -143,9 +124,9 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    INSET GROUPED LIST
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-list-group {
     background-color: var(--ios-card);
     border-radius: var(--ios-radius);
@@ -214,9 +195,9 @@ body {
     flex-shrink: 0;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    PILL BUTTONS
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .btn-ios {
     background: linear-gradient(135deg, var(--ios-red), #d1264e);
     color: #fff;
@@ -301,9 +282,9 @@ body {
     color: var(--ios-text-secondary);
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    BADGES
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-badge {
     font-size: 0.75rem;
     font-weight: 600;
@@ -329,10 +310,10 @@ body {
     color: #ff453a;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    OVERLAY
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-/*AÃ±adimos esto porque el panel se ve borroso unu*/
+   ════════════════════════ */
+/*Añadimos esto porque el panel se ve borroso unu*/
 @media (min-width: 993PX) {
     .sidebar-overlay {
         display: none !important;
@@ -352,9 +333,9 @@ body {
     z-index: 1000;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    SEARCH BAR
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-search-bar {
     background-color: #27272a;
     border: 1px solid #3f3f46;
@@ -377,9 +358,9 @@ body {
     color: #71717a;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    LABELS & INPUTS
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-label {
     font-size: 0.85rem;
     font-weight: 500;
@@ -413,9 +394,9 @@ body {
     color: #71717a;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    DASHBOARD WIDGET GRID
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-widget-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -427,14 +408,6 @@ body {
     .ios-widget-grid {
         grid-template-columns: 1fr 1fr;
         gap: 0.8rem;
-    }
-    
-    .ios-widget .value {
-        font-size: 1.8rem;
-    }
-    
-    .ios-widget h4 {
-        font-size: 0.8rem;
     }
 }
 
@@ -512,9 +485,9 @@ body {
     transform: scale(1.1);
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    CARDS
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-card {
     background-color: var(--ios-card);
     border-radius: 20px;
@@ -528,9 +501,9 @@ body {
     box-shadow: var(--ios-shadow-hover);
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    PREMIUM MODAL
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-modal-overlay {
     position: fixed;
     top: 0;
@@ -634,9 +607,9 @@ body {
     margin-bottom: 0;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    IOS BUTTONS (Modal)
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-btn {
     padding: 12px 24px;
     border-radius: 14px;
@@ -686,9 +659,9 @@ body {
     padding-top: 0.5rem;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   SEGMENTED CONTROL (SettingsTab) â€” Dark
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ════════════════════════
+   SEGMENTED CONTROL (SettingsTab) — Dark
+   ════════════════════════ */
 .ios-segmented-control {
     display: inline-flex;
     background-color: #27272a;
@@ -724,9 +697,9 @@ body {
     color: #ffffff;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   INLINE INPUTS (SettingsTab profile fields) â€” Dark
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ════════════════════════
+   INLINE INPUTS (SettingsTab profile fields) — Dark
+   ════════════════════════ */
 .ios-list-item .ios-inline-input {
     border: none !important;
     width: 100%;
@@ -742,9 +715,9 @@ body {
     color: #52525b;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    EMPTY STATE
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-empty-state {
     padding: 3rem 2rem;
     text-align: center;
@@ -762,9 +735,9 @@ body {
     margin: 0;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    PREMIUM SPINNER
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .ios-spinner {
     width: 36px;
     height: 36px;
@@ -780,9 +753,9 @@ body {
     }
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    BOOTSTRAP DARK OVERRIDES
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 .admin-panel header:not(.admin-header) {
     background: transparent !important;
 }
@@ -842,9 +815,9 @@ body {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ════════════════════════
    KEYFRAMES
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ════════════════════════ */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -864,5 +837,41 @@ body {
     to {
         transform: translateY(0);
         opacity: 1;
+    }
+}
+/* Added to fix overrides and responsive layout without messing up regex */
+.tab-header {
+    flex-wrap: wrap !important;
+    gap: 1rem !important;
+}
+
+@media (max-width: 576px) {
+    .tab-header {
+        align-items: center !important;
+        flex-direction: column !important;
+        text-align: center !important;
+        padding-top: 1rem !important;
+    }
+    .tab-header h2 {
+        font-size: 1.6rem !important;
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+    .ios-widget-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.8rem !important;
+    }
+    .ios-widget .value {
+        font-size: 1.8rem !important;
+    }
+    .ios-widget h4 {
+        font-size: 0.8rem !important;
+    }
+}
+
+@media (max-width: 992px) {
+    .admin-content,
+    .admin-content.collapsed {
+        margin-left: 0 !important;
     }
 }

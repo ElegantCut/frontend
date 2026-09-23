@@ -1,4 +1,4 @@
-﻿import api from '../lib/axios';
+import api from '../lib/axios';
 
 export class AuthClient {
 
@@ -14,11 +14,7 @@ export class AuthClient {
 
       if (data.success) {
         // Guardar datos del usuario (el token ya está en la cookie HttpOnly)
-        localStorage.setItem('user', JSON.stringify(data.user));
-        // Guardar token para Safari iOS (fallback Bearer token)
-        if (data.token) {
-          localStorage.setItem('auth_token', data.token);
-        }
+        localStorage.setItem('user', JSON.stringify(data.user)); if (data.token) { localStorage.setItem('auth_token', data.token); }
 
         console.log(' Registro exitoso!');
         return { success: true, user: data.user };
@@ -56,83 +52,79 @@ export class AuthClient {
     }
   }
 
-  // FUNCIÓN NUEVA: Login con token de Google
+  // Función para hacer login
+  
+  // FUNCI�N NUEVA: Login con token de Google
   static async loginWithGoogleToken(token) {
     try {
       console.log('Enviando token de Google al servidor...');
       const response = await api.post('/auth/google', { token });
       const data = response.data;
       if (data.success) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-        // Guardar token para Safari iOS (fallback Bearer token)
-        if (data.token) {
-          localStorage.setItem('auth_token', data.token);
-        }
+        localStorage.setItem('user', JSON.stringify(data.user)); if (data.token) { localStorage.setItem('auth_token', data.token); }
         console.log('Login con Google exitoso!');
         return { success: true, user: data.user };
       } else {
         return { success: false, error: data.message || 'Error en login con Google' };
       }
     } catch (error) {
-      console.log('Error de conexión:', error);
+      console.log('Error de conexi�n:', error);
       return { success: false, error: error.response?.data?.message || 'No se pudo conectar al servidor' };
     }
   }
 
   static async login(username, password) {
     try {
-      console.log('Enviando login al servidor...');
+      console.log('📞 Enviando login al servidor...');
 
       const response = await api.post('/auth/login', { username, password });
       const data = response.data;
 
-      console.log('Respuesta del servidor:', data);
+      console.log('📨 Respuesta del servidor:', data);
 
       if (data.success) {
-        // Guardar solo los datos del usuario
-        localStorage.setItem('user', JSON.stringify(data.user));
-        // Guardar token para Safari iOS (fallback Bearer token)
-        if (data.token) {
-          localStorage.setItem('auth_token', data.token);
-        }
+        // Guardar solo los datos del usuario (el token está en la cookie)
+        localStorage.setItem('user', JSON.stringify(data.user)); if (data.token) { localStorage.setItem('auth_token', data.token); }
 
-        console.log('Login exitoso!');
+        console.log('✅ Login exitoso!');
         return { success: true, user: data.user };
       } else {
-        console.log('Error en login:', data.error);
+        console.log('❌ Error en login:', data.error);
         return { success: false, error: data.error };
       }
     } catch (error) {
-      console.log('Error de conexión:', error);
+      console.log('🚨 Error de conexión:', error);
       return { success: false, error: error.response?.data?.message || 'No se pudo conectar al servidor' };
     }
   }
 
-  // Solicitar código de recuperación por email
+  // ✅ NUEVO: Solicitar código de recuperación por email
   static async solicitarRecuperacion(email) {
     try {
-      console.log('Solicitando código de recuperación para:', email);
+      console.log('📧 Solicitando código de recuperación para:', email);
 
+      // Usar el endpoint real del backend: /auth/forgot-password
       const response = await api.post('/auth/forgot-password', { email });
       const data = response.data;
 
-      console.log('Respuesta del servidor (forgot-password):', data);
+      console.log('📨 Respuesta del servidor (forgot-password):', data);
 
       return {
         success: true,
         message: data.message || 'Se ha enviado un código a tu correo.'
       };
     } catch (error) {
-      console.log('Error de conexión:', error);
+      console.log('🚨 Error de conexión:', error);
       return { success: false, error: error.response?.data?.message || 'No se pudo conectar al servidor' };
     }
   }
 
-  // Verificar código y cambiar contraseña
+  // ✅ NUEVO: Verificar código y cambiar contraseña
   static async verificarCodigoRecuperacion(email, codigo, nuevaContrasena) {
     try {
-      console.log('Verificando código para:', email);
+      console.log('🔐 Verificando código para:', email);
 
+      // Usar el endpoint real del backend: /auth/reset-password (PUT)
       const response = await api.put('/auth/reset-password', {
         email,
         codigo,
@@ -140,63 +132,63 @@ export class AuthClient {
       });
       const data = response.data;
 
-      console.log('Respuesta del servidor (reset-password):', data);
+      console.log('📨 Respuesta del servidor (reset-password):', data);
 
       if (data.success) {
-        console.log('Contraseña cambiada exitosamente!');
+        console.log('✅ Contraseña cambiada exitosamente!');
         return { success: true, message: data.message };
       } else {
-        console.log('Error verificando código:', data.error);
+        console.log('❌ Error verificando código:', data.error);
         return { success: false, error: data.error };
       }
     } catch (error) {
-      console.log('Error de conexión:', error);
+      console.log('🚨 Error de conexión:', error);
       return { success: false, error: error.response?.data?.message || 'Error al cambiar contraseña' };
     }
   }
 
-  // Olvidar contraseña (método antiguo por compatibilidad)
+  // ✅ MANTENER: Olvidar contraseña (método antiguo por compatibilidad)
   static async forgotPassword(username, newPassword) {
     try {
-      console.log('Recuperando contraseña para:', username);
+      console.log('📞 Recuperando contraseña para:', username);
 
       const response = await api.post('/auth/forgot-password', { username, newPassword });
       const data = response.data;
 
-      console.log('Respuesta del servidor (forgot-password):', data);
+      console.log('📨 Respuesta del servidor (forgot-password):', data);
 
       if (data.success) {
-        console.log('Contraseña recuperada!');
+        console.log('✅ Contraseña recuperada!');
         return { success: true, message: data.message };
       } else {
-        console.log('Error recuperando contraseña:', data.error);
+        console.log('❌ Error recuperando contraseña:', data.error);
         return { success: false, error: data.error };
       }
     } catch (error) {
-      console.log('Error de conexión:', error);
+      console.log('🚨 Error de conexión:', error);
       return { success: false, error: 'No se pudo conectar al servidor' };
     }
   }
 
-  // Actualizar contraseña (por compatibilidad)
+  // ✅ MANTENER: Actualizar contraseña (por compatibilidad)
   static async updatePassword(username, newPassword) {
     try {
-      console.log('Actualizando contraseña para:', username);
+      console.log('📞 Actualizando contraseña para:', username);
 
       const response = await api.post('/auth/forgot-password', { username, newPassword });
       const data = response.data;
 
-      console.log('Respuesta del servidor (update-password):', data);
+      console.log('📨 Respuesta del servidor (update-password):', data);
 
       if (data.success) {
-        console.log('Contraseña actualizada!');
+        console.log('✅ Contraseña actualizada!');
         return { success: true, message: data.message };
       } else {
-        console.log('Error actualizando contraseña:', data.error);
+        console.log('❌ Error actualizando contraseña:', data.error);
         return { success: false, error: data.error };
       }
     } catch (error) {
-      console.log('Error de conexión:', error);
+      console.log('🚨 Error de conexión:', error);
       return { success: false, error: 'No se pudo conectar al servidor' };
     }
   }
@@ -208,12 +200,11 @@ export class AuthClient {
     } catch (error) {
       console.error('Error al cerrar sesión en el servidor:', error);
     }
-    localStorage.removeItem('user');
-    localStorage.removeItem('auth_token');
-    console.log('Sesión cerrada');
+    localStorage.removeItem('user'); localStorage.removeItem('auth_token');
+    console.log('👋 Sesión cerrada');
   }
 
-  // Obtener token
+  // Obtener token (Ya no es posible con HttpOnly)
   static getToken() {
     return localStorage.getItem('auth_token') || null;
   }
@@ -230,7 +221,7 @@ export class AuthClient {
     if (userData && userData !== 'undefined' && userData !== 'null') {
       try { return JSON.parse(userData); } catch (e) { }
     }
-    return null;
+    return localStorage.getItem('auth_token') || null;
   }
 
   // Verificar si está logueado (Aproximación basada en datos de usuario locales)
@@ -256,7 +247,7 @@ export class AuthClient {
     return user && user.role === 'cliente';
   }
 
-  // Verificar si el token es válido (Se verifica contra el backend vía cookies o Bearer)
+  // Verificar si el token es válido (Se verifica contra el backend vía cookies)
   static async isTokenValid() {
     try {
       const response = await api.post('/auth/check-token');
