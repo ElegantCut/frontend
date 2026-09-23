@@ -875,3 +875,41 @@ body {
         margin-left: 0 !important;
     }
 }
+/* Ensure no horizontal scroll on any admin views */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.admin-panel {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.admin-content {
+    min-width: 0;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.admin-main {
+    min-width: 0;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* Force tables to wrap natively or scroll internally */
+.admin-panel table {
+    max-width: 100%;
+}
+.admin-panel .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Fix row negative margins causing scroll when not in container */
+.admin-panel .row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
