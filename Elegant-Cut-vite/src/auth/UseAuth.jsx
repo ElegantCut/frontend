@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+﻿import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from './authService';
 
 // 1. Creamos el Contexto Global de Autenticación
@@ -16,11 +16,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuth = async () => {
-    // Ya no buscamos el token en localStorage porque ahora se maneja por cookies HttpOnly.
     setLoading(true);
 
     try {
-      // Verificamos si la cookie sigue siendo válida contra el backend
+      // Verificamos si la cookie o el token Bearer siguen siendo válidos contra el backend
       const result = await authService.checkToken(); 
 
       if (result.user) {
@@ -30,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(result.user));
       }
     } catch (error) {
-      // Si hay un error de red pero tenemos datos locales, podrías elegir no desloguear
+      // Si hay un error de red pero tenemos datos locales, no desloguear
       // Pero para seguridad estricta con HttpOnly, lo ideal es limpiar si el token no sirve
       if (error !== "No se pudo conectar al servidor") {
           logoutLocal(); 
@@ -43,6 +42,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await authService.login(credentials);
       
+      // Guardar el token JWT en localStorage para el interceptor de axios
+      // Safari iOS bloquea cookies cross-site, así que usamos Bearer token como fallback
+      if (result.token) {
+        localStorage.setItem('auth_token', result.token);
+      }
+
       if (result.user) {
         setUser(result.user);
         setIsAuthenticated(true);
@@ -56,12 +61,13 @@ export const AuthProvider = ({ children }) => {
 
   const logoutLocal = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('auth_token');
     setIsAuthenticated(false);
     setUser(null);
   };
 
   const logout = async () => {
-    console.log("👋 Cerrando sesión...");
+    console.log("Cerrando sesión...");
     await authService.logout();
     logoutLocal();
   };
