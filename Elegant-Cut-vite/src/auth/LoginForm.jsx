@@ -117,7 +117,7 @@ const Pupil = ({ size = 12, maxDistance = 5, pupilColor = 'black', forceLookX, f
 
 // ─── Main LoginForm ─────────────────────────────────────────────────────────────
 function LoginForm() {
-  const { login } = useAuth();
+  const { login, checkAuth } = useAuth();
   const navigate = useNavigate();
 
   // ── View State ──────────────────────────────────────────────────────────────
@@ -689,7 +689,8 @@ function LoginForm() {
                         mostrarMensaje('Autenticando con Google...', '');
                         const response = await AuthClient.loginWithGoogleToken(credentialResponse.credential);
                         if (response.success) {
-                          mostrarMensaje('�Login exitoso! Redirigiendo...', 'success');
+                            await checkAuth();
+                          mostrarMensaje('�Login exitoso! Redirigiendo...', 'success');
                           setTimeout(() => {
                             const role = response.user?.role;
                             if (role === 'admin') navigate('/admin');
@@ -697,16 +698,16 @@ function LoginForm() {
                             else navigate('/');
                           }, 1000);
                         } else {
-                          mostrarMensaje(response.error || 'Error al iniciar sesi�n con Google', 'error');
+                          mostrarMensaje(response.error || 'Error al iniciar sesi�n con Google', 'error');
                         }
                       } catch (err) {
-                        mostrarMensaje('Error de conexi�n con Google.', 'error');
+                        mostrarMensaje('Error de conexi�n con Google.', 'error');
                       } finally {
                         setLoading(false);
                       }
                     }}
                     onError={() => {
-                      mostrarMensaje('El inicio de sesi�n con Google fall�.', 'error');
+                      mostrarMensaje('El inicio de sesi�n con Google fall�.', 'error');
                     }}
                     theme='outline'
                     size='large'
