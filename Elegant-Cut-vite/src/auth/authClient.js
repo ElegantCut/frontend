@@ -29,26 +29,35 @@ export class AuthClient {
   }
 
   // Subir foto de perfil
-  static async uploadProfilePhoto(formData) {
+  static async uploadProfilePhoto(file, userId) {
     try {
-      const response = await api.post('/users/profile-photo', formData);
-
-      const data = response.data;
-
-      if (data.success) {
-        // Actualizar datos locales del usuario con la nueva foto
-        const userData = this.getUser();
-        if (userData) {
-          userData.photoUrl = data.photoUrl;
-          localStorage.setItem('user', JSON.stringify(userData));
-        }
-        return { success: true, photoUrl: data.photoUrl };
-      } else {
-        return { success: false, error: data.message || 'Error al subir imagen' };
+      // 1. Subir imagen a Cloudinary
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const uploadRes = await api.post('/uploads/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      if (!uploadRes.data || !uploadRes.data.url || !uploadRes.data.public_id) {
+        return { success: false, error: 'Error al subir la imagen al servidor' };
       }
+
+      // 2. Actualizar la foto en el usuario
+      await api.patch(`/users/update-photo/${userId}`, {
+        public_id: uploadRes.data.public_id
+      });
+      
+      // Actualizar datos locales del usuario con la nueva foto
+      const userData = this.getUser();
+      if (userData && (userData.userId == userId || userData.id_usuario == userId)) {
+        userData.foto_perfil = uploadRes.data.url;
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
+      return { success: true, photoUrl: uploadRes.data.url };
     } catch (error) {
       console.error('Error subiendo foto:', error);
-      return { success: false, error: 'Error de conexión' };
+      return { success: false, error: error.response?.data?.message || 'Error de conexión' };
     }
   }
 
@@ -123,7 +132,8 @@ export class AuthClient {
       }
     } catch (error) {
       console.log('🚨 Error de conexión:', error);
-      return { success: false, error: error.response?.data?.message || 'Error al cambiar contraseña' };
+      const message = error.response?.data?.message;
+      return { success: false, error: (Array.isArray(message) ? message[0] : message) || 'Error al cambiar contraseña' };
     }
   }
 

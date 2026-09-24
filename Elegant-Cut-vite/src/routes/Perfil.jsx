@@ -6,6 +6,7 @@ import AnimatedPage from '../components/shared/AnimatedPage';
 import { AnimatedContainer, AnimatedItem } from '../components/shared/AnimatedList';
 import { motion, AnimatePresence } from 'framer-motion';
 import { appointmentService } from '../lib/appointmentService';
+import { getCloudinaryUrl } from '../lib/utils/imageHelper';
 
 const FALLBACK_HORARIOS = [
     { id_horarios: 1, hora_inicio: 900, hora_fin: 930 },
@@ -39,6 +40,9 @@ function Perfil() {
     const [editMode, setEditMode] = useState(false);
     const [appointments, setAppointments] = useState([]);
     const [loadingAppointments, setLoadingAppointments] = useState(false);
+    
+    // Estado para foto de perfil
+    const [uploadingPhoto, setUploadingPhoto] = useState(false);
     
     // Estado para cambio de contraseña
     const [showPassModal, setShowPassModal] = useState(false);
@@ -116,6 +120,34 @@ function Perfil() {
             ...prev,
             [name]: value
         }));
+    };
+
+    const handlePhotoUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            alert('Solo se permiten imágenes.');
+            return;
+        }
+
+        setUploadingPhoto(true);
+        try {
+            const targetId = user?.id_usuario || AuthClient.getUser()?.userId;
+            const result = await AuthClient.uploadProfilePhoto(file, targetId);
+
+            if (result.success) {
+                setUser(prev => ({ ...prev, foto_perfil: result.photoUrl }));
+                alert('Foto actualizada correctamente.');
+            } else {
+                alert(result.error || 'Error al subir imagen.');
+            }
+        } catch (error) {
+            alert('Error de conexión.');
+        } finally {
+            setUploadingPhoto(false);
+            e.target.value = '';
+        }
     };
 
     const handleSaveChanges = async () => {
@@ -308,13 +340,28 @@ function Perfil() {
                     <div className="perfil-header">
                         <div className="perfil-avatar">
                             <div className="avatar-circle">
-                                <span className="avatar-initials">
-                                    {user.prim_nombre?.charAt(0)}{user.apellido1?.charAt(0)}
-                                </span>
+                                {user.foto_perfil ? (
+                                    <img src={getCloudinaryUrl(user.foto_perfil)} alt="Avatar" className="avatar-img" />
+                                ) : (
+                                    <span className="avatar-initials">
+                                        {user.prim_nombre?.charAt(0)}{user.apellido1?.charAt(0)}
+                                    </span>
+                                )}
                             </div>
-                            <button className="avatar-edit-btn">
-                                <i className="fas fa-camera"></i>
-                            </button>
+                            <label className="avatar-edit-btn">
+                                {uploadingPhoto ? (
+                                    <i className="fas fa-spinner fa-spin"></i>
+                                ) : (
+                                    <i className="fas fa-camera"></i>
+                                )}
+                                <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    style={{ display: 'none' }} 
+                                    onChange={handlePhotoUpload}
+                                    disabled={uploadingPhoto}
+                                />
+                            </label>
                         </div>
                         <div className="perfil-header-info">
                             <h1>{user.prim_nombre} {user.apellido1}</h1>
@@ -747,6 +794,11 @@ function Perfil() {
                     font-size: 1.8rem;
                     font-weight: 700;
                     color: #fff;
+                }
+                .avatar-img {
+                    width: 100%; height: 100%;
+                    border-radius: 50%;
+                    object-fit: cover;
                 }
                 .avatar-edit-btn {
                     position: absolute;
