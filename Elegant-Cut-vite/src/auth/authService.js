@@ -73,7 +73,8 @@ export const authService = {
             const response = await api.put('/auth/reset-password', { email, codigo, newPassword });
             return response.data;
         } catch (error) {
-            throw error.response?.data?.message || "Código inválido o expirado";
+            const message = error.response?.data?.message;
+            throw (Array.isArray(message) ? message[0] : message) || "Código inválido o expirado";
         }
     }
 };

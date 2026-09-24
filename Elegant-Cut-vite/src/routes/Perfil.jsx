@@ -348,20 +348,21 @@ function Perfil() {
                                     </span>
                                 )}
                             </div>
-                            <label className="avatar-edit-btn">
+                            <label htmlFor="photo-upload" className="avatar-edit-btn">
                                 {uploadingPhoto ? (
                                     <i className="fas fa-spinner fa-spin"></i>
                                 ) : (
                                     <i className="fas fa-camera"></i>
                                 )}
-                                <input 
-                                    type="file" 
-                                    accept="image/*" 
-                                    style={{ display: 'none' }} 
-                                    onChange={handlePhotoUpload}
-                                    disabled={uploadingPhoto}
-                                />
                             </label>
+                            <input 
+                                id="photo-upload"
+                                type="file" 
+                                accept="image/*" 
+                                style={{ display: 'none' }} 
+                                onChange={handlePhotoUpload}
+                                disabled={uploadingPhoto}
+                            />
                         </div>
                         <div className="perfil-header-info">
                             <h1>{user.prim_nombre} {user.apellido1}</h1>

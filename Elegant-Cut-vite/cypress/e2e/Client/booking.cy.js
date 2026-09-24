@@ -153,9 +153,9 @@ describe('Flujo de Agendamiento de Citas - Rol Cliente', () => {
   });
 
   it('Debe seleccionar un servicio, ir al formulario, configurar barbero, fecha, hora, pago y confirmar cita', () => {
-
+   
     // PASO 1: INICIAR SESIÓN COMO CLIENTE
-
+   
     cy.loginAsClient();
     cy.wait(3500);
 
@@ -204,7 +204,7 @@ describe('Flujo de Agendamiento de Citas - Rol Cliente', () => {
     cy.wait(3500);
 
     // PASO 4: FORMULARIO DE AGENDAMIENTO - PASO 2 (PROFESIONAL Y SERVICIO)
-
+   
     cy.get('.fa-panel').scrollIntoView({ duration: 600, offset: { top: -100, left: 0 } });
     cy.contains('Elige tu profesional y servicio').should('be.visible');
 
@@ -220,9 +220,9 @@ describe('Flujo de Agendamiento de Citas - Rol Cliente', () => {
     cy.get('.fa-btn-next').contains(/Continuar/i).should('not.be.disabled').click({ scrollBehavior: false });
     cy.wait(3500);
 
-
+    
     // PASO 5: FORMULARIO DE AGENDAMIENTO - PASO 3 (CONTACTO Y PAGO)
-
+    
     // Asegurar que el panel de formulario quede perfectamente encuadrado y visible, por que  la pantalla no se visualizaba bien
     cy.get('.fa-panel').scrollIntoView({ duration: 600, offset: { top: -100, left: 0 } });
     cy.contains('Datos de contacto').should('be.visible');
@@ -253,7 +253,7 @@ describe('Flujo de Agendamiento de Citas - Rol Cliente', () => {
     cy.contains('.fa-pay-opt.active', 'Transferencia').should('exist');
     cy.wait(3500);
 
-
+   
     // PASO 6: CONFIRMAR CITA Y VALIDAR RESULTADO
 
     cy.get('.fa-btn-next').contains(/Confirmar cita/i).click({ scrollBehavior: false });

@@ -327,8 +327,8 @@ function LoginForm() {
     if (forgotPasswordData.newPassword !== forgotPasswordData.confirmarContrasena) {
       mostrarMensaje('Las contraseñas no coinciden.', 'error'); return;
     }
-    if (forgotPasswordData.newPassword.length < 6) {
-      mostrarMensaje('La contraseña debe tener al menos 6 caracteres.', 'error'); return;
+    if (forgotPasswordData.newPassword.length < 8) {
+      mostrarMensaje('La contraseña debe tener al menos 8 caracteres.', 'error'); return;
     }
     setLoading(true);
     mostrarMensaje('', '');
@@ -340,7 +340,8 @@ function LoginForm() {
         switchToLogin();
       }, 2000);
     } catch (error) {
-      mostrarMensaje('Error: ' + (error.message || 'Código inválido o expirado.'), 'error');
+      const msg = typeof error === 'string' ? error : (Array.isArray(error) ? error[0] : (error?.message || 'Código inválido o expirado.'));
+      mostrarMensaje('Error: ' + msg, 'error');
     } finally {
       setLoading(false);
     }
@@ -596,7 +597,7 @@ function LoginForm() {
                   onBlur={() => setIsTyping(false)}
                   required
                   disabled={loading}
-                  className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                  className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4"
                 />
               </div>
 
@@ -613,7 +614,7 @@ function LoginForm() {
                     onChange={(e) => setLoginData({ ...loginData, contrasena: e.target.value })}
                     required
                     disabled={loading}
-                    className="h-12 pr-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                    className="h-12 pr-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4"
                   />
                   <button
                     type="button"
@@ -684,7 +685,7 @@ function LoginForm() {
                   <Label className="text-sm font-medium text-white/90">Nombre de usuario</Label>
                   <Input placeholder="Nombre de usuario " value={registerData.usuario}
                     onChange={(e) => setRegisterData({ ...registerData, usuario: e.target.value })}
-                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4"
                     onFocus={() => setIsTyping(true)} onBlur={() => setIsTyping(false)}
                   />
                 </div>
@@ -692,7 +693,7 @@ function LoginForm() {
                   <Label className="text-sm font-medium text-white/90">Email</Label>
                   <Input type="email" placeholder="Email" value={registerData.email}
                     onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
-                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
+                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4" />
                 </div>
               </div>
 
@@ -701,13 +702,13 @@ function LoginForm() {
                   <Label className="text-sm font-medium text-white/90">Primer nombre </Label>
                   <Input placeholder="Primer Nombre " value={registerData.prim_nombre}
                     onChange={(e) => setRegisterData({ ...registerData, prim_nombre: e.target.value })}
-                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
+                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4" />
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label className="text-sm font-medium text-white/90">Segundo nombre </Label>
                   <Input placeholder="Segundo Nombre" value={registerData.apellido1}
                     onChange={(e) => setRegisterData({ ...registerData, apellido1: e.target.value })}
-                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
+                    required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4" />
                 </div>
               </div>
 
@@ -715,7 +716,7 @@ function LoginForm() {
                 <Label className="text-sm font-medium text-white/90">Teléfono</Label>
                 <Input type="tel" placeholder="Número de teléfono" value={registerData.telefono}
                   onChange={(e) => setRegisterData({ ...registerData, telefono: e.target.value })}
-                  disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4" />
+                  disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4" />
               </div>
 
               <div className="flex flex-col gap-2">
@@ -726,7 +727,7 @@ function LoginForm() {
                     placeholder="••••••••"
                     value={registerData.contrasena}
                     onChange={(e) => setRegisterData({ ...registerData, contrasena: e.target.value })}
-                    required disabled={loading} className="h-12 pr-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                    required disabled={loading} className="h-12 pr-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4"
                   />
                   <button
                     type="button"
@@ -763,7 +764,7 @@ function LoginForm() {
                   placeholder="Ingresa tu correo para tú código"
                   value={forgotPasswordData.email}
                   onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, email: e.target.value })}
-                  required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                  required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4"
                 />
               </div>
 
@@ -804,7 +805,7 @@ function LoginForm() {
                   value={forgotPasswordData.codigo}
                   onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, codigo: e.target.value.replace(/\D/g, '') })}
                   required disabled={loading}
-                  className="h-12 text-center text-xl tracking-widest font-bold bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg"
+                  className="h-12 text-center text-xl tracking-widest font-bold bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg"
                 />
                 <p className="text-xs text-center text-neutral-400 mt-1">
                   El código expira en 6 minutos
@@ -819,7 +820,7 @@ function LoginForm() {
                     placeholder="New password"
                     value={forgotPasswordData.newPassword}
                     onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, newPassword: e.target.value })}
-                    required disabled={loading} className="h-12 pr-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                    required disabled={loading} className="h-12 pr-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4"
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-all">
@@ -835,7 +836,7 @@ function LoginForm() {
                   placeholder="Confirm new password"
                   value={forgotPasswordData.confirmarContrasena}
                   onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, confirmarContrasena: e.target.value })}
-                  required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white rounded-lg px-4"
+                  required disabled={loading} className="h-12 bg-transparent border-neutral-800 focus-visible:ring-1 focus-visible:border-white text-white focus:text-white rounded-lg px-4"
                 />
               </div>
 
